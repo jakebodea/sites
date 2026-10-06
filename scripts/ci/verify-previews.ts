@@ -9,10 +9,12 @@
  *   bun scripts/ci/verify-previews.ts --production  # smoke only, never fail on Lighthouse noise
  */
 import { execFileSync } from "node:child_process";
-import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { mkdirSync, readFileSync } from "node:fs";
 import path from "node:path";
 
 import { Schema } from "effect";
+
+import { controlCheck } from "./control-check.ts";
 
 const Deployments = Schema.fromJsonString(
   Schema.Array(
@@ -31,22 +33,6 @@ const deployments = Schema.decodeUnknownSync(Deployments)(
   readFileSync(path.join(root, "deployments.json"), "utf-8")
 );
 
-/** Runs one control-app check, saving its JSON report. Returns false when it fails. */
-const check = (name: string, site: string, url: string): boolean => {
-  try {
-    const report = execFileSync(
-      "bun",
-      ["packages/control-app/src/cli.ts", name, "--site", site, "--url", url],
-      { cwd: root, encoding: "utf-8" }
-    );
-    writeFileSync(path.join(output, `${site}-${name}.json`), report);
-    return true;
-  } catch (error) {
-    process.stderr.write(`${site}: ${name} failed\n${String(error)}\n`);
-    return false;
-  }
-};
-
 let failed = false;
 for (const { site, url } of deployments) {
   if (url === null) {
@@ -62,7 +48,10 @@ for (const { site, url } of deployments) {
       { cwd: root, stdio: "inherit" }
     );
   }
-  const passed = [check("smoke", site, url), check("seo", site, url)];
+  const passed = [
+    await controlCheck({ name: "smoke", origin: url, output, site }),
+    await controlCheck({ name: "seo", origin: url, output, site }),
+  ];
   if (passed.includes(false)) {
     failed = true;
   }

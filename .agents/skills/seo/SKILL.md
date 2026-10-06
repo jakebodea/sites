@@ -5,7 +5,7 @@ description: Technical and on-page SEO for a marketing site: run the automated a
 
 # SEO
 
-Most of the checklist is automated. `bun run app -- seo` crawls every sitemap page plus every internal link on a running stage and reads the server-rendered HTML the way a crawler does. Errors exit 1. CI runs it on every preview and on production (`scripts/ci/verify-previews.ts`).
+Most of the checklist is automated. `bun run app -- seo` crawls every sitemap page plus every internal link on a running stage and reads the server-rendered HTML the way a crawler does. Errors exit 1. CI first audits affected sites' standalone Alchemy builds in disposable local Workers (`scripts/ci/local-seo.ts`), without Cloudflare credentials or deploying a preview. CMS content is seeded locally; seed images are served from the build's own assets. `--content-only` omits stage indexing headers and response timing. Previews requested by the `preview` label and production still get the full deployed audit (`scripts/ci/verify-previews.ts`). JSON reports survive failed commands and are uploaded with `always()`.
 
 ```bash
 bun run app -- seo                    # local dev stage

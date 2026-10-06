@@ -25,11 +25,11 @@ env:
 
 jobs:
   check:
-    if: github.event.action != 'labeled' || github.event.label.name == 'preview'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     concurrency:
-      group: check-${{ github.event.pull_request.number || github.sha }}
+      # Unrelated labels must neither cancel preview validation nor skip the required check.
+      group: check-${{ github.event.pull_request.number || github.sha }}-${{ github.event.action == 'labeled' && github.event.label.name != 'preview' && 'labels' || 'code' }}
       cancel-in-progress: ${{ github.event_name == 'pull_request' }}
     outputs:
       sites: ${{ steps.affected.outputs.sites }}
@@ -48,10 +48,6 @@ jobs:
           "$RUNNER_TEMP/actionlint" -color
       - name: Lint
         run: bun run lint:ci
-      - name: Typecheck, test, build (affected, cached)
-        run: bunx turbo run typecheck test build //#typecheck:root //#test:root --affected
-        env:
-          TURBO_SCM_BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
       - name: Affected sites
         id: affected
         # Assigned first so a failing script fails the step (inside `echo` it would pass an empty list on).
@@ -60,6 +56,24 @@ jobs:
           echo "sites=$sites" >> "$GITHUB_OUTPUT"
         env:
           BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
+      - name: Prepare local SEO build inputs
+        run: bun scripts/ci/local-seo.ts --prepare --sites "$SITES"
+        env:
+          SITES: ${{ steps.affected.outputs.sites }}
+      - name: Typecheck, test, build (affected, cached)
+        run: bunx turbo run typecheck test build //#typecheck:root //#test:root --affected
+        env:
+          TURBO_SCM_BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
+      - name: Audit affected sites locally before deployment
+        run: bun scripts/ci/local-seo.ts --sites "$SITES"
+        env:
+          SITES: ${{ steps.affected.outputs.sites }}
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        if: always()
+        with:
+          name: local-seo-verification
+          path: .artifacts/ci/local-seo/
+          if-no-files-found: ignore
 
   dependency-review:
     # GitHub supports dependency review only on public repos or with Advanced Security;
@@ -151,3 +165,9 @@ jobs:
           SITES: ${{ github.event_name == 'workflow_dispatch' && inputs.sites || needs.check.outputs.sites }}
       - name: Verify production
         run: bun scripts/ci/verify-previews.ts --production
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        if: always()
+        with:
+          name: production-verification
+          path: .artifacts/ci/
+          if-no-files-found: ignore
