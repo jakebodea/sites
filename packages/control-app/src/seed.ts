@@ -26,6 +26,14 @@ const SetupStatus = Schema.Struct({
 
 /** Large seeds apply across several requests (EmDash budgets each one). */
 const MAX_ROUNDS = 30;
+/**
+ * The first setup request on a fresh stage runs EmDash's migrations and
+ * downloads seed images, which can outlast the usual 20 s deadline. Aborting
+ * it cancels the Worker while it holds the migration lock, and that lock never
+ * expires: the stage then answers "EmDash is not initialized" until it is
+ * destroyed and redeployed.
+ */
+const SETUP_TIMEOUT_MS = 180_000;
 
 export interface SeedResult {
   readonly seeded: boolean;
@@ -50,6 +58,7 @@ export const seedStage = async (origin: string): Promise<SeedResult> => {
       body: JSON.stringify({ includeContent: true, tagline, title }),
       headers: { "content-type": "application/json", origin },
       method: "POST",
+      signal: AbortSignal.timeout(SETUP_TIMEOUT_MS),
     });
     if (!response.ok) {
       return {

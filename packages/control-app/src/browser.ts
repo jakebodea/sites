@@ -96,14 +96,21 @@ const loadEverything = async (page: Page): Promise<void> => {
   ]);
 };
 
+/**
+ * Images that failed to load. Images not rendered at this width (a `hidden
+ * lg:block` ancestor) are skipped: lazy images there never load, by design.
+ */
 const brokenImages = async (page: Page): Promise<string[]> =>
-  await page.evaluate(() =>
-    [...document.images].flatMap((image) =>
-      image.complete && image.naturalWidth > 0
-        ? []
-        : [image.currentSrc || image.src]
-    )
-  );
+  await page.evaluate(() => {
+    const broken: string[] = [];
+    for (const image of document.images) {
+      const loaded = image.complete && image.naturalWidth > 0;
+      if (image.checkVisibility() && !loaded) {
+        broken.push(image.currentSrc || image.src);
+      }
+    }
+    return broken;
+  });
 
 /**
  * Signs in to EmDash with its dev-only bypass (seeds the site's content on
