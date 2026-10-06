@@ -1,0 +1,35 @@
+---
+/** Questions as native <details> disclosures: accessible and JavaScript-free. */
+import type { BlockComponentProps } from "emdash/ui";
+
+import Headline from "@/components/headline.astro";
+import SectionLabel from "@/components/section-label.astro";
+import type { PageContentFaqBlock } from "../../../emdash-env";
+
+type Props = BlockComponentProps<PageContentFaqBlock>;
+
+const { value } = Astro.props;
+---
+
+<section class="container-page py-20 sm:py-28">
+  <div class="grid gap-10 border-t border-border pt-10 md:grid-cols-[1fr_1.6fr] md:gap-16">
+    <div class="space-y-6">
+      {value.label && <SectionLabel label={value.label} />}
+      <h2 class="text-3xl leading-tight sm:text-4xl"><Headline text={value.headline} /></h2>
+    </div>
+    <div class="divide-y divide-border border-b border-border">
+      {value.items.map((item) => (
+        <details class="group py-5 first:pt-0">
+          <summary class="flex cursor-pointer list-none items-center justify-between gap-6 font-medium [&::-webkit-details-marker]:hidden">
+            {item.question}
+            <span class="relative size-3 shrink-0 text-muted-foreground" aria-hidden="true">
+              <span class="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-current"></span>
+              <span class="absolute inset-y-0 left-1/2 w-px -translate-x-1/2 bg-current transition-transform duration-200 group-open:rotate-90"></span>
+            </span>
+          </summary>
+          <p class="mt-3 max-w-xl leading-relaxed text-muted-foreground">{item.answer}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</section>

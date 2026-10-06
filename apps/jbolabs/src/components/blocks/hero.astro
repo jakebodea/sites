@@ -1,0 +1,38 @@
+---
+import { sanitizeHref } from "emdash";
+import type { BlockComponentProps } from "emdash/ui";
+
+import ButtonLink from "@/components/button-link.astro";
+import Headline from "@/components/headline.astro";
+import type { PageContentHeroBlock } from "../../../emdash-env";
+
+type Props = BlockComponentProps<PageContentHeroBlock>;
+
+const { value } = Astro.props;
+---
+
+<section class="container-page pt-16 pb-24 sm:pt-32 sm:pb-36">
+  {value.availability && (
+    <p class="rise mb-10 inline-flex items-center gap-2.5 rounded-full border border-border bg-card px-3.5 py-1.5 text-[0.8rem] text-muted-foreground">
+      <span class="relative flex size-2" aria-hidden="true">
+        <span class="absolute inline-flex size-full animate-ping rounded-full bg-signal opacity-50 motion-reduce:hidden"></span>
+        <span class="relative inline-flex size-2 rounded-full bg-signal"></span>
+      </span>
+      {value.availability}
+    </p>
+  )}
+  <h1 class="rise max-w-4xl text-[2.6rem] leading-[1.04] sm:text-7xl sm:leading-[1.02] [animation-delay:60ms]"><Headline text={value.headline} /></h1>
+  {value.subheadline && (
+    <p class="rise mt-8 max-w-xl text-lg leading-relaxed text-muted-foreground sm:text-xl [animation-delay:140ms]">{value.subheadline}</p>
+  )}
+  {(value.primary_cta_label || value.secondary_cta_label) && (
+    <div class="rise mt-12 flex flex-wrap items-center gap-x-6 gap-y-4 [animation-delay:220ms]">
+      {value.primary_cta_label && value.primary_cta_url && (
+        <ButtonLink href={sanitizeHref(value.primary_cta_url)} size="hero">{value.primary_cta_label}</ButtonLink>
+      )}
+      {value.secondary_cta_label && value.secondary_cta_url && (
+        <a href={sanitizeHref(value.secondary_cta_url)} class="text-[0.95rem] underline decoration-border decoration-1 underline-offset-[6px] transition-colors hover:decoration-foreground">{value.secondary_cta_label}</a>
+      )}
+    </div>
+  )}
+</section>

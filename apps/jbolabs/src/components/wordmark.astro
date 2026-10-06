@@ -1,0 +1,17 @@
+---
+/**
+ * The text wordmark: the site title from CMS settings, so renaming the studio
+ * needs no new artwork. The small ink square is the only "logo".
+ */
+interface Props {
+  title: string;
+  class?: string;
+}
+
+const { class: className, title } = Astro.props;
+---
+
+<span class:list={["inline-flex items-center gap-2.5 text-[0.95rem] font-medium tracking-[-0.01em]", className]}>
+  <span class="size-2.5 rounded-[3px] bg-ink" aria-hidden="true"></span>
+  {title}
+</span>

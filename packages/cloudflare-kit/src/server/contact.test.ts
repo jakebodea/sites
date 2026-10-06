@@ -3,7 +3,12 @@ import { Effect, Exit, Layer, Option, Ref, Schema } from "effect";
 
 import { Analytics } from "./analytics.ts";
 import type { ServerEventCapture } from "./analytics.ts";
-import { ContactForm, LeadInbox, submitContact } from "./contact.ts";
+import {
+  ContactForm,
+  LeadInbox,
+  leadNotificationText,
+  submitContact,
+} from "./contact.ts";
 import { Email, EmailFailed } from "./email.ts";
 import type { EmailMessage } from "./email.ts";
 import { LeadStore } from "./leads.ts";
@@ -72,6 +77,34 @@ describe(ContactForm, () => {
     });
     expect(Exit.isFailure(bad)).toBeTruthy();
   });
+
+  it("caps the number of intake answers", () => {
+    const answer = { answer: "Under $5k", question: "Budget" };
+    const tooMany = Schema.decodeUnknownExit(ContactForm)({
+      ...form,
+      answers: Array.from({ length: 9 }, () => answer),
+    });
+    expect(Exit.isFailure(tooMany)).toBeTruthy();
+  });
+});
+
+describe(leadNotificationText, () => {
+  it("includes the referrer and intake answers when given", () => {
+    const text = leadNotificationText({
+      ...form,
+      answers: [{ answer: "1-3 months", question: "Timeline" }],
+      referrer: "Alex Rivera",
+      sourcePath: "/contact",
+    });
+    expect(text).toContain("Referred by: Alex Rivera");
+    expect(text).toContain("Timeline: 1-3 months");
+  });
+
+  it("leaves the referrer line out when there is none", () => {
+    expect(
+      leadNotificationText({ ...form, sourcePath: "/contact" })
+    ).not.toContain("Referred by");
+  });
 });
 
 describe(submitContact, () => {
@@ -84,10 +117,26 @@ describe(submitContact, () => {
       expect(result).toStrictEqual({ leadId: "lead-1" });
       expect((yield* Ref.get(leads))[0]?.sourcePath).toBe("/contact");
       expect((yield* Ref.get(emails))[0]?.replyTo).toBe("pat@example.com");
+      expect((yield* Ref.get(emails))[0]?.subject).toBe(
+        "New enquiry from Pat Builder"
+      );
       expect((yield* Ref.get(events))[0]).toMatchObject({
         distinctId: "visitor-1",
         event: "lead submitted",
       });
+    })
+  );
+
+  it.effect("names the referrer in the notification subject", () =>
+    Effect.gen(function* namesReferrer() {
+      const { emails, layer, leads } = yield* recorder;
+      yield* submitContact({ ...form, referrer: "Alex Rivera" }, request).pipe(
+        Effect.provide(Layer.merge(layer(), TurnstileAllowAll))
+      );
+      expect((yield* Ref.get(leads))[0]?.referrer).toBe("Alex Rivera");
+      expect((yield* Ref.get(emails))[0]?.subject).toBe(
+        "New enquiry from Pat Builder (via Alex Rivera)"
+      );
     })
   );
 

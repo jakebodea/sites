@@ -1,0 +1,40 @@
+---
+/**
+ * ProfessionalService JSON-LD on every page. EmDashHead adds the WebSite
+ * graph; this adds the studio and its founder. Unknown facts are omitted
+ * rather than guessed (see site.config.ts).
+ */
+import { site } from "../../site.config";
+
+interface Props {
+  origin: string;
+}
+
+const { origin } = Astro.props;
+const { business } = site;
+interface StudioJsonLd {
+  readonly "@context": string;
+  readonly "@type": string;
+  readonly description: string;
+  readonly founder: { "@type": string; name: string };
+  readonly image: string;
+  readonly name: string;
+  readonly url: string;
+  email?: string;
+}
+
+const data: StudioJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "ProfessionalService",
+  description: site.description,
+  founder: { "@type": "Person", name: business.founder },
+  image: `${origin}/og-default.png`,
+  name: site.name,
+  url: origin,
+};
+if (business.email !== undefined) {
+  data.email = business.email;
+}
+---
+
+<script type="application/ld+json" set:html={JSON.stringify(data)} />

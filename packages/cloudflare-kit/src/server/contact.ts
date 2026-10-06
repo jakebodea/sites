@@ -37,6 +37,20 @@ const trimmed = (min: number, max: number) =>
 const optionalTrimmed = (max: number) =>
   Schema.optional(Schema.Trim.check(Schema.isMaxLength(max)));
 
+/** Most intake questions a site may add to its form. */
+export const MAX_LEAD_ANSWERS = 8;
+
+/**
+ * A site-specific intake question and the visitor's answer (budget, timeline,
+ * ...). Sites validate their own options before building these; the pipeline
+ * only stores and forwards them.
+ */
+export const LeadAnswer = Schema.Struct({
+  answer: trimmed(1, 200),
+  question: trimmed(1, 80),
+});
+export type LeadAnswer = typeof LeadAnswer.Type;
+
 /** What the browser sends. Field limits double as spam guards. */
 export const ContactForm = Schema.Struct({
   /** The page view's PostHog ids, so the server event joins the visitor's session. */
@@ -45,6 +59,9 @@ export const ContactForm = Schema.Struct({
       distinctId: Schema.optional(Schema.String),
       sessionId: Schema.optional(Schema.String),
     })
+  ),
+  answers: Schema.optional(
+    Schema.Array(LeadAnswer).check(Schema.isMaxLength(MAX_LEAD_ANSWERS))
   ),
   company: optionalTrimmed(120),
   email: Schema.Trim.check(
@@ -56,6 +73,8 @@ export const ContactForm = Schema.Struct({
   message: trimmed(10, 5000),
   name: trimmed(2, 120),
   phone: optionalTrimmed(40),
+  /** Who sent the visitor (a referral partner or past client), when they say. */
+  referrer: optionalTrimmed(120),
   turnstileToken: Schema.String,
 });
 export type ContactForm = typeof ContactForm.Type;
@@ -107,6 +126,10 @@ export const leadNotificationText = (lead: Lead): string =>
     `Email: ${lead.email}`,
     `Phone: ${lead.phone ?? "-"}`,
     `Company: ${lead.company ?? "-"}`,
+    ...(lead.referrer === undefined ? [] : [`Referred by: ${lead.referrer}`]),
+    ...(lead.answers ?? []).map(
+      ({ answer, question }) => `${question}: ${answer}`
+    ),
     `Page: ${lead.sourcePath}`,
     "",
     lead.message,
@@ -128,11 +151,13 @@ export const submitContact = Effect.fn("submitContact")(function* submitContact(
   });
 
   const lead: Lead = {
+    answers: form.answers,
     company: form.company,
     email: form.email,
     message: form.message,
     name: form.name,
     phone: form.phone,
+    referrer: form.referrer,
     sourcePath: request.sourcePath,
   };
   const { id } = yield* leads.save(lead);
@@ -146,7 +171,10 @@ export const submitContact = Effect.fn("submitContact")(function* submitContact(
         .send({
           from,
           replyTo: lead.email,
-          subject: `New enquiry from ${lead.name}`,
+          subject:
+            lead.referrer === undefined
+              ? `New enquiry from ${lead.name}`
+              : `New enquiry from ${lead.name} (via ${lead.referrer})`,
           text: leadNotificationText(lead),
           to,
         })

@@ -1,0 +1,28 @@
+---
+import type { BlockComponentProps } from "emdash/ui";
+
+import Headline from "@/components/headline.astro";
+import SectionLabel from "@/components/section-label.astro";
+import type { PageContentProcessBlock } from "../../../emdash-env";
+
+type Props = BlockComponentProps<PageContentProcessBlock>;
+
+const { value } = Astro.props;
+---
+
+<!-- `id` is the hero's default "How I work" anchor (#process). -->
+<section id="process" class="container-page py-20 sm:py-28">
+  <div class="border-t border-border pt-10">
+    {value.label && <SectionLabel label={value.label} />}
+    <h2 class="mt-6 max-w-2xl text-3xl leading-tight sm:text-4xl"><Headline text={value.headline} /></h2>
+    <ol class="mt-14 grid gap-x-10 gap-y-12 sm:grid-cols-2 lg:grid-cols-4">
+      {value.steps.map((step, index) => (
+        <li class="space-y-3">
+          <span class="font-mono text-xs text-muted-foreground">{String(index + 1).padStart(2, "0")}</span>
+          <h3 class="text-lg">{step.title}</h3>
+          <p class="text-[0.95rem] leading-relaxed text-muted-foreground">{step.body}</p>
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>
