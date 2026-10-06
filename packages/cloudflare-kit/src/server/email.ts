@@ -53,3 +53,29 @@ export const EmailLog = Layer.succeed(Email, {
       Effect.annotateLogs({ subject: message.subject, to: message.to })
     ),
 });
+
+export const emailFromEnv = (
+  binding: SendEmail | undefined
+): Layer.Layer<Email> =>
+  binding === undefined
+    ? EmailLog
+    : emailCloudflare({
+        send: async (message) => {
+          const builder: EmailMessageBuilder = {
+            from: message.from,
+            subject: message.subject,
+            text: message.text,
+            to: message.to,
+          };
+          if (message.cc !== undefined) {
+            builder.cc = [...message.cc];
+          }
+          if (message.html !== undefined) {
+            builder.html = message.html;
+          }
+          if (message.replyTo !== undefined) {
+            builder.replyTo = message.replyTo;
+          }
+          return await binding.send(builder);
+        },
+      });

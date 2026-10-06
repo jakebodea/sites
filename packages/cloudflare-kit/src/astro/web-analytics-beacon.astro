@@ -1,0 +1,14 @@
+---
+import { env } from "cloudflare:workers";
+import { Option } from "effect";
+
+import { webAnalyticsFromEnv } from "../web-analytics.ts";
+
+const analytics = webAnalyticsFromEnv(env);
+const host = new URL(env.SITE_ORIGIN).hostname;
+const allowedHost = Astro.url.hostname === host || Astro.url.hostname === `www.${host}`;
+---
+
+{allowedHost && Option.isSome(analytics) && (
+  <script is:inline defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon={JSON.stringify({ token: analytics.value.siteToken })}></script>
+)}

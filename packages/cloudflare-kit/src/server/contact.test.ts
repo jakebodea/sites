@@ -1,23 +1,21 @@
 import { describe, expect, it } from "@effect/vitest";
-import { Effect, Exit, Layer, Option, Ref, Schema } from "effect";
+import { Effect, Exit, Layer, Logger, Option, Ref, Schema } from "effect";
 
-import { Analytics } from "./analytics.ts";
-import type { ServerEventCapture } from "./analytics.ts";
 import {
   ContactForm,
-  LeadInbox,
+  LeadMail,
   leadNotificationText,
-  reportLeadFailure,
   submitContact,
 } from "./contact.ts";
 import { Email, EmailFailed } from "./email.ts";
 import type { EmailMessage } from "./email.ts";
-import { LeadStore } from "./leads.ts";
+import { LeadNotSaved, LeadStore } from "./leads.ts";
 import type { Lead } from "./leads.ts";
 import {
   Turnstile,
   TurnstileAllowAll,
   TurnstileRejected,
+  TurnstileUnavailable,
 } from "./turnstile.ts";
 
 const form = Schema.decodeUnknownSync(ContactForm)({
@@ -28,9 +26,8 @@ const form = Schema.decodeUnknownSync(ContactForm)({
 });
 
 const request = {
-  distinctId: "visitor-1",
   remoteIp: "203.0.113.9",
-  sessionId: "session-1",
+  requestId: "ray-1",
   sourcePath: "/contact",
 };
 
@@ -38,7 +35,7 @@ const request = {
 const recorder = Effect.gen(function* recorder() {
   const leads = yield* Ref.make<Lead[]>([]);
   const emails = yield* Ref.make<EmailMessage[]>([]);
-  const events = yield* Ref.make<ServerEventCapture[]>([]);
+  const attempts = yield* Ref.make<EmailMessage[]>([]);
   const layer = (options: { emailFails?: boolean; inbox?: boolean } = {}) =>
     Layer.mergeAll(
       Layer.succeed(LeadStore, {
@@ -49,24 +46,24 @@ const recorder = Effect.gen(function* recorder() {
       }),
       Layer.succeed(Email, {
         send: (message) =>
-          options.emailFails === true
-            ? Effect.fail(new EmailFailed({ cause: "smtp down" }))
-            : Ref.update(emails, (all) => [...all, message]),
+          Ref.update(attempts, (all) => [...all, message]).pipe(
+            Effect.andThen(
+              options.emailFails === true
+                ? Effect.fail(new EmailFailed({ cause: "smtp down" }))
+                : Ref.update(emails, (all) => [...all, message])
+            )
+          ),
       }),
-      Layer.succeed(
-        LeadInbox,
-        options.inbox === false
-          ? Option.none()
-          : Option.some({
-              from: { email: "site@example.com", name: "Website" },
-              to: "office@example.com",
-            })
-      ),
-      Layer.succeed(Analytics, {
-        capture: (event) => Ref.update(events, (all) => [...all, event]),
+      Layer.succeed(LeadMail, {
+        alert: Option.some("alerts@example.com"),
+        from: Option.some({ email: "site@example.com", name: "Website" }),
+        inbox:
+          options.inbox === false
+            ? Option.none()
+            : Option.some("office@example.com"),
       })
     );
-  return { emails, events, layer, leads };
+  return { attempts, emails, layer, leads };
 });
 
 describe(ContactForm, () => {
@@ -109,9 +106,9 @@ describe(leadNotificationText, () => {
 });
 
 describe(submitContact, () => {
-  it.effect("saves the lead, notifies the inbox, and captures the event", () =>
+  it.effect("saves the lead and notifies the inbox", () =>
     Effect.gen(function* savesNotifiesCaptures() {
-      const { emails, events, layer, leads } = yield* recorder;
+      const { emails, layer, leads } = yield* recorder;
       const result = yield* submitContact(form, request).pipe(
         Effect.provide(Layer.merge(layer(), TurnstileAllowAll))
       );
@@ -121,10 +118,6 @@ describe(submitContact, () => {
       expect((yield* Ref.get(emails))[0]?.subject).toBe(
         "New enquiry from Pat Builder"
       );
-      expect((yield* Ref.get(events))[0]).toMatchObject({
-        distinctId: "visitor-1",
-        event: "lead submitted",
-      });
     })
   );
 
@@ -143,7 +136,7 @@ describe(submitContact, () => {
 
   it.effect("stops before saving when Turnstile rejects the visitor", () =>
     Effect.gen(function* stopsOnTurnstileRejection() {
-      const { layer, leads } = yield* recorder;
+      const { emails, layer, leads } = yield* recorder;
       const rejectAll = Layer.succeed(Turnstile, {
         verify: () => Effect.fail(new TurnstileRejected({ codes: ["bad"] })),
       });
@@ -153,19 +146,30 @@ describe(submitContact, () => {
       );
       expect(error._tag).toBe("TurnstileRejected");
       expect(yield* Ref.get(leads)).toHaveLength(0);
+      expect(yield* Ref.get(emails)).toHaveLength(0);
     })
   );
 
   it.effect("still succeeds when the notification email fails", () =>
     Effect.gen(function* survivesEmailFailure() {
-      const { events, layer } = yield* recorder;
+      const { attempts, emails, layer } = yield* recorder;
+      const logs: unknown[] = [];
+      const logger = Logger.layer([
+        Logger.make((entry) => {
+          logs.push(entry.message);
+        }),
+      ]);
       const result = yield* submitContact(form, request).pipe(
         Effect.provide(
-          Layer.merge(layer({ emailFails: true }), TurnstileAllowAll)
+          Layer.mergeAll(layer({ emailFails: true }), TurnstileAllowAll, logger)
         )
       );
       expect(result.leadId).toBe("lead-1");
-      expect(yield* Ref.get(events)).toHaveLength(1);
+      expect(yield* Ref.get(emails)).toHaveLength(0);
+      expect(
+        (yield* Ref.get(attempts)).map((message) => message.to)
+      ).toStrictEqual(["office@example.com"]);
+      expect(logs.flat()).toContain("lead notification failed");
     })
   );
 
@@ -180,16 +184,67 @@ describe(submitContact, () => {
   );
 });
 
-describe(reportLeadFailure, () => {
-  it.effect("captures the failure for the PostHog alert", () =>
-    Effect.gen(function* captureFailure() {
-      const { events, layer } = yield* recorder;
-      yield* reportLeadFailure({ _tag: "LeadNotSaved" }).pipe(
-        Effect.provide(layer())
+describe("contact alert policy", () => {
+  it.effect(
+    "alerts with lead details and requestId when Turnstile is unavailable",
+    () =>
+      Effect.gen(function* unavailableAlert() {
+        const { emails, layer, leads } = yield* recorder;
+        const unavailable = Layer.succeed(Turnstile, {
+          verify: () =>
+            Effect.fail(new TurnstileUnavailable({ cause: "offline" })),
+        });
+        const error = yield* submitContact(form, request).pipe(
+          Effect.provide(Layer.merge(layer(), unavailable)),
+          Effect.flip
+        );
+        expect(error._tag).toBe("TurnstileUnavailable");
+        expect(yield* Ref.get(leads)).toHaveLength(0);
+        const sent = yield* Ref.get(emails);
+        expect(sent).toHaveLength(1);
+        expect(sent[0]).toMatchObject({
+          subject: "Lead submission failed [ray-1]",
+          to: "alerts@example.com",
+        });
+        expect(sent[0]?.text).toContain("pat@example.com");
+      })
+  );
+
+  it.effect("alerts with recoverable lead details when saving fails", () =>
+    Effect.gen(function* saveAlert() {
+      const { emails, layer } = yield* recorder;
+      const failingStore = Layer.succeed(LeadStore, {
+        save: () => Effect.fail(new LeadNotSaved({ cause: "database down" })),
+      });
+      const error = yield* submitContact(form, request).pipe(
+        Effect.provide(
+          Layer.mergeAll(layer(), failingStore, TurnstileAllowAll)
+        ),
+        Effect.flip
       );
-      expect(yield* Ref.get(events)).toStrictEqual([
-        { event: "lead submit failed", properties: { error: "LeadNotSaved" } },
-      ]);
+      expect(error._tag).toBe("LeadNotSaved");
+      const sent = yield* Ref.get(emails);
+      expect(sent).toHaveLength(1);
+      expect(sent[0]?.text).toContain("Request: ray-1");
+      expect(sent[0]?.text).toContain(form.message);
+      expect(sent[0]?.text).toContain("Step: save");
+    })
+  );
+
+  it.effect("alerts on a store defect and preserves the defect", () =>
+    Effect.gen(function* defectAlert() {
+      const { emails, layer } = yield* recorder;
+      const failingStore = Layer.succeed(LeadStore, {
+        save: () => Effect.die("unexpected"),
+      });
+      const exit = yield* submitContact(form, request).pipe(
+        Effect.provide(
+          Layer.mergeAll(layer(), failingStore, TurnstileAllowAll)
+        ),
+        Effect.exit
+      );
+      expect(Exit.isFailure(exit)).toBeTruthy();
+      expect(yield* Ref.get(emails)).toHaveLength(1);
     })
   );
 });
