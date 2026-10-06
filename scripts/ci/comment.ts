@@ -15,8 +15,11 @@ const Deployments = Schema.fromJsonString(
     Schema.Struct({ site: Schema.String, url: Schema.NullOr(Schema.String) })
   )
 );
-const Comments = Schema.fromJsonString(
-  Schema.Array(Schema.Struct({ body: Schema.String, id: Schema.Number }))
+/** `--paginate --slurp` prints one array per page; gh refuses `--slurp` with `--jq`. */
+const CommentPages = Schema.fromJsonString(
+  Schema.Array(
+    Schema.Array(Schema.Struct({ body: Schema.String, id: Schema.Number }))
+  )
 );
 const MARKER = "<!-- marketing-previews -->";
 
@@ -53,16 +56,11 @@ Smoke and Lighthouse results are in the workflow run. EmDash admin on a preview 
 `;
 
 const gh = (args: string[]) => execFileSync("gh", args, { encoding: "utf-8" });
-const existing = Schema.decodeUnknownSync(Comments)(
-  gh([
-    "api",
-    `repos/${repo}/issues/${pr}/comments`,
-    "--paginate",
-    "--slurp",
-    "--jq",
-    "add // [] | map({id, body})",
-  ])
-).find((comment) => comment.body.startsWith(MARKER));
+const existing = Schema.decodeUnknownSync(CommentPages)(
+  gh(["api", `repos/${repo}/issues/${pr}/comments`, "--paginate", "--slurp"])
+)
+  .flat()
+  .find((comment) => comment.body.startsWith(MARKER));
 
 if (existing === undefined) {
   gh(["api", `repos/${repo}/issues/${pr}/comments`, "-f", `body=${body}`]);
