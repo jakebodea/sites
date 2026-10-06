@@ -84,6 +84,7 @@
     "oxlint": "1.87.0",
     "oxlint-plugin-react-doctor": "0.9.17",
     "oxlint-tsgolint": "7.0.2003",
+    "p-limit": "7.3.3",
     "playwright-core": "1.63.0",
     "turbo": "2.11.7",
     "typescript": "catalog:",
