@@ -27,7 +27,6 @@ export const deployTokens = {
 export const studio = {
   alertInbox: "alerts@jbolabs.com",
   domain: "jbolabs.com",
-  // SAFETY: unset until `stacks/studio.ts` is deployed and the sending subdomain is enabled.
-  sender: undefined as string | undefined,
+  sender: "sites@mail.jbolabs.com",
   sendingSubdomain: "mail.jbolabs.com",
 } as const;
