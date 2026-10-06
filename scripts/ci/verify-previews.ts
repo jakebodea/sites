@@ -1,7 +1,8 @@
 /**
  * After a CI deploy: smoke-test every deployed site, run the technical SEO
  * audit (errors fail; on production it catches a stray noindex), and hold
- * previews to the Lighthouse budgets in `lighthouserc.json`. Reads `deployments.json` from
+ * previews to the Lighthouse budgets in `lighthouserc.json` (which skips `is-crawlable`:
+ * previews send `X-Robots-Tag: noindex` on purpose, and the SEO audit polices that). Reads `deployments.json` from
  * `scripts/ci/deploy.ts`; results land in `.artifacts/ci/`.
  *
  *   bun scripts/ci/verify-previews.ts               # previews
@@ -66,10 +67,8 @@ for (const { site, url } of deployments) {
     failed = true;
   }
   if (!production) {
-    const urls = BUDGET_PATHS.flatMap((route) => [
-      "--collect.url",
-      `${url}${route}`,
-    ]);
+    // `autorun` reads a space-separated `--collect.url <url>` as the boolean `true`.
+    const urls = BUDGET_PATHS.map((route) => `--collect.url=${url}${route}`);
     try {
       execFileSync("bunx", ["@lhci/cli@0.15.1", "autorun", ...urls], {
         cwd: root,
