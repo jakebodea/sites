@@ -1,7 +1,7 @@
 ---
 import type { Link } from "@/content/types";
 import MobileNav from "./islands/mobile-nav";
-import ThemeToggle from "./islands/theme-toggle";
+import ThemeToggle from "./theme-toggle.astro";
 import ButtonLink from "./button-link.astro";
 import Wordmark from "./wordmark.astro";
 
@@ -33,11 +33,11 @@ const isActive = (url: string) =>
           </a>
         ))
       }
-      <ThemeToggle client:idle />
+      <ThemeToggle />
       <ButtonLink href="/contact" size="cta">Start a project</ButtonLink>
     </nav>
     <div class="flex items-center gap-1 md:hidden">
-      <ThemeToggle client:media="(max-width: 767px)" />
+      <ThemeToggle />
       <MobileNav client:media="(max-width: 767px)" title={title} items={[...items]} currentPath={current} />
     </div>
   </div>

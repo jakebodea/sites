@@ -1,0 +1,25 @@
+---
+import { Moon, Sun } from "@lucide/astro";
+
+import { buttonVariants } from "@/components/ui/button";
+---
+
+<button
+  type="button"
+  data-theme-toggle
+  aria-label="Toggle dark mode"
+  class={buttonVariants({ variant: "ghost", size: "icon-round" })}
+>
+  <Sun class="hidden size-[1.15rem] dark:block" aria-hidden="true" />
+  <Moon class="size-[1.15rem] dark:hidden" aria-hidden="true" />
+</button>
+
+<script>
+  // A native button keeps the theme available before any React island hydrates.
+  for (const button of document.querySelectorAll<HTMLButtonElement>("[data-theme-toggle]")) {
+    button.addEventListener("click", () => {
+      const dark = document.documentElement.classList.toggle("dark");
+      localStorage.setItem("theme", dark ? "dark" : "light");
+    });
+  }
+</script>
