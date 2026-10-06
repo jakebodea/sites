@@ -73,5 +73,5 @@ Three models drafted designs independently with `/architect`, and a fourth judge
 - The analytics plugin is young: version 0.3.x, one maintainer, MIT license. If it is abandoned we fork it. The Cloudflare data stays ours either way.
 - The plugin's sync runs on the minute cron and needs Workers Paid, which the account already has.
 - The prod deploy token gains `Account Settings Write` because creating a `Rum.Site` is expected to need it. The first prod deploy proves the permission.
-- The failure alert is emailed only once a site has a verified sender (`EMAIL_FROM`). Until then it is logged.
+- The failure alert is emailed only once the shared `studio.sender` is set after the sending subdomain exists. Until then it is logged. `ALERT_EMAIL` now binds the committed forwarding address `studio.alertInbox`, not a GitHub secret. Site stacks pass committed mail routes to `leadMail`; the GitHub stack only provisions the analytics token.
 - jbolabs has no CMS. It gets the beacon and the alert, and its stats live in the Cloudflare dashboard.

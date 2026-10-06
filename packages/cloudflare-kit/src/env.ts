@@ -9,6 +9,7 @@ export interface WebAnalyticsEnv {
 
 export interface LeadMailEnv {
   readonly LEAD_NOTIFY_FROM: string;
+  readonly LEAD_NOTIFY_FROM_NAME: string;
   readonly LEAD_NOTIFY_TO: string;
   readonly ALERT_EMAIL: string;
 }

@@ -115,9 +115,6 @@ jobs:
       CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
       CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
       CF_ANALYTICS_API_TOKEN: ${{ secrets.CF_ANALYTICS_API_TOKEN }}
-      ALERT_EMAIL: ${{ secrets.ALERT_EMAIL }}
-      EMAIL_FROM: ${{ vars.EMAIL_FROM }}
-      LEAD_NOTIFY_TO: ${{ vars.LEAD_NOTIFY_TO }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:

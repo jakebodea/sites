@@ -26,8 +26,9 @@ import { AlchemyContext } from "alchemy/AlchemyContext";
 import * as Cloudflare from "alchemy/Cloudflare";
 import { RandomProvider } from "alchemy/Random";
 import * as RemovalPolicy from "alchemy/RemovalPolicy";
-import { Config, Effect, Layer, Option } from "effect";
+import { Effect, Layer } from "effect";
 
+import { studio } from "../../stacks/config.ts";
 import { site } from "./site.config.ts";
 import { BACKUP_CRON } from "./src/lib/schedule.ts";
 
@@ -54,10 +55,7 @@ export default Alchemy.Stack(
 
     // The Astro config reads the stage origin (canonical URLs, sitemap).
     writeBuildInputs(root, { origin });
-    // Verified Cloudflare Email Service sender for lead notifications.
-    const emailFrom = Option.getOrUndefined(
-      yield* Config.String("EMAIL_FROM").pipe(Config.option)
-    );
+    const emailFrom = studio.sender;
 
     const database = yield* Cloudflare.D1.Database("Database").pipe(keep);
     // Bound everywhere so the Worker's types never branch; only prod runs the backup cron.
@@ -78,7 +76,12 @@ export default Alchemy.Stack(
         });
     const bindings = {
       ...(yield* webAnalytics(stage)),
-      ...(yield* leadMail(stage, emailFrom)),
+      ...leadMail(stage, {
+        alertInbox: studio.alertInbox,
+        emailFrom,
+        fromName: `${site.name} website`,
+        inbox: site.leadInbox,
+      }),
       BACKUPS: backups,
       DB: database,
       SITE_ORIGIN: origin,

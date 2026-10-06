@@ -8,13 +8,10 @@
  * Needs an Alchemy profile that can create Cloudflare API tokens and a GitHub
  * login (`gh auth login`). Deploy once per repository, again to rotate.
  */
-import { fileURLToPath } from "node:url";
-
-import { siteSecrets } from "@jakebodea/cloudflare-kit/infra";
 import * as Alchemy from "alchemy";
 import * as Cloudflare from "alchemy/Cloudflare";
 import * as GitHub from "alchemy/GitHub";
-import { Config, Effect, Layer } from "effect";
+import { Effect, Layer } from "effect";
 
 import { deployTokens, repository } from "./config.ts";
 
@@ -83,7 +80,6 @@ export default Alchemy.Stack(
   "marketing-ci",
   {
     providers: Layer.mergeAll(Cloudflare.providers(), GitHub.providers()),
-    secrets: siteSecrets(fileURLToPath(new URL("..", import.meta.url))),
     state: ciOnly,
   },
   Effect.gen(function* controlPlane() {
@@ -143,13 +139,6 @@ export default Alchemy.Stack(
           owner,
           repository: repo,
           value: analyticsToken.value,
-        });
-        yield* GitHub.Secret("ProductionAlertEmail", {
-          environment: githubEnvironment,
-          name: "ALERT_EMAIL",
-          owner,
-          repository: repo,
-          value: yield* Config.Redacted("ALERT_EMAIL"),
         });
       }
       yield* GitHub.Variable(`${environment.id}CloudflareAccount`, {

@@ -80,6 +80,8 @@ export interface ContactRequest {
 }
 
 export interface LeadMailRoutes {
+  readonly name: string;
+  readonly siteOrigin: string;
   readonly from: Option.Option<EmailAddress>;
   readonly inbox: Option.Option<string>;
   readonly alert: Option.Option<string>;
@@ -112,10 +114,13 @@ export const LeadMailFromConfig = Layer.effect(
     const name = yield* Config.String("LEAD_NOTIFY_FROM_NAME").pipe(
       Config.withDefault("Website")
     );
+    const siteOrigin = yield* Config.String("SITE_ORIGIN");
     return {
       alert,
       from: from.pipe(Option.map((address) => ({ email: address, name }))),
       inbox,
+      name,
+      siteOrigin,
     };
   })
 );
@@ -135,8 +140,12 @@ export const leadNotificationText = (lead: Lead): string =>
     lead.message,
   ].join("\n");
 
-export const leadFailureText = (failure: LeadFailure): string =>
+export const leadFailureText = (
+  failure: LeadFailure,
+  siteOrigin: string
+): string =>
   [
+    `Site: ${siteOrigin}`,
     `Request: ${failure.requestId}`,
     `Step: ${failure.stage}`,
     `Error: ${failure.error}`,
@@ -166,8 +175,8 @@ const reportLeadFailure = Effect.fn("reportLeadFailure")(
           .send({
             from,
             replyTo: failure.form.email,
-            subject: `Lead submission failed [${failure.requestId}]`,
-            text: leadFailureText(failure),
+            subject: `Lead submission failed: ${mail.name} [${failure.requestId}]`,
+            text: leadFailureText(failure, mail.siteOrigin),
             to,
           })
           .pipe(

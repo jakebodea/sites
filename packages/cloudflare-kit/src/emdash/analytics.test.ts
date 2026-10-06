@@ -22,6 +22,7 @@ const env: KitEmDashEnv = {
   CF_ANALYTICS_API_TOKEN: "test-token",
   EMDASH_ENCRYPTION_KEY: `emdash_enc_v1_${btoa(String.fromCodePoint(...new Uint8Array(32).fill(7))).replaceAll("=", "")}`,
   LEAD_NOTIFY_FROM: "",
+  LEAD_NOTIFY_FROM_NAME: "Test website",
   LEAD_NOTIFY_TO: "",
   WEB_ANALYTICS_ACCOUNT_ID: "account",
   WEB_ANALYTICS_HOSTS: "example.com,www.example.com",

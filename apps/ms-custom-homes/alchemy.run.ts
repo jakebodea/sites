@@ -27,8 +27,9 @@ import { AlchemyContext } from "alchemy/AlchemyContext";
 import * as Cloudflare from "alchemy/Cloudflare";
 import { RandomProvider } from "alchemy/Random";
 import * as RemovalPolicy from "alchemy/RemovalPolicy";
-import { Config, Effect, Layer, Option } from "effect";
+import { Effect, Layer } from "effect";
 
+import { studio } from "../../stacks/config.ts";
 import { site } from "./site.config.ts";
 import { BACKUP_CRON, EMDASH_CRON } from "./src/lib/schedule.ts";
 
@@ -54,9 +55,7 @@ export default Alchemy.Stack(
     const origin = dev ? `http://localhost:${port}` : stage.origin;
 
     // Build inputs the Astro config reads (origin, seed media, CMS email sender).
-    const emailFrom = Option.getOrUndefined(
-      yield* Config.String("EMAIL_FROM").pipe(Config.option)
-    );
+    const emailFrom = studio.sender;
     writeBuildInputs(root, {
       emailFrom,
       emailFromName: `${site.shortName} website`,
@@ -87,7 +86,12 @@ export default Alchemy.Stack(
         });
     const bindings = {
       ...(yield* webAnalytics(stage)),
-      ...(yield* leadMail(stage, emailFrom)),
+      ...leadMail(stage, {
+        alertInbox: studio.alertInbox,
+        emailFrom,
+        fromName: `${site.name} website`,
+        inbox: site.leadInbox,
+      }),
       ...(yield* emdashSecrets),
       BACKUPS: backups,
       DB: database,

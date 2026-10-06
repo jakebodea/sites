@@ -18,3 +18,11 @@ export const deployTokens = {
   expiresOn: "2027-10-05T23:59:59Z",
   generation: 1,
 } as const;
+
+// jbolabs.com is not registered yet; keep sending off until its sending subdomain exists.
+export const studio = {
+  alertInbox: "alerts@jbolabs.com",
+  domain: "jbolabs.com",
+  // SAFETY: Intentionally absent; set to "sites@mail.jbolabs.com" once stacks/studio.ts is deployed.
+  sender: undefined as string | undefined,
+} as const;
