@@ -39,22 +39,43 @@ export const affectedSites = (
   return sites.filter((site) => touched.has(site));
 };
 
+/** True when `ref` names a commit in this clone. */
+const isCommit = (ref: string, cwd: string): boolean => {
+  try {
+    execFileSync("git", ["cat-file", "-e", `${ref}^{commit}`], {
+      cwd,
+      stdio: "ignore",
+    });
+    return true;
+  } catch {
+    return false;
+  }
+};
+
 if (import.meta.main) {
   const base = process.argv[2] ?? "origin/main";
   const root = execFileSync("git", ["rev-parse", "--show-toplevel"], {
     encoding: "utf-8",
   }).trim();
-  const changed = execFileSync(
-    "git",
-    ["diff", "--name-only", `${base}...HEAD`],
-    {
-      cwd: root,
-      encoding: "utf-8",
-    }
-  )
-    .split("\n")
-    .filter((line) => line !== "");
-  process.stdout.write(
-    `${JSON.stringify(affectedSites(changed, listSites(root)))}\n`
-  );
+  const sites = listSites(root);
+  // A branch's first push (base 000…0) or a force-push leaves no base to diff against:
+  // treat everything as changed, as `turbo --affected` does.
+  if (isCommit(base, root)) {
+    const changed = execFileSync(
+      "git",
+      ["diff", "--name-only", `${base}...HEAD`],
+      {
+        cwd: root,
+        encoding: "utf-8",
+      }
+    )
+      .split("\n")
+      .filter((line) => line !== "");
+    process.stdout.write(`${JSON.stringify(affectedSites(changed, sites))}\n`);
+  } else {
+    process.stderr.write(
+      `base ${base} is not a commit here; every site is affected\n`
+    );
+    process.stdout.write(`${JSON.stringify(sites)}\n`);
+  }
 }

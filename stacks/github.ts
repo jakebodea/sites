@@ -123,6 +123,14 @@ export default Alchemy.Stack(
         value: repository.accountId,
       });
     }
+    // Repo-level (job `if:` conditions cannot see environment variables): CI's deploy jobs
+    // skip until this stack has created the environments and tokens above.
+    yield* GitHub.Variable("DeploysEnabled", {
+      name: "DEPLOYS_ENABLED",
+      owner,
+      repository: repo,
+      value: "true",
+    });
     yield* GitHub.Ruleset("MainRuleset", {
       conditions: { include: ["refs/heads/main"] },
       enforcement: "active",

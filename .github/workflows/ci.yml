@@ -44,7 +44,12 @@ jobs:
           TURBO_SCM_BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
       - name: Affected sites
         id: affected
-        run: echo "sites=$(bun scripts/ci/affected.ts ${{ github.event.pull_request.base.sha || github.event.before }})" >> "$GITHUB_OUTPUT"
+        # Assigned first so a failing script fails the step (inside `echo` it would pass an empty list on).
+        run: |
+          sites="$(bun scripts/ci/affected.ts "$BASE")"
+          echo "sites=$sites" >> "$GITHUB_OUTPUT"
+        env:
+          BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
 
   dependency-review:
     if: github.event_name == 'pull_request'
@@ -60,7 +65,8 @@ jobs:
   preview:
     needs: check
     # Fork PRs never get deploy credentials.
-    if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository && needs.check.outputs.sites != '[]'
+    # Deploy jobs skip until `stacks/github.ts` has created the environments and tokens.
+    if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository && needs.check.outputs.sites != '[]' && vars.DEPLOYS_ENABLED == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 30
     environment: preview
@@ -96,7 +102,7 @@ jobs:
 
   production:
     needs: check
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && needs.check.outputs.sites != '[]'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && needs.check.outputs.sites != '[]' && vars.DEPLOYS_ENABLED == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 30
     environment: production
