@@ -5,7 +5,7 @@ description: Technical and on-page SEO for a marketing site: run the automated a
 
 # SEO
 
-Most of the checklist is automated. `bun run app -- seo` crawls every sitemap page plus every internal link on a running stage and reads the server-rendered HTML the way a crawler does. Errors exit 1. CI runs it on every preview and on production (`scripts/ci/verify-previews.ts`).
+Most of the checklist is automated. `bun run app -- seo` crawls every sitemap page plus every internal link on a running stage and reads the server-rendered HTML the way a crawler does. Errors exit 1. CI first audits affected sites' standalone Alchemy builds in disposable local Workers (`scripts/ci/local-verify.ts`), without Cloudflare credentials or deploying a preview. CMS content is seeded locally; seed images are served from the build's own assets. `--content-only` omits stage indexing headers and response timing. Previews requested by the `preview` label and production still get the full deployed audit (`scripts/ci/verify-previews.ts`). JSON reports survive failed commands and are uploaded with `always()`.
 
 ```bash
 bun run app -- seo                    # local dev stage
@@ -33,7 +33,7 @@ Errors must be zero. Warnings are judgment calls: fix them in code, or leave the
 | 13 | No orphan pages | Every sitemap page must be linked from some page (nav, a category, related projects). | `no-orphans` |
 | 14 | Alt text | CMS media carry an alt field; decorative images (hero backgrounds) use `alt=""` inside `aria-hidden`. The audit only checks the attribute exists: read the alts. | `image-alt` |
 | 15 | WebP/AVIF | CMS images go through `/_image` (Cloudflare Images negotiates AVIF/WebP). Static files in `public/` must be WebP or SVG, sized at 2x their display size (`cwebp -q 90 -resize W H`). Keep a PNG only where a consumer needs it (JSON-LD logo, OG image). | `modern-images` |
-| 16 | No layout shift | Every `<img>` has `width`/`height`; EmDash `<Image>` adds them. Lighthouse CLS runs on previews. | `no-layout-shift`, Lighthouse |
+| 16 | No layout shift | Every `<img>` has `width`/`height`; EmDash `<Image>` adds them. Lighthouse CLS runs in the required local CI gate and on labeled hosted previews. | `no-layout-shift`, Lighthouse |
 | 17 | Under 2 s | Workers Paid (the Free plan's 10 ms CPU limit fails SSR), server-rendered HTML, no client JS beyond islands. | `fast-response` (800 ms TTFB), Lighthouse perf ≥ 0.9 on `/` and `/contact` |
 | 18 | No AI-slop copy | Manual (below). Ultracite's anti-slop plugin covers code, not copy. | — |
 | 19 | Author/expertise | Manual (below). | — |

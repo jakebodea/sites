@@ -45,6 +45,7 @@ const USAGE = `Usage: bun run app -- <command> [--site <name>] [--url <origin>] 
   logs [--lines 80]       tail the dev server log
 
 --url targets a deployed stage instead of local dev; --auth reuses the CMS session.
+seo --content-only skips deployed indexing headers and response timing.
 `;
 
 interface Args {
@@ -53,7 +54,7 @@ interface Args {
   readonly flags: ReadonlyMap<string, string>;
 }
 
-const BOOLEAN_FLAGS = new Set(["auth"]);
+const BOOLEAN_FLAGS = new Set(["auth", "content-only"]);
 
 export const parseArgs = (argv: readonly string[]): Args => {
   const flags = new Map<string, string>();
@@ -167,8 +168,9 @@ const commands = {
         };
     printJson(result);
   },
-  seo: async (_site, _args, origin) => {
+  seo: async (_site, args, origin) => {
     const report = await auditSeo({
+      checks: args.flags.has("content-only") ? "content" : "all",
       origin,
       production: isProductionOrigin(origin),
     });

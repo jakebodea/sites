@@ -25,11 +25,14 @@ Guiding principle: be all-in on Cloudflare + Alchemy + Effect, add as few vendor
 
 ### EmDash on Alchemy workarounds (verified live 2026-10-05)
 
-Alchemy's Astro adapter pins its own Worker entry and image endpoint. Three Vite aliases in the site's `astro.config` fix it; keep them in one commented block so they're easy to delete when Alchemy supports a custom entry:
+Alchemy's Astro adapter pins its own Worker entry and image endpoint. Four Vite aliases in the site's `astro.config` fix it; keep them in one commented block so they're easy to delete when Alchemy supports a custom entry:
 
 1. Alchemy's pinned entry (`@alchemy.run/frontend-frameworks/astro/entrypoints/server`) → `src/worker.ts` (keeps EmDash's `scheduled()` cron + `PluginBridge`).
 2. `@astrojs/cloudflare/entrypoints/server` → Alchemy's vendored `.../entrypoints/server.js`.
-3. Alchemy's `image-passthrough-endpoint.js` → `@emdash-cms/cloudflare/image-endpoint` (+ bind `IMAGES: Cloudflare.Images.Images("IMAGES")`).
+3. Astro’s `assets/services/noop` → `@astrojs/cloudflare/image-service-workerd`: Alchemy forces the noop service, which removes the output format. Restore format and responsive width URLs so the endpoint transforms instead of streaming originals.
+4. Alchemy's `image-passthrough-endpoint.js` → `@emdash-cms/cloudflare/image-endpoint` (+ bind `IMAGES: Cloudflare.Images.Images("IMAGES")`).
+
+The CMS sites authorize only their configured hostname’s `/_emdash/api/media/file/**` path for image optimization (localhost in credential-free audits). Astro’s `site` does not populate EmDash’s image source allowlist, so this pattern is explicit. Local built-Worker verification on 2026-10-06 confirmed resized WebP output and rejection of unapproved external origins; deployed verification remains required.
 
 Also:
 
@@ -76,7 +79,7 @@ No Infisical, no 1Password.
 ## Environments and stages
 
 - `dev-<worktree>`: per-worktree `alchemy dev` stage (parallel agents never collide).
-- `pr-<n>`: per-PR preview, destroyed on close.
+- `pr-<n>`: per-PR preview for affected sites only, requested by adding the `preview` label. Subsequent pushes update it while the label remains; removing the label or closing the PR destroys it. Shared code changes affect every site; docs-only changes deploy none.
 - `prod`: custom domain attached only here (left unset until the zone is on the account, so prod serves from workers.dev); deploys only from CI on `main`.
 - State: `Cloudflare.state()`.
 
@@ -85,8 +88,10 @@ No Infisical, no 1Password.
 - **GitHub Actions** with thin YAML; logic in tested TypeScript under `scripts/ci/`.
 - **Turborepo** with `--affected` and a **remote cache hosted on Cloudflare** (Worker + R2, Alchemy stack `stacks/turbo-cache.ts`) shared by CI and every agent worktree.
 - **Alchemy** deploys; memoized builds mean unchanged sites are no-ops. Don't double-build.
-- **`stacks/github.ts`** (typed Alchemy GitHub provider): environments, `main` ruleset, scoped expiring Cloudflare tokens per environment (rotate by bumping a generation), variables, `GitHub.Comment` for preview URLs. Workflows themselves stay YAML.
-- Workflows: `ci.yml` (check → preview + smoke + SEO audit + Lighthouse budgets → prod + post-deploy smoke and SEO audit), `preview-cleanup.yml` (refuses `prod`), `janitor.yml` (orphaned previews), `upgrade-smoke.yml` (weekly latest Alchemy/EmDash smoke). Actions pinned to SHAs, least-privilege permissions, `actionlint`, `dependency-review`, fork PRs never get credentials. **Renovate** for upgrades.
+- **`stacks/github.ts`** (typed Alchemy GitHub provider): environments, the `preview` label, `main` ruleset, scoped expiring Cloudflare tokens per environment (rotate by bumping a generation), variables, `GitHub.Comment` for preview URLs. Redeploy this stack to provision the label. Workflows themselves stay YAML.
+- Workflows: `ci.yml` (check → preview + smoke + SEO audit + Lighthouse budgets → prod + post-deploy smoke and SEO audit), `preview-cleanup.yml` (refuses `prod`), `janitor.yml` (closed or unlabeled PR previews), `upgrade-smoke.yml` (weekly latest Alchemy/EmDash smoke). Actions pinned to SHAs, least-privilege permissions, `actionlint`, `dependency-review`, fork PRs never get credentials. **Renovate** for upgrades.
+- CI restores Bun downloads and a local Turbo task cache through GitHub Actions, including when remote cache credentials are absent. Successful tasks are saved before SEO validation, so audit failures do not discard reusable builds. Preview verification overlaps up to three independent sites and each site’s smoke/SEO checks, but serializes Lighthouse to avoid CPU contention affecting budgets. Lighthouse results and intermediate files are isolated per site; failed basic checks skip its browser audit.
+- The required `check` job runs smoke, rendered SEO, and Lighthouse for every affected site before deployment, using Alchemy's standalone build in disposable Miniflare Workers with local D1/R2/KV/Images. It seeds CMS content and serves seed images from the build assets, so no cloud preview or deploy credentials are needed. `.build-inputs.json` participates in the build cache key. Local SEO checks content; deployed SEO additionally checks stage indexing policy and response timing. Lighthouse uses the same unchanged budgets on `/` and `/contact`, with one Node/Miniflare lifecycle and browser audit at a time. Native Worker startup has a 30 s deadline; CMS setup retains its separate 180 s migration deadline. These required checks run for unlabeled and fork PRs with no deploy credentials. The `preview` label controls only the persistent hosted review environment and its additional hosted checks. Failed smoke/SEO/Lighthouse reports remain available in logs and uploaded artifacts.
 - **Backups**: D1 Time Travel + scheduled EmDash export to a retained R2 bucket.
 
 ## Tooling

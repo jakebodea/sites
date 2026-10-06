@@ -10,10 +10,13 @@ permissions:
   pull-requests: read
 
 jobs:
-  stale-previews:
+  discover:
+    if: vars.DEPLOYS_ENABLED == 'true'
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 10
     environment: preview
+    outputs:
+      pulls: ${{ steps.stale.outputs.pulls }}
     env:
       CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
       CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
@@ -21,6 +24,45 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          ref: main
           persist-credentials: false
       - uses: ./.github/actions/setup
-      - run: bun scripts/ci/janitor.ts
+      - name: Find stale preview PRs (read-only)
+        id: stale
+        run: |
+          pulls="$(bun scripts/ci/janitor.ts)"
+          echo "pulls=$pulls" >> "$GITHUB_OUTPUT"
+
+  destroy:
+    needs: discover
+    if: needs.discover.outputs.pulls != '[]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment: preview
+    strategy:
+      fail-fast: false
+      matrix:
+        pull: ${{ fromJSON(needs.discover.outputs.pulls) }}
+    concurrency:
+      group: preview-${{ matrix.pull }}
+      cancel-in-progress: false
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: main
+          persist-credentials: false
+      - uses: ./.github/actions/setup
+      - name: Check current preview request
+        id: policy
+        run: bun scripts/ci/preview-policy.ts >> "$GITHUB_OUTPUT"
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ matrix.pull }}
+      - name: Destroy stale preview through Alchemy
+        if: steps.policy.outputs.destroy == 'true'
+        run: bun scripts/ci/deploy.ts --destroy --stage "pr-$PR" --sites all
+        env:
+          PR: ${{ matrix.pull }}

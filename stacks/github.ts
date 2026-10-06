@@ -83,6 +83,13 @@ export default Alchemy.Stack(
   Effect.gen(function* controlPlane() {
     const { owner } = repository;
     const repo = repository.repository;
+    yield* GitHub.Label("PreviewLabel", {
+      color: "0e8a16",
+      description: "Deploy affected sites to a PR preview environment",
+      name: "preview",
+      owner,
+      repository: repo,
+    });
     for (const environment of environments) {
       const githubEnvironment = yield* GitHub.Environment(
         `${environment.id}Environment`,
