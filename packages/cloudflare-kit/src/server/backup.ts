@@ -221,7 +221,8 @@ export const mirrorMedia = Effect.fn("mirrorMedia")(function* mirrorMedia(
 
 export const runBackup = Effect.fn("runBackup")(function* runBackup(options: {
   readonly db: BackupDatabase;
-  readonly media: BackupBucket;
+  /** The CMS media bucket to mirror; sites without a CMS have none. */
+  readonly media?: BackupBucket;
   readonly backups: BackupBucket;
   readonly now: Date;
 }) {
@@ -238,7 +239,10 @@ export const runBackup = Effect.fn("runBackup")(function* runBackup(options: {
         },
       })
   );
-  const mediaCopied = yield* mirrorMedia(options.media, options.backups);
+  const mediaCopied =
+    options.media === undefined
+      ? 0
+      : yield* mirrorMedia(options.media, options.backups);
   yield* Effect.logInfo("backup complete").pipe(
     Effect.annotateLogs({ bytes: sql.length, key, mediaCopied })
   );

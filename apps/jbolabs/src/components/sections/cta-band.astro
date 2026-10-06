@@ -1,12 +1,11 @@
 ---
-import { sanitizeHref } from "emdash";
-import type { BlockComponentProps } from "emdash/ui";
-
 import ButtonLink from "@/components/button-link.astro";
 import Headline from "@/components/headline.astro";
-import type { PageContentCtaBandBlock } from "../../../emdash-env";
+import type { CallToAction } from "@/content/types";
 
-type Props = BlockComponentProps<PageContentCtaBandBlock>;
+interface Props {
+  value: CallToAction;
+}
 
 const { value } = Astro.props;
 ---
@@ -14,7 +13,7 @@ const { value } = Astro.props;
 <section class="container-page py-24 text-center sm:py-36">
   <h2 class="mx-auto max-w-3xl text-4xl leading-[1.08] sm:text-6xl"><Headline text={value.headline} /></h2>
   {value.body && <p class="mx-auto mt-6 max-w-lg text-lg leading-relaxed text-muted-foreground">{value.body}</p>}
-  {value.cta_label && value.cta_url && (
-    <ButtonLink href={sanitizeHref(value.cta_url)} size="hero" class="mt-10">{value.cta_label}</ButtonLink>
+  {value.link && (
+    <ButtonLink href={value.link.href} size="hero" class="mt-10">{value.link.label}</ButtonLink>
   )}
 </section>

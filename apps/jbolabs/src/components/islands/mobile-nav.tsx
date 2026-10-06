@@ -14,7 +14,7 @@ import { cn } from "@/lib/utils";
 
 interface NavItem {
   readonly label: string;
-  readonly url: string;
+  readonly href: string;
 }
 
 interface MobileNavProps {
@@ -50,9 +50,9 @@ const MobileNav = ({ currentPath, items, title }: MobileNavProps) => {
         <nav aria-label="Main" className="flex flex-col p-3">
           {items.map((item) => (
             <a
-              key={item.url}
-              href={item.url}
-              aria-current={currentPath === item.url ? "page" : undefined}
+              key={item.href}
+              href={item.href}
+              aria-current={currentPath === item.href ? "page" : undefined}
               onClick={() => {
                 setOpen(false);
               }}

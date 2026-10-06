@@ -115,12 +115,12 @@
   @apply text-muted-foreground font-mono text-[0.72rem] tracking-[0.08em] uppercase;
 }
 
-/* The italic serif accent used for emphasized words in headlines (`*like this*` in the CMS). */
+/* The italic serif accent used for emphasized words in headlines (`*like this*` in src/content). */
 @utility accent-serif {
   @apply font-serif font-normal tracking-normal italic;
 }
 
-/* Long-form copy from the CMS (Portable Text). */
+/* Long-form copy (src/components/prose.astro). */
 @utility prose-site {
   @apply text-ink-soft max-w-[62ch] space-y-6 text-lg leading-[1.75];
 

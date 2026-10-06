@@ -1,11 +1,11 @@
 ---
-import type { BlockComponentProps } from "emdash/ui";
-
 import Headline from "@/components/headline.astro";
 import SectionLabel from "@/components/section-label.astro";
-import type { PageContentServicesBlock } from "../../../emdash-env";
+import type { ListSection } from "@/content/types";
 
-type Props = BlockComponentProps<PageContentServicesBlock>;
+interface Props {
+  value: ListSection;
+}
 
 const { value } = Astro.props;
 ---

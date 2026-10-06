@@ -1,41 +1,21 @@
 ---
 import { env } from "cloudflare:workers";
-import { getSeoMeta } from "emdash";
 
-import PageBlocks from "@/components/blocks/page-blocks.astro";
 import ContactForm from "@/components/islands/contact-form";
 import PageHeader from "@/components/page-header.astro";
+import { contact } from "@/content/pages";
 import Base from "@/layouts/base.astro";
-import { getPage } from "@/lib/content";
-
-const { cacheHint, entry: page } = await getPage("contact");
-if (Astro.cache?.enabled) {
-  Astro.cache.set(cacheHint);
-}
-const title = page?.data.title ?? "Start a project";
-const seo = page ? getSeoMeta(page, { defaultDescription: page.data.intro, path: "/contact", siteUrl: Astro.url.origin }) : undefined;
-const steps = [
-  "I read your note and reply within two business days.",
-  "We have a short intro call to talk it through.",
-  "You get a clear proposal with a fixed price.",
-];
 ---
 
-<Base
-  title={seo?.title ?? title}
-  description={seo?.description}
-  image={seo?.ogImage}
-  robots={seo?.robots}
-  content={page ? { collection: "pages", id: page.data.id, slug: page.id } : undefined}
->
-  <PageHeader title={title} intro={page?.data.intro} eyebrow="Intake" />
+<Base title={contact.title} description={contact.description}>
+  <PageHeader title={contact.title} intro={contact.intro} eyebrow="Intake" />
   <section class="container-page grid gap-16 pb-10 lg:grid-cols-[1.7fr_1fr] lg:gap-20">
     <ContactForm client:visible turnstileSiteKey={env.TURNSTILE_SITE_KEY} />
     <aside class="space-y-10 lg:pt-1">
       <div>
         <p class="label-mono">What happens next</p>
         <ol class="mt-5 space-y-4">
-          {steps.map((step, index) => (
+          {contact.nextSteps.map((step, index) => (
             <li class="flex gap-4 text-[0.95rem] leading-relaxed text-muted-foreground">
               <span class="font-mono text-xs leading-[1.7rem] text-foreground">{String(index + 1).padStart(2, "0")}</span>
               <span>{step}</span>
@@ -50,5 +30,4 @@ const steps = [
       <p class="text-sm text-muted-foreground">Your details are used only to reply to you. See the <a href="/privacy" class="text-foreground underline decoration-border underline-offset-4 hover:decoration-foreground">privacy notes</a>.</p>
     </aside>
   </section>
-  {page && <div {...page.edit.content}><PageBlocks value={page.data.content} /></div>}
 </Base>

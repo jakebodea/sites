@@ -1,14 +1,14 @@
 /**
- * Worker entry. Alchemy's pinned entry is aliased here (see
+ * Worker entry. Alchemy's pinned entry is aliased here (`workerEntryAlias` in
  * `@jakebodea/cloudflare-kit/emdash/alchemy-workarounds`), so this wraps
- * EmDash's entry and adds two site concerns before Astro runs:
+ * Alchemy's Astro handler and adds three site concerns:
  *
  * - the PostHog reverse proxy at the random `POSTHOG_PROXY_PATH`;
  * - the daily backup cron (prod only, where `BACKUPS` is bound);
  * - `X-Robots-Tag: noindex` on every non-prod stage, so previews never get
  *   indexed (a header, not robots.txt, because a Disallow hides the noindex).
  */
-import handler, { createScheduledHandler } from "@emdash-cms/cloudflare/worker";
+import astro from "@alchemy.run/frontend-frameworks/astro/entrypoints/server.js";
 import {
   isPostHogProxyRequest,
   proxyPostHog,
@@ -18,10 +18,6 @@ import { Effect } from "effect";
 
 import { BACKUP_CRON } from "./lib/schedule.ts";
 
-// EmDash's sandboxed-plugin entrypoint must be exported from the Worker's main module.
-export { PluginBridge } from "@emdash-cms/cloudflare/worker";
-
-const emdashScheduled = createScheduledHandler();
 const SWITCHING_PROTOCOLS = 101;
 
 export default {
@@ -33,9 +29,7 @@ export default {
     ) {
       return await proxyPostHog(request, proxy);
     }
-    const response =
-      (await handler.fetch?.(request, env, ctx)) ??
-      new Response(null, { status: 404 });
+    const response = await astro.fetch(request, env, ctx);
     if (env.STAGE === "prod" || response.status === SWITCHING_PROTOCOLS) {
       return response;
     }
@@ -47,28 +41,23 @@ export default {
       statusText: response.statusText,
     });
   },
-  async scheduled(controller, env, ctx) {
-    if (controller.cron !== BACKUP_CRON) {
-      // Every-minute tick: EmDash's scheduled publishing and maintenance.
-      await emdashScheduled(controller, env, ctx);
+  async scheduled(controller, env) {
+    if (controller.cron !== BACKUP_CRON || env.STAGE !== "prod") {
       return;
     }
-    if (env.STAGE === "prod") {
-      await Effect.runPromise(
-        runBackup({
-          backups: env.BACKUPS,
-          db: env.DB,
-          media: env.MEDIA,
-          now: new Date(controller.scheduledTime),
-        }).pipe(
-          Effect.tapError((error) =>
-            Effect.logError("backup failed", {
-              cause: String(error.cause),
-              step: error.step,
-            })
-          )
+    await Effect.runPromise(
+      runBackup({
+        backups: env.BACKUPS,
+        db: env.DB,
+        now: new Date(controller.scheduledTime),
+      }).pipe(
+        Effect.tapError((error) =>
+          Effect.logError("backup failed", {
+            cause: String(error.cause),
+            step: error.step,
+          })
         )
-      );
-    }
+      )
+    );
   },
 } satisfies ExportedHandler<Env>;

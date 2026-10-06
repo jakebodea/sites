@@ -1,12 +1,11 @@
 ---
-import { sanitizeHref } from "emdash";
-import type { BlockComponentProps } from "emdash/ui";
-
 import ButtonLink from "@/components/button-link.astro";
 import Headline from "@/components/headline.astro";
-import type { PageContentHeroBlock } from "../../../emdash-env";
+import type { Hero } from "@/content/types";
 
-type Props = BlockComponentProps<PageContentHeroBlock>;
+interface Props {
+  value: Hero;
+}
 
 const { value } = Astro.props;
 ---
@@ -25,13 +24,13 @@ const { value } = Astro.props;
   {value.subheadline && (
     <p class="rise mt-8 max-w-xl text-lg leading-relaxed text-muted-foreground sm:text-xl [animation-delay:140ms]">{value.subheadline}</p>
   )}
-  {(value.primary_cta_label || value.secondary_cta_label) && (
+  {(value.primary || value.secondary) && (
     <div class="rise mt-12 flex flex-wrap items-center gap-x-6 gap-y-4 [animation-delay:220ms]">
-      {value.primary_cta_label && value.primary_cta_url && (
-        <ButtonLink href={sanitizeHref(value.primary_cta_url)} size="hero">{value.primary_cta_label}</ButtonLink>
+      {value.primary && (
+        <ButtonLink href={value.primary.href} size="hero">{value.primary.label}</ButtonLink>
       )}
-      {value.secondary_cta_label && value.secondary_cta_url && (
-        <a href={sanitizeHref(value.secondary_cta_url)} class="text-[0.95rem] underline decoration-border decoration-1 underline-offset-[6px] transition-colors hover:decoration-foreground">{value.secondary_cta_label}</a>
+      {value.secondary && (
+        <a href={value.secondary.href} class="text-[0.95rem] underline decoration-border decoration-1 underline-offset-[6px] transition-colors hover:decoration-foreground">{value.secondary.label}</a>
       )}
     </div>
   )}

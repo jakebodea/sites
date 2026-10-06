@@ -12,10 +12,10 @@ import {
   writeBuildInputs,
 } from "@jakebodea/cloudflare-kit/infra";
 /**
- * JBO Labs infrastructure (one Alchemy stack, one stage per environment):
+ * JBO Labs infrastructure (one Alchemy stack, one stage per environment).
+ * No CMS: copy is in src/content, so the only data is intake-form leads.
  *
- *   D1 (EmDash content) + R2 (media) + Images binding + session KV (auto)
- *   + Turnstile widget + every-minute cron (EmDash scheduled publishing)
+ *   D1 (leads) + session KV (auto) + Turnstile widget
  *   prod only: custom domain, retained backups bucket + daily backup cron,
  *              Axiom datasets/monitors (when AXIOM_TOKEN is set)
  *
@@ -30,7 +30,7 @@ import * as RemovalPolicy from "alchemy/RemovalPolicy";
 import { Config, Effect, Layer, Option } from "effect";
 
 import { site } from "./site.config.ts";
-import { BACKUP_CRON, EMDASH_CRON } from "./src/lib/schedule.ts";
+import { BACKUP_CRON } from "./src/lib/schedule.ts";
 
 const root = import.meta.dirname;
 
@@ -53,30 +53,22 @@ export default Alchemy.Stack(
       return yield* Effect.die(new Error(refusal));
     }
     const keep = RemovalPolicy.retain(stage.production);
-    // `alchemy dev` emulates D1/R2/KV/Images locally; nothing here may need the cloud.
+    // `alchemy dev` emulates D1/R2/KV locally; nothing here may need the cloud.
     const { dev } = yield* AlchemyContext;
     const port = devPort(stage.stage);
     const origin = dev ? `http://localhost:${port}` : stage.origin;
 
-    // Build inputs the Astro config reads (origin, seed media, CMS email sender).
+    // The Astro config reads the stage origin (canonical URLs, sitemap).
+    writeBuildInputs(root, { origin });
+    // Verified Cloudflare Email Service sender for lead notifications.
     const emailFrom = Option.getOrUndefined(
       yield* Config.String("EMAIL_FROM").pipe(Config.option)
     );
-    writeBuildInputs(root, {
-      emailFrom,
-      emailFromName: `${site.shortName} website`,
-      origin,
-      // EmDash's SSRF guard refuses localhost seed downloads, so local dev seeds from a public copy.
-      seedMediaBase: dev ? site.localSeedMediaBase : `${origin}/_seed/media`,
-    });
 
     const database = yield* Cloudflare.D1.Database("Database").pipe(keep);
-    const media = yield* Cloudflare.R2.Bucket("Media", {
-      // Disposable stages must empty the bucket to delete it.
-      forceDestroy: !stage.production,
-    }).pipe(keep);
     // Bound everywhere so the Worker's types never branch; only prod runs the backup cron.
     const backups = yield* Cloudflare.R2.Bucket("Backups", {
+      // Disposable stages must empty the bucket to delete it.
       forceDestroy: !stage.production,
     }).pipe(keep);
     // Turnstile has no local emulation: dev uses Cloudflare's always-pass test keys.
@@ -106,9 +98,6 @@ export default Alchemy.Stack(
       ...leadInbox,
       BACKUPS: backups,
       DB: database,
-      // EmDash's /_image endpoint resizes media with this binding.
-      IMAGES: Cloudflare.Images.Images("IMAGES"),
-      MEDIA: media,
       SITE_ORIGIN: origin,
       STAGE: stage.stage,
       TURNSTILE_SECRET_KEY: turnstile.secret,
@@ -130,7 +119,7 @@ export default Alchemy.Stack(
         date: WORKER_COMPATIBILITY.date,
         flags: [...WORKER_COMPATIBILITY.flags],
       },
-      crons: stage.production ? [EMDASH_CRON, BACKUP_CRON] : [EMDASH_CRON],
+      crons: stage.production ? [BACKUP_CRON] : [],
       dev: { port, strictPort: true },
       domain: stage.production ? site.domain : undefined,
       env,
@@ -143,8 +132,6 @@ export default Alchemy.Stack(
           ".astro/**",
           ".alchemy/**",
           ".wrangler/**",
-          ".emdash/**",
-          "public/_seed/**",
         ],
         include: ["**/*", BUILD_INPUTS_FILE],
         lockfile: true,

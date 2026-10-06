@@ -1,8 +1,8 @@
 /**
  * The intake form: the shared contact fields plus this site's own questions.
  * Options are fixed lists, validated here on the server, and travel through
- * the shared lead pipeline as labeled `answers` (stored as their own CMS
- * fields by `LeadStoreEmDash`, listed in the notification email).
+ * the shared lead pipeline as labeled `answers` (stored as their own D1
+ * columns by `LeadStoreD1`, listed in the notification email).
  */
 import { ContactForm } from "@jakebodea/cloudflare-kit/server";
 import type { LeadAnswer } from "@jakebodea/cloudflare-kit/server";
@@ -10,7 +10,7 @@ import { Schema, Struct } from "effect";
 
 import { BUDGETS, SERVICES, TIMELINES } from "./intake-options.ts";
 
-/** Question labels: shown in the email and used to file each answer in its CMS field. */
+/** Question labels: shown in the email and used to file each answer in its own column. */
 export const INTAKE_QUESTIONS = {
   budget: "Budget",
   services: "Looking for",
@@ -56,7 +56,7 @@ export const toContactForm = (form: IntakeForm): ContactForm => {
   };
 };
 
-/** The answer to one intake question, for filing into its own CMS field. */
+/** The answer to one intake question, for filing into its own column. */
 export const answerTo = (
   answers: readonly LeadAnswer[] | undefined,
   key: IntakeQuestion

@@ -18,7 +18,7 @@ import { ConfigProvider, Layer } from "effect";
 import { FetchHttpClient } from "effect/http";
 
 import { site } from "../../site.config.ts";
-import { LeadStoreEmDash } from "./leads.ts";
+import { LeadStoreD1 } from "./leads.ts";
 
 export { waitUntil } from "cloudflare:workers";
 
@@ -50,7 +50,7 @@ const configLayer = () => ConfigProvider.layer(ConfigProvider.fromUnknown(env));
 export const contactLayer = () =>
   Layer.mergeAll(
     TurnstileLive,
-    LeadStoreEmDash,
+    LeadStoreD1,
     env.EMAIL === undefined
       ? EmailLog
       : emailCloudflare(emailBinding(env.EMAIL)),

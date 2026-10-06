@@ -9,6 +9,6 @@
     "allowImportingTsExtensions": true,
     "types": ["@cloudflare/workers-types"]
   },
-  "include": [".astro/types.d.ts", "emdash-env.d.ts", "src"],
+  "include": [".astro/types.d.ts", "src"],
   "exclude": ["dist"]
 }

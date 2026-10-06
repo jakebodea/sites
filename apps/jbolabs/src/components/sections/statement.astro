@@ -1,12 +1,11 @@
 ---
-import { sanitizeHref } from "emdash";
-import type { BlockComponentProps } from "emdash/ui";
-
 import Headline from "@/components/headline.astro";
 import SectionLabel from "@/components/section-label.astro";
-import type { PageContentStatementBlock } from "../../../emdash-env";
+import type { Statement } from "@/content/types";
 
-type Props = BlockComponentProps<PageContentStatementBlock>;
+interface Props {
+  value: Statement;
+}
 
 const { value } = Astro.props;
 ---
@@ -16,9 +15,9 @@ const { value } = Astro.props;
     {value.label && <SectionLabel label={value.label} />}
     <p class="mt-8 max-w-3xl text-2xl leading-snug sm:text-4xl sm:leading-[1.2]"><Headline text={value.headline} /></p>
     {value.body && <p class="mt-6 max-w-xl leading-relaxed text-muted-foreground sm:text-lg">{value.body}</p>}
-    {value.link_label && value.link_url && (
-      <a href={sanitizeHref(value.link_url)} class="mt-10 inline-flex items-center gap-2 text-[0.95rem] underline decoration-border underline-offset-[6px] transition-colors hover:decoration-foreground">
-        {value.link_label}<span aria-hidden="true">&rarr;</span>
+    {value.link && (
+      <a href={value.link.href} class="mt-10 inline-flex items-center gap-2 text-[0.95rem] underline decoration-border underline-offset-[6px] transition-colors hover:decoration-foreground">
+        {value.link.label}<span aria-hidden="true">&rarr;</span>
       </a>
     )}
   </div>

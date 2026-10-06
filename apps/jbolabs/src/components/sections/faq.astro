@@ -1,12 +1,13 @@
 ---
 /** Questions as native <details> disclosures: accessible and JavaScript-free. */
-import type { BlockComponentProps } from "emdash/ui";
 
 import Headline from "@/components/headline.astro";
 import SectionLabel from "@/components/section-label.astro";
-import type { PageContentFaqBlock } from "../../../emdash-env";
+import type { FaqSection } from "@/content/types";
 
-type Props = BlockComponentProps<PageContentFaqBlock>;
+interface Props {
+  value: FaqSection;
+}
 
 const { value } = Astro.props;
 ---

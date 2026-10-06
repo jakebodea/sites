@@ -1,32 +1,19 @@
 ---
-import { getSeoMeta } from "emdash";
-
-import PageBlocks from "@/components/blocks/page-blocks.astro";
+import CtaBand from "@/components/sections/cta-band.astro";
+import Faq from "@/components/sections/faq.astro";
+import Hero from "@/components/sections/hero.astro";
+import Process from "@/components/sections/process.astro";
+import Services from "@/components/sections/services.astro";
+import Statement from "@/components/sections/statement.astro";
+import { closing, faq, hero, process, referred, services } from "@/content/home";
 import Base from "@/layouts/base.astro";
-import { getHomePage } from "@/lib/content";
-import { site } from "../../site.config";
-
-const { cacheHint, entry: page } = await getHomePage();
-if (Astro.cache?.enabled) {
-  Astro.cache.set(cacheHint);
-}
-const seo = page
-  ? getSeoMeta(page, { defaultDescription: site.description, path: "/", siteUrl: Astro.url.origin })
-  : undefined;
 ---
 
-<Base
-  description={seo?.description}
-  image={seo?.ogImage}
-  robots={seo?.robots}
-  content={page ? { collection: "home", id: page.data.id, slug: page.id } : undefined}
->
-  {page ? (
-    <div {...page.edit.content}><PageBlocks value={page.data.content} /></div>
-  ) : (
-    <section class="container-page py-24">
-      <h1 class="text-4xl">Welcome</h1>
-      <p class="mt-4 text-muted-foreground">Finish EmDash setup at <a class="underline" href="/_emdash/admin">/_emdash/admin</a> to load the site content.</p>
-    </section>
-  )}
+<Base>
+  <Hero value={hero} />
+  <Services value={services} />
+  <Process value={process} />
+  <Statement value={referred} />
+  <Faq value={faq} />
+  <CtaBand value={closing} />
 </Base>

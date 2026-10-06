@@ -27,6 +27,8 @@ export interface SiteContext {
   readonly origin: string;
   /** `.artifacts/app/<site>/<stage>`: logs, screenshots, videos, session state. */
   readonly artifacts: string;
+  /** Whether the site runs EmDash (has `seed/seed.json`); sites without one keep content in code. */
+  readonly cms: boolean;
 }
 
 const gitRoot = (cwd: string): string =>
@@ -82,9 +84,11 @@ export const resolveSite = (
   const name = pickSite(listSites(root), requested, path.relative(root, cwd));
   const stage = developmentStage(path.basename(root));
   const port = devPort(stage);
+  const directory = path.join(root, "apps", name);
   return {
     artifacts: path.join(root, ".artifacts", "app", name, stage),
-    directory: path.join(root, "apps", name),
+    cms: existsSync(path.join(directory, "seed", "seed.json")),
+    directory,
     name,
     origin: `http://localhost:${port}`,
     port,

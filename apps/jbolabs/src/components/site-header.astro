@@ -1,12 +1,12 @@
 ---
-import type { NavItem } from "@/lib/content";
+import type { Link } from "@/content/types";
 import MobileNav from "./islands/mobile-nav";
 import ButtonLink from "./button-link.astro";
 import Wordmark from "./wordmark.astro";
 
 interface Props {
   title: string;
-  items: readonly NavItem[];
+  items: readonly Link[];
 }
 
 const { items, title } = Astro.props;
@@ -24,8 +24,8 @@ const isActive = (url: string) =>
       {
         items.map((item) => (
           <a
-            href={item.url}
-            aria-current={isActive(item.url) ? "page" : undefined}
+            href={item.href}
+            aria-current={isActive(item.href) ? "page" : undefined}
             class="text-sm text-muted-foreground transition-colors hover:text-foreground aria-[current=page]:text-foreground"
           >
             {item.label}

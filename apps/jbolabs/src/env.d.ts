@@ -3,14 +3,10 @@
 /** Worker bindings and vars, declared in alchemy.run.ts. */
 declare namespace Cloudflare {
   interface Env {
-    /** EmDash content (D1). */
+    /** Intake form leads (D1, see src/lib/leads.ts). */
     DB: D1Database;
-    /** EmDash media library (R2). */
-    MEDIA: R2Bucket;
     /** Backup bucket (retained on prod; the daily backup cron runs on prod only). */
     BACKUPS: R2Bucket;
-    /** Image resizing for EmDash's `/_image` endpoint. */
-    IMAGES: ImagesBinding;
     /** Astro sessions (auto-provisioned by Alchemy). */
     SESSION: KVNamespace;
     /** Cloudflare Email Service; bound once a verified sending domain exists. */

@@ -1,7 +1,7 @@
 {
   "name": "@sites/jbolabs",
   "private": true,
-  "description": "JBO Labs studio site: Astro + EmDash on Cloudflare Workers, deployed with Alchemy.",
+  "description": "JBO Labs studio site: Astro on Cloudflare Workers, deployed with Alchemy. Content lives in code (src/content).",
   "type": "module",
   "scripts": {
     "build": "ASTRO_STANDALONE_BUILD=1 astro build",
@@ -10,21 +10,18 @@
     "destroy": "alchemy destroy",
     "typecheck": "astro-check && tsc --noEmit -p tsconfig.node.json",
     "test": "vitest run",
-    "types": "node ../../packages/cloudflare-kit/src/emdash/env-types.ts",
-    "sync": "(test -f .astro/types.d.ts -a -f emdash-env.d.ts && grep -qF \"$PWD/\" .astro/actions.d.ts) || (astro sync && node ../../packages/cloudflare-kit/src/emdash/env-types.ts)"
+    "sync": "(test -f .astro/types.d.ts && grep -qF \"$PWD/\" .astro/actions.d.ts) || astro sync"
   },
   "dependencies": {
     "@astrojs/cloudflare": "catalog:",
     "@astrojs/react": "catalog:",
     "@base-ui/react": "catalog:",
-    "@emdash-cms/cloudflare": "catalog:",
     "@jakebodea/cloudflare-kit": "workspace:*",
     "@lucide/astro": "catalog:",
     "astro": "catalog:",
     "class-variance-authority": "catalog:",
     "clsx": "catalog:",
     "effect": "catalog:",
-    "emdash": "catalog:",
     "lucide-react": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
@@ -50,8 +47,5 @@
     "typescript": "catalog:",
     "vitest": "catalog:",
     "wrangler": "catalog:"
-  },
-  "emdash": {
-    "seed": "seed/seed.json"
   }
 }

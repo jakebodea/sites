@@ -1,5 +1,5 @@
 /**
- * Headlines are plain CMS strings; wrapping words in asterisks (`I build
+ * Headlines are plain strings in `src/content`; wrapping words in asterisks (`I build
  * *considered* websites`) sets them in the italic serif accent. A lone or
  * unmatched asterisk renders as typed.
  */

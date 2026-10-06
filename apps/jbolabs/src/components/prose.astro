@@ -1,0 +1,16 @@
+---
+/** Plain long-form copy from `src/content` (paragraphs and subheadings). */
+import type { Prose } from "@/content/types";
+
+interface Props {
+  value: Prose;
+}
+
+const { value } = Astro.props;
+---
+
+<section class="container-page py-10 sm:py-14">
+  <div class="prose-site">
+    {value.map((block) => ("heading" in block ? <h2>{block.heading}</h2> : <p>{block.paragraph}</p>))}
+  </div>
+</section>
