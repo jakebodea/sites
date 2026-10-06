@@ -7,6 +7,8 @@ description: Deploy, preview, tear down, or rotate credentials for sites in this
 
 Always get the user's go-ahead before deploying or destroying anything.
 
+**Alchemy is the only way infrastructure changes.** Resources, their settings, and their data change only through a stack (`apps/<site>/alchemy.run.ts`, `stacks/`) and `alchemy deploy`/`destroy`. Never use the dashboard, Cloudflare MCP write tools (D1 queries that write, bucket/KV/worker create or delete), `wrangler`, or raw API calls to create, edit, or delete anything, including rows in a stage's D1. Reading (listing resources, `SELECT` queries, logs) is fine. If something needs to change, change the stack and redeploy.
+
 | Stage | How | When |
 | --- | --- | --- |
 | `dev-<worktree>` | `bun run app -- start` | Local, emulated, any time |
@@ -21,6 +23,14 @@ ALCHEMY_PROFILE=admin bun alchemy deploy --stage <stage>
 ALCHEMY_PROFILE=admin bun alchemy destroy --stage <stage>   # non-prod buckets are force-emptied
 bun run app -- smoke --url <stage url>
 ```
+
+## When a deployed stage misbehaves
+
+1. Read its logs: `cd apps/<site> && ALCHEMY_PROFILE=admin bun alchemy logs --stage <stage> --since 1h` (`--tail` to stream, `-r Website` to filter).
+2. Fix the cause in code (the stack, `@jakebodea/cloudflare-kit/infra`, or the site) and redeploy.
+3. If the stage's data is wedged (for example EmDash answering "EmDash is not initialized" because a cancelled request left its migration lock held), ask, then `alchemy destroy --stage <stage>` and deploy it again. Do not edit tables to unstick it.
+
+Known causes: seed images missing on deployed stages came from Workers' same-zone `fetch()` going to the (nonexistent) `workers.dev` origin; `WORKER_COMPATIBILITY` now sets `global_fetch_strictly_public`. A stuck migration lock came from `app seed` aborting a slow first setup request; setup requests now get 180 s.
 
 ## CI control plane (once per repo, then to rotate)
 

@@ -43,6 +43,7 @@ The Alchemy profile comes from `ALCHEMY_PROFILE` (e.g. `ALCHEMY_PROFILE=admin`).
 - Never export `CLOUDFLARE_API_TOKEN`/`CLOUDFLARE_ACCOUNT_ID` locally: use `alchemy profile`.
 - Never deploy `prod` from a shell. Production deploys from CI on merge to `main`; the stack refuses otherwise.
 - Never deploy, destroy, or change cloud resources without the user's explicit go-ahead for that action.
+- Never touch infrastructure outside Alchemy. Every resource and every setting lives in an `alchemy.run.ts` or `stacks/` and changes only through `alchemy deploy`/`destroy`. No dashboard, Cloudflare MCP write tools, `wrangler`, or raw API calls that create, change, or delete resources or the data inside them (D1 rows, R2 objects, KV keys). Read-only inspection is fine. A broken stage is fixed in code and redeployed, or destroyed and redeployed.
 - Never print or commit secrets. Real `.env` files live only in the main checkout.
 - Never add `@cloudflare/vite-plugin`, wrangler config, or an Astro `adapter`: Alchemy owns that.
 - Never run Effect in islands. Islands are plain React; Effect stays on the server.
