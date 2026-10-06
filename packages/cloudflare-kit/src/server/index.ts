@@ -8,8 +8,10 @@ export type { ServerEvent, ServerEventCapture } from "./analytics.ts";
 export {
   ContactForm,
   LEAD_SUBMIT_FAILED,
+  LeadAnswer,
   LeadInbox,
   LeadInboxFromConfig,
+  MAX_LEAD_ANSWERS,
   leadNotificationText,
   submitContact,
 } from "./contact.ts";

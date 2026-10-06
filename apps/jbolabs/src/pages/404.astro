@@ -1,0 +1,18 @@
+---
+import ButtonLink from "@/components/button-link.astro";
+import Base from "@/layouts/base.astro";
+
+Astro.response.status = 404;
+---
+
+<Base title="Page not found" robots="noindex">
+  <section class="container-page flex min-h-[55svh] flex-col items-start justify-center gap-6 py-24">
+    <p class="label-mono">404</p>
+    <h1 class="text-4xl sm:text-6xl">This page <em class="accent-serif">wandered off.</em></h1>
+    <p class="max-w-xl text-lg text-muted-foreground">It may have moved, or the link may be mistyped.</p>
+    <div class="mt-4 flex flex-wrap items-center gap-x-6 gap-y-4">
+      <ButtonLink href="/" size="hero">Back to home</ButtonLink>
+      <a href="/contact" class="text-[0.95rem] underline decoration-border underline-offset-[6px] hover:decoration-foreground">Start a project</a>
+    </div>
+  </section>
+</Base>

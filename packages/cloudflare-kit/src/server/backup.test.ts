@@ -1,7 +1,7 @@
 import { describe, expect, it } from "@effect/vitest";
 import { Effect } from "effect";
 
-import { dumpDatabase, mirrorMedia, sqlLiteral } from "./backup.ts";
+import { dumpDatabase, mirrorMedia, runBackup, sqlLiteral } from "./backup.ts";
 import type { BackupBucket, BackupDatabase, D1Row } from "./backup.ts";
 
 const TABLE_NAME = /FROM "(?<table>[^"]+)"/u;
@@ -103,6 +103,24 @@ describe(mirrorMedia, () => {
         "media/a.jpg",
         "media/b.jpg",
       ]);
+    })
+  );
+});
+
+describe(runBackup, () => {
+  it.effect("dumps the database alone when the site has no media bucket", () =>
+    Effect.gen(function* dumpsWithoutMedia() {
+      const backups = memoryBucket([]);
+      const result = yield* runBackup({
+        backups: backups.bucket,
+        db: fakeDatabase({ leads: [{ id: "a" }] }),
+        now: new Date("2026-10-06T10:17:00Z"),
+      });
+      expect(result).toStrictEqual({
+        key: "d1/2026-10-06.sql.gz",
+        mediaCopied: 0,
+      });
+      expect([...backups.stored]).toStrictEqual(["d1/2026-10-06.sql.gz"]);
     })
   );
 });

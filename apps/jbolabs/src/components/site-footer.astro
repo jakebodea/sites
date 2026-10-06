@@ -1,0 +1,37 @@
+---
+import type { Link } from "@/content/types";
+import { site } from "../../site.config";
+import Wordmark from "./wordmark.astro";
+
+interface Props {
+  title: string;
+  tagline: string;
+  items: readonly Link[];
+}
+
+const { items, tagline, title } = Astro.props;
+const year = new Date().getFullYear();
+---
+
+<footer class="mt-24 border-t border-border sm:mt-32">
+  <div class="container-page grid gap-10 py-14 sm:grid-cols-[1.5fr_1fr] sm:py-16">
+    <div class="space-y-4">
+      <Wordmark title={title} />
+      <p class="max-w-sm text-sm leading-relaxed text-muted-foreground">{tagline}</p>
+      {site.business.email && (
+        <a href={`mailto:${site.business.email}`} class="inline-block text-sm underline decoration-border underline-offset-4 hover:decoration-foreground">{site.business.email}</a>
+      )}
+    </div>
+    <nav aria-label="Footer" class="sm:justify-self-end">
+      <ul class="grid grid-cols-2 gap-x-10 gap-y-2.5 text-sm text-muted-foreground">
+        {items.map((item) => (
+          <li><a href={item.href} class="transition-colors hover:text-foreground">{item.label}</a></li>
+        ))}
+      </ul>
+    </nav>
+  </div>
+  <div class="container-page flex flex-col gap-1 pt-0 pb-[max(2.5rem,env(safe-area-inset-bottom))] text-xs text-muted-foreground sm:flex-row sm:justify-between">
+    <p>&copy; {year} {title}</p>
+    <p>Independent studio of {site.business.founder}</p>
+  </div>
+</footer>

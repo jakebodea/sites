@@ -1,0 +1,51 @@
+{
+  "name": "@sites/jbolabs",
+  "private": true,
+  "description": "JBO Labs studio site: Astro on Cloudflare Workers, deployed with Alchemy. Content lives in code (src/content).",
+  "type": "module",
+  "scripts": {
+    "build": "ASTRO_STANDALONE_BUILD=1 astro build",
+    "dev": "bun ../../packages/control-app/src/cli.ts dev",
+    "deploy": "alchemy deploy",
+    "destroy": "alchemy destroy",
+    "typecheck": "astro-check && tsc --noEmit -p tsconfig.node.json",
+    "test": "vitest run",
+    "sync": "(test -f .astro/types.d.ts && grep -qF \"$PWD/\" .astro/actions.d.ts) || astro sync"
+  },
+  "dependencies": {
+    "@astrojs/cloudflare": "catalog:",
+    "@astrojs/react": "catalog:",
+    "@base-ui/react": "catalog:",
+    "@jakebodea/cloudflare-kit": "workspace:*",
+    "@lucide/astro": "catalog:",
+    "astro": "catalog:",
+    "class-variance-authority": "catalog:",
+    "clsx": "catalog:",
+    "effect": "catalog:",
+    "lucide-react": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "tailwind-merge": "catalog:"
+  },
+  "devDependencies": {
+    "@alchemy.run/frontend-frameworks": "catalog:",
+    "@astrojs/check": "catalog:",
+    "@cloudflare/workers-types": "catalog:",
+    "@effect/platform-bun": "catalog:",
+    "@effect/platform-node": "catalog:",
+    "@effect/vitest": "catalog:",
+    "@emnapi/core": "catalog:",
+    "@emnapi/runtime": "catalog:",
+    "@jakebodea/config": "workspace:*",
+    "@tailwindcss/vite": "catalog:",
+    "@types/bun": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "alchemy": "catalog:",
+    "tailwindcss": "catalog:",
+    "tw-animate-css": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:",
+    "wrangler": "catalog:"
+  }
+}

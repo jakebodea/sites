@@ -1,0 +1,19 @@
+---
+import CtaBand from "@/components/sections/cta-band.astro";
+import Faq from "@/components/sections/faq.astro";
+import Hero from "@/components/sections/hero.astro";
+import Process from "@/components/sections/process.astro";
+import Services from "@/components/sections/services.astro";
+import Statement from "@/components/sections/statement.astro";
+import { closing, faq, hero, process, referred, services } from "@/content/home";
+import Base from "@/layouts/base.astro";
+---
+
+<Base>
+  <Hero value={hero} />
+  <Services value={services} />
+  <Process value={process} />
+  <Statement value={referred} />
+  <Faq value={faq} />
+  <CtaBand value={closing} />
+</Base>

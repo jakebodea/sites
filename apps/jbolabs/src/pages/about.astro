@@ -1,0 +1,13 @@
+---
+import PageHeader from "@/components/page-header.astro";
+import Prose from "@/components/prose.astro";
+import CtaBand from "@/components/sections/cta-band.astro";
+import { about } from "@/content/pages";
+import Base from "@/layouts/base.astro";
+---
+
+<Base title={about.title} description={about.description}>
+  <PageHeader title={about.title} intro={about.intro} />
+  <Prose value={about.prose} />
+  <CtaBand value={about.closing} />
+</Base>

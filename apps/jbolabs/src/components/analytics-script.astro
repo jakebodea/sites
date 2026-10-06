@@ -1,0 +1,23 @@
+---
+/**
+ * Boots cookieless PostHog. Rendered only when analytics is enabled, so other
+ * stages (and sites without a project key) ship no analytics JavaScript.
+ */
+import type { BrowserAnalyticsConfig } from "@jakebodea/cloudflare-kit/analytics/privacy";
+
+interface Props {
+  config: BrowserAnalyticsConfig;
+}
+
+const { config } = Astro.props;
+---
+
+<script type="application/json" id="analytics-config" set:html={JSON.stringify(config)} />
+<script>
+  import { initializeAnalytics } from "@jakebodea/cloudflare-kit/analytics/client";
+
+  const element = document.querySelector("#analytics-config");
+  if (element?.textContent) {
+    void initializeAnalytics(JSON.parse(element.textContent));
+  }
+</script>

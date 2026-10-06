@@ -1,0 +1,29 @@
+---
+import Headline from "@/components/headline.astro";
+import SectionLabel from "@/components/section-label.astro";
+import type { ListSection } from "@/content/types";
+
+interface Props {
+  value: ListSection;
+}
+
+const { value } = Astro.props;
+---
+
+<section class="container-page py-20 sm:py-28">
+  <div class="grid gap-10 border-t border-border pt-10 md:grid-cols-[1fr_1.6fr] md:gap-16">
+    <div class="space-y-6">
+      {value.label && <SectionLabel label={value.label} />}
+      <h2 class="text-3xl leading-tight sm:text-4xl"><Headline text={value.headline} /></h2>
+      {value.intro && <p class="max-w-sm leading-relaxed text-muted-foreground">{value.intro}</p>}
+    </div>
+    <dl class="divide-y divide-border">
+      {value.items.map((item) => (
+        <div class="grid gap-2 py-6 first:pt-0 sm:grid-cols-[1fr_1.4fr] sm:gap-8">
+          <dt class="font-medium">{item.title}</dt>
+          <dd class="leading-relaxed text-muted-foreground">{item.body}</dd>
+        </div>
+      ))}
+    </dl>
+  </div>
+</section>

@@ -9,6 +9,7 @@ Full rationale for every choice: [docs/stack.md](docs/stack.md). Domain terms: [
 | Path | What lives there |
 | --- | --- |
 | `apps/<site>/` | One site: `alchemy.run.ts` (its stack), `astro.config.ts`, `site.config.ts` (identity, domain, business facts), `seed/seed.json` (CMS schema + starting content), `src/` |
+| `apps/jbolabs/` | The exception: Jake's own studio site has no CMS. Copy lives in `src/content/*.ts` and leads go to a D1 table |
 | `apps/<site>/src/components/islands/` | The only client JS: shadcn React islands (nav, gallery, contact form) |
 | `apps/<site>/src/components/ui/` | Vendored shadcn primitives. Add variants here; never restyle them at call sites |
 | `packages/cloudflare-kit` | Shared code: Effect server services (`./server`), browser analytics (`./analytics/*`), Alchemy helpers (`./infra`), EmDash glue (`./emdash/*`) |

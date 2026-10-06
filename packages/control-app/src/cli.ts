@@ -127,6 +127,11 @@ const commands = {
   },
   reset: async (site) => {
     await wipeLocalState(site);
+    if (!site.cms) {
+      // Nothing to seed or sign in to: a fresh, empty local database is the reset.
+      printJson({ ...(await start(site)), restored: false });
+      return;
+    }
     const restored = restoreSeedSnapshot(site);
     await start(site);
     // Needs the running server. The dev bypass seeds an empty site, then signs in; on a
@@ -153,8 +158,13 @@ const commands = {
       })
     );
   },
-  seed: async (_site, _args, origin) => {
-    const result = await seedStage(origin);
+  seed: async (site, _args, origin) => {
+    const result = site.cms
+      ? await seedStage(origin)
+      : {
+          detail: "nothing to do (no CMS: content lives in code)",
+          seeded: false,
+        };
     printJson(result);
   },
   seo: async (_site, _args, origin) => {
@@ -183,8 +193,12 @@ const commands = {
       process.exitCode = 1;
     }
   },
-  smoke: async (_site, args, origin) => {
-    const checks = await smoke({ local: !args.flags.has("url"), origin });
+  smoke: async (site, args, origin) => {
+    const checks = await smoke({
+      cms: site.cms,
+      local: !args.flags.has("url"),
+      origin,
+    });
     const failed = checks.filter((item) => !item.ok);
     printJson({ checks, failed: failed.length, ok: failed.length === 0 });
     if (failed.length > 0) {

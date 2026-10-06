@@ -1,0 +1,39 @@
+---
+import type { Link } from "@/content/types";
+import MobileNav from "./islands/mobile-nav";
+import ButtonLink from "./button-link.astro";
+import Wordmark from "./wordmark.astro";
+
+interface Props {
+  title: string;
+  items: readonly Link[];
+}
+
+const { items, title } = Astro.props;
+const current = Astro.url.pathname;
+const isActive = (url: string) =>
+  url === "/" ? current === "/" : current === url || current.startsWith(`${url}/`);
+---
+
+<header class="sticky top-0 z-40 bg-background/85 backdrop-blur-md supports-backdrop-filter:bg-background/70">
+  <div class="container-page flex h-18 items-center justify-between gap-6 sm:h-22">
+    <a href="/" class="rounded-sm" aria-label={`${title}, home`}>
+      <Wordmark title={title} />
+    </a>
+    <nav aria-label="Main" class="hidden items-center gap-8 md:flex">
+      {
+        items.map((item) => (
+          <a
+            href={item.href}
+            aria-current={isActive(item.href) ? "page" : undefined}
+            class="text-sm text-muted-foreground transition-colors hover:text-foreground aria-[current=page]:text-foreground"
+          >
+            {item.label}
+          </a>
+        ))
+      }
+      <ButtonLink href="/contact" size="cta">Start a project</ButtonLink>
+    </nav>
+    <MobileNav client:media="(max-width: 767px)" title={title} items={[...items]} currentPath={current} />
+  </div>
+</header>

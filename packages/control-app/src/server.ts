@@ -54,7 +54,8 @@ const FIRST_BOOT_TIMEOUT_MS = 150_000;
 const POLL_MS = 1000;
 /** Vite optimizes dependencies on the first requests; a few clean responses in a row mean it settled. */
 const WARM_STREAK = 3;
-const WARM_PATHS = ["/", "/contact", "/_emdash/admin"];
+const warmPaths = (site: SiteContext): string[] =>
+  site.cms ? ["/", "/contact", "/_emdash/admin"] : ["/", "/contact"];
 
 const sleep = async (ms: number) => {
   await Bun.sleep(ms);
@@ -103,6 +104,7 @@ const responds = async (url: string): Promise<boolean> => {
 
 /** Waits until every warm-up path answers cleanly several times in a row; false on timeout. */
 const waitUntilWarm = async (
+  site: SiteContext,
   origin: string,
   timeoutMs: number
 ): Promise<boolean> => {
@@ -113,7 +115,7 @@ const waitUntilWarm = async (
       return false;
     }
     const results = await Promise.all(
-      WARM_PATHS.map(async (route) => await responds(`${origin}${route}`))
+      warmPaths(site).map(async (route) => await responds(`${origin}${route}`))
     );
     streak = results.every(Boolean) ? streak + 1 : 0;
     await sleep(POLL_MS);
@@ -209,13 +211,13 @@ export const stop = async (site: SiteContext): Promise<boolean> => {
 export const start = async (site: SiteContext): Promise<DevState> => {
   const running = readState(site);
   if (running !== undefined) {
-    if (!(await waitUntilWarm(running.origin, READY_TIMEOUT_MS))) {
+    if (!(await waitUntilWarm(site, running.origin, READY_TIMEOUT_MS))) {
       throw notReady(running.origin);
     }
     return running;
   }
   const state = spawnServer(site);
-  if (await waitUntilWarm(site.origin, FIRST_BOOT_TIMEOUT_MS)) {
+  if (await waitUntilWarm(site, site.origin, FIRST_BOOT_TIMEOUT_MS)) {
     return state;
   }
   process.stderr.write(
@@ -224,7 +226,7 @@ export const start = async (site: SiteContext): Promise<DevState> => {
   await stop(site);
   rmSync(viteCache(site), { force: true, recursive: true });
   const retry = spawnServer(site);
-  if (!(await waitUntilWarm(site.origin, READY_TIMEOUT_MS))) {
+  if (!(await waitUntilWarm(site, site.origin, READY_TIMEOUT_MS))) {
     throw notReady(site.origin);
   }
   return retry;

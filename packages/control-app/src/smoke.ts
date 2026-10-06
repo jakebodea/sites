@@ -17,6 +17,8 @@ export interface SmokeOptions {
   readonly origin: string;
   /** Local `alchemy dev`: Turnstile test keys and the manual cron route are available. */
   readonly local: boolean;
+  /** The site runs EmDash: check its admin, and treat an empty sitemap as setup pending. */
+  readonly cms: boolean;
 }
 
 const FIXED_PATHS = ["/"];
@@ -168,7 +170,8 @@ export const smoke = async (options: SmokeOptions): Promise<SmokeCheck[]> => {
   const { origin } = options;
   const discovered = await discoverPaths(origin);
   const paths = [...new Set([...FIXED_PATHS, ...discovered])];
-  const setupPending = discovered.length === 0 && (await needsSetup(origin));
+  const setupPending =
+    options.cms && discovered.length === 0 && (await needsSetup(origin));
   const checks = [
     check(
       "sitemap",
@@ -181,11 +184,13 @@ export const smoke = async (options: SmokeOptions): Promise<SmokeCheck[]> => {
   ];
   const missing = await status(`${origin}/__smoke-test-missing-page`);
   checks.push(check("unknown path 404s", missing === 404, `HTTP ${missing}`));
-  const admin = await status(`${origin}/_emdash/admin`);
-  checks.push(
-    check("CMS admin", admin === 200 || admin === 302, `HTTP ${admin}`),
-    ...(await imageChecks(origin, paths))
-  );
+  if (options.cms) {
+    const admin = await status(`${origin}/_emdash/admin`);
+    checks.push(
+      check("CMS admin", admin === 200 || admin === 302, `HTTP ${admin}`)
+    );
+  }
+  checks.push(...(await imageChecks(origin, paths)));
   if (options.local) {
     checks.push(await contactCheck(origin), await cronCheck(origin));
   }

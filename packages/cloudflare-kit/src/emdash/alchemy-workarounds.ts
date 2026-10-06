@@ -23,13 +23,21 @@ export interface AliasEntry {
   readonly replacement: string;
 }
 
+/**
+ * Alchemy pins its own Worker entry; this swaps in the site's `src/worker.ts`.
+ * Sites without EmDash use it alone: their entry wraps Alchemy's handler,
+ * imported as `@alchemy.run/frontend-frameworks/astro/entrypoints/server.js`
+ * (the `.js` spelling escapes this alias), to add crons and response headers.
+ */
+export const workerEntryAlias = (workerEntry: string): AliasEntry => ({
+  find: /^@alchemy\.run\/frontend-frameworks\/astro\/entrypoints\/server$/u,
+  replacement: workerEntry,
+});
+
 /** Vite `resolve.alias` entries; `workerEntry` is the absolute path of the site's `src/worker.ts`. */
 export const emdashOnAlchemyAliases = (workerEntry: string): AliasEntry[] => [
-  {
-    // 1. Alchemy pins its own Worker entry; use the site's entry, which wraps EmDash's.
-    find: /^@alchemy\.run\/frontend-frameworks\/astro\/entrypoints\/server$/u,
-    replacement: workerEntry,
-  },
+  // 1. Use the site's entry, which wraps EmDash's.
+  workerEntryAlias(workerEntry),
   {
     // 2. EmDash's entry wraps the stock adapter handler; hand it Alchemy's vendored copy instead.
     find: /^@astrojs\/cloudflare\/entrypoints\/server$/u,
