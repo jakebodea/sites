@@ -4,6 +4,14 @@ on:
   pull_request:
   push:
     branches: [main]
+  # Re-runs the prod deploy for chosen sites (a failed deploy is not retried by a re-run
+  # of an old push, and a fix outside `apps/<site>/` marks no site affected).
+  workflow_dispatch:
+    inputs:
+      sites:
+        description: 'Sites to deploy to prod, as a JSON array (e.g. ["jbolabs"])'
+        required: true
+        type: string
 
 permissions:
   contents: read
@@ -104,7 +112,7 @@ jobs:
 
   production:
     needs: check
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && needs.check.outputs.sites != '[]' && vars.DEPLOYS_ENABLED == 'true'
+    if: (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/main' && (github.event_name == 'workflow_dispatch' || needs.check.outputs.sites != '[]') && vars.DEPLOYS_ENABLED == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 30
     environment: production
@@ -125,6 +133,8 @@ jobs:
           persist-credentials: false
       - uses: ./.github/actions/setup
       - name: Deploy affected sites to prod
-        run: bun scripts/ci/deploy.ts --stage prod --sites '${{ needs.check.outputs.sites }}'
+        run: bun scripts/ci/deploy.ts --stage prod --sites "$SITES"
+        env:
+          SITES: ${{ github.event_name == 'workflow_dispatch' && inputs.sites || needs.check.outputs.sites }}
       - name: Verify production
         run: bun scripts/ci/verify-previews.ts --production
