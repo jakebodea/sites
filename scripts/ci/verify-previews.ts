@@ -17,6 +17,7 @@ import pLimit from "p-limit";
 import { command } from "./command.ts";
 import { controlCheck } from "./control-check.ts";
 import { lighthouse } from "./lighthouse.ts";
+import { waitForDeployment } from "./readiness.ts";
 
 const Deployments = Schema.fromJsonString(
   Schema.Array(
@@ -44,6 +45,8 @@ const results = await Promise.all(
           if (url === null) {
             throw new Error("deploy reported no URL");
           }
+          // New custom domains may not resolve immediately after Alchemy attaches them.
+          await waitForDeployment(url);
           // A fresh CMS stage serves no pages until setup applies its seed. Seeding skips any
           // stage whose setup already started, so it never overwrites a client's edits.
           await command(
