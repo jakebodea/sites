@@ -25,6 +25,7 @@ const MEDIA_TYPES = new Map([
   [".svg", "image/svg+xml"],
   [".webp", "image/webp"],
 ]);
+export const LOCAL_CMS_BOOTSTRAP_TOKEN = "local-audit-cms-bootstrap-token-0001";
 
 const text = (value: string) =>
   ({ type: "text", value }) satisfies NonNullable<
@@ -53,6 +54,9 @@ export const localWorker = async (directory: string, cms: boolean) => {
     ASSETS: { type: "assets" },
     BACKUPS: { name: `${scope}-backups`, type: "r2" },
     CF_ANALYTICS_API_TOKEN: text(""),
+    CMS_BOOTSTRAP_TOKEN: text(LOCAL_CMS_BOOTSTRAP_TOKEN),
+    CMS_OWNER_EMAIL: text("owner@example.test"),
+    CMS_OWNER_SITE: text(path.basename(directory)),
     DB: { id: `${scope}-db`, type: "d1" },
     LEAD_NOTIFY_FROM: text(""),
     LEAD_NOTIFY_FROM_NAME: text(""),

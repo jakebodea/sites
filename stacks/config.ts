@@ -26,6 +26,7 @@ export const deployTokens = {
  */
 export const studio = {
   alertInbox: "alerts@jbolabs.com",
+  cmsOwnerEmail: "jakebodea@gmail.com",
   domain: "jbolabs.com",
   sender: "sites@mail.jbolabs.com",
   sendingSubdomain: "mail.jbolabs.com",

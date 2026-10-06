@@ -9,6 +9,7 @@ import { d1, r2 } from "@emdash-cms/cloudflare";
 import { emdashOnAlchemyAliases } from "@jakebodea/cloudflare-kit/emdash/alchemy-workarounds";
 import { analyticsPlugin } from "@jakebodea/cloudflare-kit/emdash/analytics";
 import { emailPlugin } from "@jakebodea/cloudflare-kit/emdash/email-plugin";
+import { siteOwner } from "@jakebodea/cloudflare-kit/emdash/owner-integration";
 import { seedMedia } from "@jakebodea/cloudflare-kit/emdash/seed-media";
 import {
   WORKER_COMPATIBILITY,
@@ -85,8 +86,10 @@ export default defineConfig({
     ...standaloneAdapter,
     seedMedia({ mediaBase: inputs.seedMediaBase }),
     react(),
+    siteOwner(),
     emdash({
       database: d1({ binding: "DB", session: "auto" }),
+      middleware: { outer: "@jakebodea/cloudflare-kit/emdash/owner-gate" },
       // CMS mail (invites, magic links) only once a verified sender exists; until then
       // EmDash reports "Email is not configured" and invite links are copied by hand.
       plugins: [

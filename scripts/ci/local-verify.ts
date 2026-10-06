@@ -8,7 +8,7 @@ import { Schema } from "effect";
 import { seedStage } from "../../packages/control-app/src/seed.ts";
 import { controlCheck } from "./control-check.ts";
 import { lighthouse } from "./lighthouse.ts";
-import { localWorker } from "./local-worker.ts";
+import { LOCAL_CMS_BOOTSTRAP_TOKEN, localWorker } from "./local-worker.ts";
 
 const SiteList = Schema.fromJsonString(Schema.Array(Schema.String));
 const SiteConfig = Schema.Struct({
@@ -60,7 +60,7 @@ if (!prepare) {
     try {
       worker = await localWorker(directory, cms);
       if (cms) {
-        const seed = await seedStage(worker.origin);
+        const seed = await seedStage(worker.origin, LOCAL_CMS_BOOTSTRAP_TOKEN);
         writeFileSync(
           path.join(output, `${site}-seed.json`),
           `${JSON.stringify(seed, null, 2)}\n`

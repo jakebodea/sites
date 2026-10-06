@@ -11,6 +11,7 @@
 import * as Alchemy from "alchemy";
 import * as Cloudflare from "alchemy/Cloudflare";
 import * as GitHub from "alchemy/GitHub";
+import { Random, RandomProvider } from "alchemy/Random";
 import { Effect, Layer } from "effect";
 
 import { deployTokens, repository } from "./config.ts";
@@ -79,7 +80,11 @@ const ciOnly = Layer.unwrap(
 export default Alchemy.Stack(
   "marketing-ci",
   {
-    providers: Layer.mergeAll(Cloudflare.providers(), GitHub.providers()),
+    providers: Layer.mergeAll(
+      Cloudflare.providers(),
+      GitHub.providers(),
+      RandomProvider()
+    ),
     state: ciOnly,
   },
   Effect.gen(function* controlPlane() {
@@ -102,6 +107,16 @@ export default Alchemy.Stack(
           repository: repo,
         }
       );
+      const cmsBootstrap = yield* Random(`${environment.id}CmsBootstrapToken`, {
+        bytes: 32,
+      });
+      yield* GitHub.Secret(`${environment.id}CmsBootstrapSecret`, {
+        environment: githubEnvironment,
+        name: "CMS_BOOTSTRAP_TOKEN",
+        owner,
+        repository: repo,
+        value: cmsBootstrap.text,
+      });
       const token = yield* Cloudflare.ApiToken.AccountApiToken(
         `${environment.id}DeployToken${deployTokens.generation}`,
         {

@@ -177,7 +177,7 @@ export const smoke = async (options: SmokeOptions): Promise<SmokeCheck[]> => {
       "sitemap",
       discovered.length > 0 || setupPending,
       setupPending
-        ? "CMS setup pending: claim the admin, or run `app -- seed --url`"
+        ? "CMS bootstrap pending: run credentialed `app -- seed --url`"
         : `${discovered.length} pages`
     ),
     ...(await pageChecks(origin, paths)),

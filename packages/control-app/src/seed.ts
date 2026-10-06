@@ -1,15 +1,12 @@
-/**
- * Applies a site's seed (CMS schema + starting content) to a fresh deployed
- * stage through EmDash's setup API, stopping before account creation. The
- * first person to finish setup in the admin still becomes the admin; the
- * stage just stops being empty, so previews can be smoke-tested and reviewed.
- */
 import { Schema } from "effect";
 
 import { request } from "./http.ts";
 
 const SetupResponse = Schema.Struct({
   data: Schema.Struct({ seedComplete: Schema.optional(Schema.Boolean) }),
+});
+const OwnerResponse = Schema.Struct({
+  data: Schema.Struct({ ownerReady: Schema.Literal(true) }),
 });
 const SetupStatus = Schema.Struct({
   data: Schema.Struct({
@@ -40,7 +37,27 @@ export interface SeedResult {
   readonly detail: string;
 }
 
-export const seedStage = async (origin: string): Promise<SeedResult> => {
+export const seedStage = async (
+  origin: string,
+  bootstrapToken: string | undefined = process.env.CMS_BOOTSTRAP_TOKEN
+): Promise<SeedResult> => {
+  const headers = new Headers({ "content-type": "application/json", origin });
+  if (bootstrapToken !== undefined) {
+    headers.set("x-cms-bootstrap-token", bootstrapToken);
+  }
+  const finishOwner = async (): Promise<void> => {
+    const response = await request(`${origin}/_emdash/api/setup/owner`, {
+      headers,
+      method: "POST",
+      signal: AbortSignal.timeout(SETUP_TIMEOUT_MS),
+    });
+    if (!response.ok) {
+      throw new Error(
+        `CMS owner provisioning answered ${response.status}: ${await response.text()}`
+      );
+    }
+    Schema.decodeUnknownSync(OwnerResponse)(await response.json());
+  };
   const statusResponse = await request(`${origin}/_emdash/api/setup/status`, {
     signal: AbortSignal.timeout(SETUP_TIMEOUT_MS),
   });
@@ -48,8 +65,9 @@ export const seedStage = async (origin: string): Promise<SeedResult> => {
     await statusResponse.json()
   );
   if (!status.data.needsSetup || status.data.step !== "start") {
+    await finishOwner();
     return {
-      detail: `nothing to do (setup step: ${status.data.step ?? "complete"})`,
+      detail: "existing content preserved; studio owner verified",
       seeded: false,
     };
   }
@@ -58,28 +76,25 @@ export const seedStage = async (origin: string): Promise<SeedResult> => {
   for (let round = 1; round <= MAX_ROUNDS; round += 1) {
     const response = await request(`${origin}/_emdash/api/setup`, {
       body: JSON.stringify({ includeContent: true, tagline, title }),
-      headers: { "content-type": "application/json", origin },
+      headers,
       method: "POST",
       signal: AbortSignal.timeout(SETUP_TIMEOUT_MS),
     });
     if (!response.ok) {
-      return {
-        detail: `setup API answered ${response.status}: ${await response.text()}`,
-        seeded: false,
-      };
+      throw new Error(
+        `setup API answered ${response.status}: ${await response.text()}`
+      );
     }
     const result = Schema.decodeUnknownSync(SetupResponse)(
       await response.json()
     );
     if (result.data.seedComplete === true) {
+      await finishOwner();
       return {
-        detail: `seed applied in ${round} request(s); admin account still unclaimed`,
+        detail: `seed applied in ${round} request(s); studio owner reserved`,
         seeded: true,
       };
     }
   }
-  return {
-    detail: `seed still incomplete after ${MAX_ROUNDS} requests`,
-    seeded: false,
-  };
+  throw new Error(`seed still incomplete after ${MAX_ROUNDS} requests`);
 };
