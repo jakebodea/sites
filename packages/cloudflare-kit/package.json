@@ -15,7 +15,12 @@
     "./env": "./src/env.ts",
     "./astro/web-analytics-beacon.astro": "./src/astro/web-analytics-beacon.astro",
     "./emdash/analytics": "./src/emdash/analytics.ts",
-    "./emdash/worker": "./src/emdash/worker.ts"
+    "./emdash/worker": "./src/emdash/worker.ts",
+    "./emdash/owner-policy": "./src/emdash/owner-policy.ts",
+    "./emdash/owner-gate": "./src/emdash/owner-gate.ts",
+    "./emdash/owner-middleware": "./src/emdash/owner-middleware.ts",
+    "./emdash/owner-integration": "./src/emdash/owner-integration.ts",
+    "./emdash/owner-route": "./src/emdash/owner-route.ts"
   },
   "scripts": {
     "test": "vitest run",
@@ -23,6 +28,7 @@
   },
   "dependencies": {
     "@eisbachcode/emdash-plugin-analytics": "catalog:",
+    "@emdash-cms/auth": "catalog:",
     "effect": "catalog:"
   },
   "devDependencies": {

@@ -18,6 +18,9 @@ declare global {
       SESSION: KVNamespace;
       /** Cloudflare Email Service; bound once a verified sending domain exists. */
       EMAIL?: SendEmail;
+      CMS_OWNER_EMAIL: string;
+      CMS_OWNER_SITE: string;
+      CMS_BOOTSTRAP_TOKEN: string;
       STAGE: string;
       SITE_ORIGIN: string;
       TURNSTILE_SITE_KEY: string;

@@ -18,6 +18,7 @@ jobs:
       group: preview-${{ github.event.pull_request.number }}
       cancel-in-progress: false
     env:
+      CMS_BOOTSTRAP_TOKEN: ${{ secrets.CMS_BOOTSTRAP_TOKEN }}
       CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
       CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
     steps:

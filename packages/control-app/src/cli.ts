@@ -41,7 +41,7 @@ const USAGE = `Usage: bun run app -- <command> [--site <name>] [--url <origin>] 
   smoke                   pages, 404, admin, images, contact action, cron
   seo                     technical SEO audit: titles, descriptions, canonicals, H1s, alt text,
                           image formats, layout shift, breadcrumbs, orphans, redirects, robots.txt
-  seed --url <origin>     apply the seed to a fresh deployed stage (leaves the admin account unclaimed)
+  seed --url <origin>     seed a fresh stage and verify its owner (CMS_BOOTSTRAP_TOKEN required)
   logs [--lines 80]       tail the dev server log
 
 --url targets a deployed stage instead of local dev; --auth reuses the CMS session.

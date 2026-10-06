@@ -27,7 +27,7 @@ import { AlchemyContext } from "alchemy/AlchemyContext";
 import * as Cloudflare from "alchemy/Cloudflare";
 import { RandomProvider } from "alchemy/Random";
 import * as RemovalPolicy from "alchemy/RemovalPolicy";
-import { Effect, Layer } from "effect";
+import { Config, Effect, Layer, Redacted } from "effect";
 
 import { studio } from "../../stacks/config.ts";
 import { site } from "./site.config.ts";
@@ -94,6 +94,12 @@ export default Alchemy.Stack(
       }),
       ...(yield* emdashSecrets),
       BACKUPS: backups,
+      CMS_BOOTSTRAP_TOKEN: dev
+        ? Redacted.make("local-only-cms-bootstrap-credential")
+        : yield* Config.Redacted("CMS_BOOTSTRAP_TOKEN"),
+
+      CMS_OWNER_EMAIL: studio.cmsOwnerEmail,
+      CMS_OWNER_SITE: site.id,
       DB: database,
       // EmDash's /_image endpoint resizes media with this binding.
       IMAGES: Cloudflare.Images.Images("IMAGES"),
