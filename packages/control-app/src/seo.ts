@@ -34,6 +34,8 @@ export interface SeoOptions {
   readonly origin: string;
   /** Production must be indexable; every other stage must not be. */
   readonly production: boolean;
+  /** Local CI checks page content; deployed audits also check stage policy and timing. */
+  readonly checks?: "content" | "all";
 }
 
 interface PageFacts {
@@ -338,6 +340,9 @@ const headChecks: Check = (page) => {
 };
 
 const indexingChecks: Check = (page, options) => {
+  if (options.checks === "content") {
+    return [];
+  }
   const add = at(page);
   const stageNoindex = page.robotsHeader.includes("noindex");
   if (options.production && stageNoindex) {
@@ -361,7 +366,7 @@ const indexingChecks: Check = (page, options) => {
   return [];
 };
 
-const structureChecks: Check = (page) => {
+const structureChecks: Check = (page, options) => {
   const add = at(page);
   const found: SeoFinding[] = [];
   if (page.h1Count !== 1) {
@@ -395,7 +400,7 @@ const structureChecks: Check = (page) => {
       )
     );
   }
-  if (page.ttfbMs > TTFB_BUDGET_MS) {
+  if (options.checks !== "content" && page.ttfbMs > TTFB_BUDGET_MS) {
     found.push(
       add(
         "fast-response",

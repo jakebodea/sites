@@ -12,7 +12,7 @@ Always get the user's go-ahead before deploying or destroying anything.
 | Stage | How | When |
 | --- | --- | --- |
 | `dev-<worktree>` | `bun run app -- start` | Local, emulated, any time |
-| `pr-<n>` | CI on every PR from this repo | Destroyed when the PR closes; janitor sweeps leftovers daily |
+| `pr-<n>` | CI on same-repo PRs labeled `preview`, affected sites only | Destroyed on label removal or PR close; janitor sweeps leftovers daily |
 | named preview | `cd apps/<site> && ALCHEMY_PROFILE=admin bun alchemy deploy --stage <name>` | Ad-hoc demos; destroy when done |
 | `prod` | CI on merge to `main` only | The stack refuses prod outside CI |
 
