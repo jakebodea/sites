@@ -17,6 +17,15 @@ const SWITCHING_PROTOCOLS = 101;
 
 export default {
   async fetch(request, env, ctx) {
+    if (env.STAGE === "prod") {
+      const url = new URL(request.url);
+      const canonical = new URL(env.SITE_ORIGIN);
+      if (url.origin !== canonical.origin) {
+        canonical.pathname = url.pathname;
+        canonical.search = url.search;
+        return Response.redirect(canonical.href, 308);
+      }
+    }
     const response = await astro.fetch(request, env, ctx);
     if (env.STAGE === "prod" || response.status === SWITCHING_PROTOCOLS) {
       return response;

@@ -85,7 +85,7 @@ No Infisical, no 1Password.
 
 - `dev-<worktree>`: per-worktree `alchemy dev` stage (parallel agents never collide).
 - `pr-<n>`: per-PR preview for affected sites only, requested by adding the `preview` label. Subsequent pushes update it while the label remains; removing the label or closing the PR destroys it. Shared code changes affect every site; docs-only changes deploy none.
-- `prod`: custom domain attached only here. JBO Labs uses `jbolabs.com`; client domains remain unset until their zones are on the account and serve from workers.dev meanwhile. Deploys only from CI on `main`.
+- `prod`: custom domain attached only here. JBO Labs uses `jbolabs.com`, with HTTP, `www`, and the old workers.dev hostname redirecting to HTTPS on the apex. Client domains remain unset until their zones are on the account and serve from workers.dev meanwhile. Deploys only from CI on `main`.
 - State: `Cloudflare.state()`.
 
 ## DevOps
