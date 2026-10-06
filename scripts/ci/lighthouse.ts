@@ -9,9 +9,8 @@ const root = path.resolve(import.meta.dirname, "../..");
 export const lighthouse = async (origin: string, directory: string) => {
   mkdirSync(directory, { recursive: true });
   await command(
-    "bunx",
+    path.join(root, "node_modules/.bin/lhci"),
     [
-      "@lhci/cli@0.15.1",
       "autorun",
       `--config=${path.join(root, "lighthouserc.json")}`,
       `--upload.outputDir=${directory}`,

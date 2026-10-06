@@ -24,12 +24,12 @@ env:
   TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
 
 jobs:
-  check:
+  affected:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 5
     concurrency:
       # Unrelated labels must neither cancel preview validation nor skip the required check.
-      group: check-${{ github.event.pull_request.number || github.sha }}-${{ github.event.action == 'labeled' && github.event.label.name != 'preview' && 'labels' || 'code' }}
+      group: affected-${{ github.event.pull_request.number || github.sha }}-${{ github.event.action == 'labeled' && github.event.label.name != 'preview' && 'labels' || 'code' }}
       cancel-in-progress: ${{ github.event_name == 'pull_request' }}
     outputs:
       sites: ${{ steps.affected.outputs.sites }}
@@ -39,12 +39,27 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
       - uses: ./.github/actions/setup
-      - uses: actions/cache/restore@caa296126883cff596d87d8935842f9db880ef25 # v5.0.3
-        id: turbo-cache
+      - name: Affected sites
+        id: affected
+        # Assigned first so a failing script fails the step (inside `echo` it would pass an empty list on).
+        run: |
+          sites="$(bun scripts/ci/affected.ts "$BASE")"
+          echo "sites=$sites" >> "$GITHUB_OUTPUT"
+        env:
+          BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
+
+  lint-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    concurrency:
+      group: lint-test-${{ github.event.pull_request.number || github.sha }}-${{ github.event.action == 'labeled' && github.event.label.name != 'preview' && 'labels' || 'code' }}
+      cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          path: .turbo/cache
-          key: turbo-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('bun.lock') }}-${{ github.sha }}
-          restore-keys: turbo-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('bun.lock') }}-
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: ./.github/actions/setup
       - name: Lint workflows
         run: |
           curl -fsSL -o "$RUNNER_TEMP/actionlint.tar.gz" \
@@ -54,41 +69,63 @@ jobs:
           "$RUNNER_TEMP/actionlint" -color
       - name: Lint
         run: bun run lint:ci
-      - name: Affected sites
-        id: affected
-        # Assigned first so a failing script fails the step (inside `echo` it would pass an empty list on).
-        run: |
-          sites="$(bun scripts/ci/affected.ts "$BASE")"
-          echo "sites=$sites" >> "$GITHUB_OUTPUT"
-        env:
-          BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
-      - name: Prepare local verification build inputs
-        run: bun scripts/ci/local-verify.ts --prepare --sites "$SITES"
-        env:
-          SITES: ${{ steps.affected.outputs.sites }}
-      - name: Typecheck, test, build (affected, cached)
-        run: bunx turbo run typecheck test build //#typecheck:root //#test:root --affected
+      - name: Typecheck and test (affected, cached)
+        run: bunx turbo run typecheck test //#typecheck:root //#test:root --affected
         env:
           TURBO_SCM_BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
-      - uses: actions/cache/save@caa296126883cff596d87d8935842f9db880ef25 # v5.0.3
-        if: always() && !cancelled() && steps.turbo-cache.outputs.cache-primary-key != '' && steps.turbo-cache.outputs.cache-hit != 'true'
+
+  # One runner per site: Lighthouse budgets stay free of CPU contention while sites run in parallel.
+  verify:
+    needs: affected
+    if: needs.affected.outputs.sites != '[]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    concurrency:
+      group: verify-${{ matrix.site }}-${{ github.event.pull_request.number || github.sha }}-${{ github.event.action == 'labeled' && github.event.label.name != 'preview' && 'labels' || 'code' }}
+      cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+    strategy:
+      fail-fast: false
+      matrix:
+        site: ${{ fromJSON(needs.affected.outputs.sites) }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          path: .turbo/cache
-          key: ${{ steps.turbo-cache.outputs.cache-primary-key }}
+          persist-credentials: false
+      - uses: ./.github/actions/setup
+      - name: Prepare local verification build inputs
+        run: bun scripts/ci/local-verify.ts --prepare --sites "[\"$SITE\"]"
+        env:
+          SITE: ${{ matrix.site }}
+      - name: Build (cached)
+        run: bunx turbo run build --filter="@sites/$SITE"
+        env:
+          SITE: ${{ matrix.site }}
       # Miniflare supports Node; use its native runtime rather than Bun's subprocess emulation.
       - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
         with:
           node-version: "24"
-      - name: Required smoke, SEO and Lighthouse for affected sites
-        run: node scripts/ci/local-verify.ts --sites "$SITES"
+      - name: Required smoke, SEO and Lighthouse
+        run: node scripts/ci/local-verify.ts --sites "[\"$SITE\"]"
         env:
-          SITES: ${{ steps.affected.outputs.sites }}
+          SITE: ${{ matrix.site }}
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         if: always()
         with:
-          name: required-site-verification
+          name: required-site-verification-${{ matrix.site }}
           path: .artifacts/ci/local-verification/
           if-no-files-found: ignore
+
+  # The ruleset requires one `check` context; this gathers the parallel jobs into it.
+  check:
+    needs: [affected, lint-test, verify]
+    if: always()
+    runs-on: ubuntu-latest
+    outputs:
+      sites: ${{ needs.affected.outputs.sites }}
+    steps:
+      - name: Require every gate
+        if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')
+        run: exit 1
 
   dependency-review:
     # GitHub supports dependency review only on public repos or with Advanced Security;
@@ -107,7 +144,7 @@ jobs:
     needs: check
     # Fork PRs never get deploy credentials.
     # Deploy jobs skip until `stacks/github.ts` has created the environments and tokens.
-    if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository && contains(github.event.pull_request.labels.*.name, 'preview') && (github.event.action != 'labeled' || github.event.label.name == 'preview') && needs.check.outputs.sites != '[]' && vars.DEPLOYS_ENABLED == 'true'
+    if: ${{ !cancelled() && needs.check.result == 'success' && github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository && contains(github.event.pull_request.labels.*.name, 'preview') && (github.event.action != 'labeled' || github.event.label.name == 'preview') && needs.check.outputs.sites != '[]' && vars.DEPLOYS_ENABLED == 'true' }}
     runs-on: ubuntu-latest
     timeout-minutes: 30
     environment: preview
@@ -154,7 +191,7 @@ jobs:
 
   production:
     needs: check
-    if: (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/main' && (github.event_name == 'workflow_dispatch' || needs.check.outputs.sites != '[]') && vars.DEPLOYS_ENABLED == 'true'
+    if: ${{ !cancelled() && needs.check.result == 'success' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/main' && (github.event_name == 'workflow_dispatch' || needs.check.outputs.sites != '[]') && vars.DEPLOYS_ENABLED == 'true' }}
     runs-on: ubuntu-latest
     timeout-minutes: 30
     environment: production

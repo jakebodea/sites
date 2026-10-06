@@ -72,6 +72,7 @@
     "@jakebodea/config": "workspace:*",
     "@jakebodea/control-app": "workspace:*",
     "@jakebodea/proof": "workspace:*",
+    "@lhci/cli": "0.15.1",
     "@shadcn/lint": "0.2.0",
     "@types/bun": "catalog:",
     "alchemy": "catalog:",
