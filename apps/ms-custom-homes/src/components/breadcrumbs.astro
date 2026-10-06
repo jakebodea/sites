@@ -1,0 +1,31 @@
+---
+/**
+ * Visible breadcrumb trail plus its BreadcrumbList JSON-LD, rendered from the
+ * same crumbs so the two never drift apart. The last crumb is the current page.
+ */
+import { breadcrumbJsonLd } from "@jakebodea/cloudflare-kit/seo";
+import type { Crumb } from "@jakebodea/cloudflare-kit/seo";
+
+interface Props {
+  crumbs: readonly Crumb[];
+  class?: string;
+}
+
+const { crumbs, class: className } = Astro.props;
+const links = crumbs.slice(0, -1);
+const current = crumbs.at(-1);
+const jsonLd = JSON.stringify(breadcrumbJsonLd(crumbs, Astro.site?.origin ?? Astro.url.origin));
+---
+
+<nav aria-label="Breadcrumb" class:list={["text-sm text-muted-foreground", className]}>
+  <ol class="flex flex-wrap items-center gap-x-2">
+    {links.map((crumb) => (
+      <li class="flex items-center gap-x-2">
+        <a href={crumb.path} class="hover:text-foreground hover:underline">{crumb.label}</a>
+        <span aria-hidden="true">/</span>
+      </li>
+    ))}
+    {current && <li aria-current="page" class="max-w-full truncate text-foreground">{current.label}</li>}
+  </ol>
+</nav>
+<script type="application/ld+json" set:html={jsonLd} />

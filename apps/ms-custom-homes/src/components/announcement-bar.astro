@@ -1,0 +1,27 @@
+---
+/** One-line promotion above the header, from the CMS `announcement` menu (empty menu: no bar). */
+import ArrowUpRight from "@lucide/astro/icons/arrow-up-right";
+
+import type { NavItem } from "@/lib/content";
+import { isExternal } from "@/lib/content";
+
+interface Props {
+  item: NavItem;
+}
+
+const { item } = Astro.props;
+const external = isExternal(item.url);
+---
+
+<div class="relative z-50 bg-midnight text-ivory">
+  <a
+    href={item.url}
+    target={external ? "_blank" : undefined}
+    rel={external ? "noopener" : undefined}
+    class="group container-page flex min-h-10 items-center justify-center gap-2 py-2 text-center text-[0.68rem] font-normal tracking-[0.2em] uppercase sm:text-[0.7rem]"
+  >
+    <span class="text-mist">{item.label}</span>
+    <ArrowUpRight class="size-3.5 shrink-0 text-champagne transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" aria-hidden="true" />
+    {external && <span class="sr-only">(opens in a new tab)</span>}
+  </a>
+</div>

@@ -1,0 +1,15 @@
+---
+import { PortableText } from "emdash/ui";
+import type { BlockComponentProps } from "emdash/ui";
+
+import type { PageContentRichTextBlock } from "../../../emdash-env";
+
+type Props = BlockComponentProps<PageContentRichTextBlock>;
+
+const { value } = Astro.props;
+---
+
+<section class="container-page py-16 sm:py-24">
+  {value.headline && <h2 class="mb-8 text-4xl">{value.headline}</h2>}
+  <div class="prose-site"><PortableText value={value.body} /></div>
+</section>

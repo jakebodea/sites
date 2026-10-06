@@ -1,0 +1,46 @@
+---
+import ArrowRight from "@lucide/astro/icons/arrow-right";
+import type { BlockComponentProps } from "emdash/ui";
+
+import ProjectCard from "@/components/project-card.astro";
+import { getFeaturedProjects } from "@/lib/content";
+import type { PageContentFeaturedProjectsBlock } from "../../../emdash-env";
+
+type Props = BlockComponentProps<PageContentFeaturedProjectsBlock>;
+
+const { value } = Astro.props;
+const { cacheHint, entries } = await getFeaturedProjects();
+if (Astro.cache?.enabled) {
+  Astro.cache.set(cacheHint);
+}
+// Editorial rhythm: a wide lead project, then pairs. Spans repeat every five cards.
+const SPANS = ["lg:col-span-7", "lg:col-span-5", "lg:col-span-5", "lg:col-span-7", "lg:col-span-12"];
+const ASPECTS = ["aspect-[4/3]", "aspect-[4/5] lg:aspect-[5/6]", "aspect-[4/5] lg:aspect-[5/6]", "aspect-[4/3]", "aspect-[4/3] lg:aspect-[21/9]"];
+---
+
+{entries.length > 0 && (
+  <section class="py-24 sm:py-32">
+    <div class="container-page">
+      <div class="flex flex-wrap items-end justify-between gap-8">
+        <div class="max-w-2xl">
+          {value.eyebrow && <p class="eyebrow mb-6" data-reveal>{value.eyebrow}</p>}
+          <h2 class="text-4xl sm:text-5xl lg:text-6xl" data-reveal style="--reveal-delay: 80ms">{value.headline}</h2>
+          {value.intro && <p class="mt-6 text-lg leading-relaxed text-muted-foreground" data-reveal style="--reveal-delay: 160ms">{value.intro}</p>}
+        </div>
+        {value.link_label && (
+          <a href="/portfolio" class="group label-caps inline-flex items-center gap-3 text-slate" data-reveal>
+            {value.link_label}
+            <ArrowRight class="size-4 transition-transform duration-500 group-hover:translate-x-1" aria-hidden="true" />
+          </a>
+        )}
+      </div>
+      <ul class="mt-16 grid gap-x-8 gap-y-16 lg:mt-20 lg:grid-cols-12">
+        {entries.map((project, index) => (
+          <li class:list={["flex", SPANS[index % SPANS.length]]}>
+            <ProjectCard slug={project.id} project={project.data} aspect={ASPECTS[index % ASPECTS.length]} />
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+)}

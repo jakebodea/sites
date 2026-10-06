@@ -1,0 +1,58 @@
+---
+/**
+ * GeneralContractor (a LocalBusiness) JSON-LD on every page. EmDashHead adds the
+ * WebSite graph; this adds the business itself. Unknown facts are omitted
+ * rather than guessed (see site.config.ts).
+ */
+import { site } from "../../site.config";
+
+interface Props {
+  origin: string;
+}
+
+const { origin } = Astro.props;
+const { business } = site;
+interface BusinessJsonLd {
+  readonly "@context": string;
+  readonly "@type": string;
+  readonly address: Record<string, string>;
+  readonly areaServed: readonly { "@type": string; name: string }[];
+  readonly description: string;
+  readonly image: string;
+  readonly logo: string;
+  readonly name: string;
+  readonly url: string;
+  email?: string;
+  telephone?: string;
+}
+
+const data: BusinessJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "GeneralContractor",
+  address: {
+    "@type": "PostalAddress",
+    addressCountry: "US",
+    addressLocality: business.address.city,
+    addressRegion: business.address.region,
+    postalCode: business.address.postalCode,
+    streetAddress: business.address.street,
+  },
+  areaServed: business.areaServed.map((name) => ({
+    "@type": "AdministrativeArea",
+    name,
+  })),
+  description: site.description,
+  image: `${origin}/og-default.png`,
+  logo: `${origin}/brand/logo.png`,
+  name: site.name,
+  url: origin,
+};
+if (business.email !== undefined) {
+  data.email = business.email;
+}
+if (business.telephone !== undefined) {
+  data.telephone = business.telephone;
+}
+---
+
+<script type="application/ld+json" set:html={JSON.stringify(data)} />

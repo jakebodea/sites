@@ -1,0 +1,23 @@
+---
+import type { BlockComponentProps } from "emdash/ui";
+
+import Logo from "@/components/brand/logo.astro";
+import type { PageContentStatementBlock } from "../../../emdash-env";
+
+type Props = BlockComponentProps<PageContentStatementBlock>;
+
+const { value } = Astro.props;
+---
+
+<section class="relative overflow-hidden py-28 sm:py-40">
+  <div class="container-page relative flex flex-col items-center text-center">
+    <Logo variant="mark" play="scroll" class="mb-12 h-24 w-auto sm:h-28" />
+    {value.eyebrow && <p class="eyebrow mb-8" data-reveal>{value.eyebrow}</p>}
+    <p class="max-w-4xl font-display text-[1.85rem] leading-[1.3] text-slate sm:text-4xl lg:text-[2.9rem]" data-reveal style="--reveal-delay: 120ms">
+      {value.text}
+    </p>
+    {value.signature && (
+      <p class="mt-10 font-display text-xl text-brand italic" data-reveal style="--reveal-delay: 240ms">{value.signature}</p>
+    )}
+  </div>
+</section>

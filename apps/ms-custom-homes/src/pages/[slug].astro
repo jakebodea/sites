@@ -1,0 +1,37 @@
+---
+/** Any CMS page (About, Privacy, and pages editors add later) at `/<slug>`. */
+import { decodeSlug, getSeoMeta } from "emdash";
+
+import PageBlocks from "@/components/blocks/page-blocks.astro";
+import PageHeader from "@/components/page-header.astro";
+import Base from "@/layouts/base.astro";
+import { getPage } from "@/lib/content";
+
+/** Pages with their own routes. */
+const DEDICATED = new Set(["contact", "portfolio"]);
+
+const slug = decodeSlug(Astro.params.slug);
+if (!slug || DEDICATED.has(slug)) {
+  return Astro.rewrite("/404");
+}
+const { cacheHint, entry: page } = await getPage(slug);
+if (!page) {
+  return Astro.rewrite("/404");
+}
+if (Astro.cache?.enabled) {
+  Astro.cache.set(cacheHint);
+}
+const seo = getSeoMeta(page, { defaultDescription: page.data.intro, path: `/${slug}`, siteUrl: Astro.url.origin });
+---
+
+<Base
+  title={seo.title}
+  description={seo.description}
+  image={seo.ogImage}
+  canonical={seo.canonical}
+  robots={seo.robots}
+  content={{ collection: "pages", id: page.data.id, slug: page.id }}
+>
+  <PageHeader title={page.data.title} intro={page.data.intro} />
+  <div {...page.edit.content}><PageBlocks value={page.data.content} /></div>
+</Base>

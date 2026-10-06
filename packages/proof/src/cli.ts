@@ -92,9 +92,14 @@ const changedFilesBetween = (base: string, head: string): string[] =>
     .split("\n")
     .filter((line) => line !== "");
 
+/** Largest `git diff --binary` the patch ID is computed over. */
+const PATCH_MAX_BYTES = 512 * 1024 * 1024;
+
 const patchId = (base: string, head: string): string => {
   const diff = execFileSync("git", ["diff", "--binary", `${base}...${head}`], {
     cwd: repositoryRoot,
+    // Binary patches (a new site's seed photos) easily pass the 1 MiB default.
+    maxBuffer: PATCH_MAX_BYTES,
   });
   if (diff.length === 0) {
     return fail("The proof range has no changes");

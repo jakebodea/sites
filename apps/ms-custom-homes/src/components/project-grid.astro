@@ -1,0 +1,18 @@
+---
+import ProjectCard from "./project-card.astro";
+import type { Project } from "@/lib/content";
+
+interface Props {
+  projects: readonly { id: string; data: Project }[];
+}
+
+const { projects } = Astro.props;
+---
+
+<ul class="grid gap-x-8 gap-y-16 sm:grid-cols-2 lg:gap-x-10 lg:gap-y-20">
+  {projects.map((project, index) => (
+    <li class:list={["flex", { "sm:mt-24": index % 2 === 1 }]}>
+      <ProjectCard slug={project.id} project={project.data} aspect={index % 4 === 0 || index % 4 === 3 ? "aspect-[4/5]" : "aspect-[4/3]"} />
+    </li>
+  ))}
+</ul>

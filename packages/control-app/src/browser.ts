@@ -17,6 +17,10 @@ export const DEFAULT_WIDTHS = [1280, 375] as const;
 const PHONE_MAX_WIDTH = 480;
 const SCROLL_STEP_PX = 600;
 const SETTLE_MS = 400;
+/** Longest wait for running CSS animations and transitions before a capture. */
+const ANIMATION_CAP_MS = 6000;
+/** Longest wait for images still downloading before they count as broken. */
+const IMAGE_LOAD_CAP_MS = 10_000;
 
 export interface PageReport {
   readonly path: string;
@@ -64,6 +68,28 @@ const newContext = async (
   });
 };
 
+/**
+ * Waits (capped) for rendered, on-page images still downloading, so large
+ * photos are painted before a capture and are not mistaken for broken ones.
+ */
+const waitForImages = async (page: Page): Promise<void> => {
+  await Promise.race([
+    page.evaluate(async () => {
+      const width = document.documentElement.clientWidth;
+      await Promise.allSettled(
+        [...document.images].flatMap((image) => {
+          const box = image.getBoundingClientRect();
+          const onPage = box.right > 0 && box.left < width;
+          return !image.complete && onPage && image.checkVisibility()
+            ? [image.decode()]
+            : [];
+        })
+      );
+    }),
+    page.waitForTimeout(IMAGE_LOAD_CAP_MS),
+  ]);
+};
+
 /** Scrolls through the page so lazy images load, then returns to the top. */
 const loadEverything = async (page: Page): Promise<void> => {
   const height = await page.evaluate(() => document.body.scrollHeight);
@@ -75,16 +101,46 @@ const loadEverything = async (page: Page): Promise<void> => {
     window.scrollTo(0, 0);
   });
   await page.waitForTimeout(SETTLE_MS);
+  // Scroll reveals and entrance animations started during the scroll-through must
+  // finish, or the capture shows them half-faded. Looping animations never finish.
+  await Promise.race([
+    page.evaluate(async () => {
+      await Promise.allSettled(
+        document
+          .getAnimations()
+          .flatMap((animation) =>
+            animation.effect?.getTiming().iterations ===
+            Number.POSITIVE_INFINITY
+              ? []
+              : [animation.finished]
+          )
+      );
+    }),
+    page.waitForTimeout(ANIMATION_CAP_MS),
+  ]);
+  await waitForImages(page);
 };
 
+/**
+ * Images that failed to load (`loadEverything` already waited for downloads).
+ * Not every unloaded image is broken: lazy images under a `hidden
+ * lg:block` ancestor never load at this width, and lazy cards off to the side
+ * of a horizontal carousel load only once swiped into view. Both are skipped.
+ */
 const brokenImages = async (page: Page): Promise<string[]> =>
-  await page.evaluate(() =>
-    [...document.images].flatMap((image) =>
-      image.complete && image.naturalWidth > 0
-        ? []
-        : [image.currentSrc || image.src]
-    )
-  );
+  await page.evaluate(() => {
+    const width = document.documentElement.clientWidth;
+    const broken: string[] = [];
+    for (const image of document.images) {
+      const box = image.getBoundingClientRect();
+      const onPage = box.right > 0 && box.left < width;
+      const loaded = image.complete && image.naturalWidth > 0;
+      if (onPage && image.checkVisibility() && !loaded) {
+        broken.push(image.currentSrc || image.src);
+      }
+    }
+    return broken;
+  });
 
 /**
  * Signs in to EmDash with its dev-only bypass (seeds the site's content on

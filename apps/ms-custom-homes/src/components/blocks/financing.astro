@@ -1,0 +1,55 @@
+---
+/**
+ * Promotion for the lending partner. External links open in a new tab and carry
+ * the partner's campaign tag as entered in the CMS; the disclosure line keeps
+ * clear who is making the offer.
+ */
+import ArrowUpRight from "@lucide/astro/icons/arrow-up-right";
+import { sanitizeHref } from "emdash";
+import { Image } from "emdash/ui";
+import type { BlockComponentProps } from "emdash/ui";
+
+import ButtonLink from "@/components/button-link.astro";
+import { isExternal } from "@/lib/content";
+import type { PageContentFinancingBlock } from "../../../emdash-env";
+
+type Props = BlockComponentProps<PageContentFinancingBlock>;
+
+const { value } = Astro.props;
+const href = sanitizeHref(value.cta_url);
+const external = isExternal(href);
+---
+
+<section class="px-4 py-16 sm:px-6 sm:py-24 lg:px-10">
+  <div class="relative isolate mx-auto max-w-[86rem] overflow-hidden bg-slate text-white" data-reveal>
+    {value.image && (
+      <div class="absolute inset-y-0 right-0 -z-10 hidden w-1/2 lg:block" aria-hidden="true">
+        <Image image={value.image} alt="" sizes="50vw" class="size-full! object-cover opacity-55 mix-blend-luminosity" />
+        <div class="absolute inset-0 bg-linear-to-r from-slate via-slate/60 to-transparent"></div>
+      </div>
+    )}
+    <svg class="absolute -top-px left-10 -z-10 h-24 w-56 text-mist/25 sm:left-16" viewBox="0 0 224 96" fill="none" aria-hidden="true">
+      <path d="M0 95 L112 1 L224 95" stroke="currentColor" stroke-width="1.5" />
+    </svg>
+    <div class="grid gap-10 px-8 py-16 sm:px-14 sm:py-20 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] lg:px-20 lg:py-24">
+      <div>
+        {value.eyebrow && <p class="label-caps mb-6 flex items-center gap-4 text-champagne before:h-px before:w-10 before:bg-champagne before:content-['']">{value.eyebrow}</p>}
+        <h2 class="text-4xl text-white sm:text-5xl lg:text-6xl">{value.headline}</h2>
+        {value.body && <p class="mt-6 max-w-lg text-lg leading-relaxed text-white/80">{value.body}</p>}
+        <ButtonLink
+          href={href}
+          target={external ? "_blank" : undefined}
+          rel={external ? "noopener" : undefined}
+          variant="inverse"
+          size="hero"
+          class="mt-10"
+          data-analytics="financing"
+        >
+          {value.cta_label}<ArrowUpRight class="size-4" aria-hidden="true" />
+          {external && <span class="sr-only">(opens in a new tab)</span>}
+        </ButtonLink>
+        {value.disclosure && <p class="mt-8 max-w-lg text-xs leading-relaxed text-white/50">{value.disclosure}</p>}
+      </div>
+    </div>
+  </div>
+</section>

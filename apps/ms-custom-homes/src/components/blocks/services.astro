@@ -1,0 +1,42 @@
+---
+import { Image } from "emdash/ui";
+import type { BlockComponentProps } from "emdash/ui";
+
+import type { PageContentServicesBlock } from "../../../emdash-env";
+
+type Props = BlockComponentProps<PageContentServicesBlock>;
+
+const { value } = Astro.props;
+---
+
+<section class="bg-stone py-24 sm:py-32">
+  <div class="container-page">
+    <div class="grid gap-6 lg:grid-cols-2 lg:items-end">
+      <div>
+        {value.eyebrow && <p class="eyebrow mb-6" data-reveal>{value.eyebrow}</p>}
+        <h2 class="text-4xl sm:text-5xl lg:text-6xl" data-reveal style="--reveal-delay: 80ms">{value.headline}</h2>
+      </div>
+      {value.intro && <p class="max-w-md text-lg leading-relaxed text-muted-foreground lg:justify-self-end" data-reveal style="--reveal-delay: 160ms">{value.intro}</p>}
+    </div>
+    <ol class="mt-16 grid gap-x-8 gap-y-14 sm:grid-cols-2 lg:mt-20 lg:grid-cols-4">
+      {value.items.map((item, index) => (
+        <li class="group" data-reveal style={`--reveal-delay: ${index * 110}ms`}>
+          <div class="relative aspect-[3/4] overflow-hidden bg-muted">
+            {item.image && (
+              <Image
+                image={item.image}
+                alt={item.image.alt ?? ""}
+                sizes="(min-width: 1024px) 22vw, (min-width: 640px) 45vw, 100vw"
+                class="size-full! object-cover transition-transform duration-1600 ease-expo group-hover:scale-105 motion-reduce:transition-none"
+              />
+            )}
+            <span class="absolute top-5 left-5 font-display text-lg text-white/90 italic drop-shadow">{String(index + 1).padStart(2, "0")}</span>
+          </div>
+          <h3 class="mt-7 text-2xl sm:text-[1.7rem]">{item.title}</h3>
+          <div class="mt-3 h-px w-10 bg-champagne transition-[width] duration-700 ease-expo group-hover:w-20"></div>
+          <p class="mt-4 leading-relaxed text-muted-foreground">{item.body}</p>
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>

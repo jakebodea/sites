@@ -71,6 +71,47 @@
         "wrangler": "catalog:",
       },
     },
+    "apps/ms-custom-homes": {
+      "name": "@sites/ms-custom-homes",
+      "dependencies": {
+        "@astrojs/cloudflare": "catalog:",
+        "@astrojs/react": "catalog:",
+        "@base-ui/react": "catalog:",
+        "@emdash-cms/cloudflare": "catalog:",
+        "@jakebodea/cloudflare-kit": "workspace:*",
+        "@lucide/astro": "catalog:",
+        "astro": "catalog:",
+        "class-variance-authority": "catalog:",
+        "clsx": "catalog:",
+        "effect": "catalog:",
+        "emdash": "catalog:",
+        "lucide-react": "catalog:",
+        "react": "catalog:",
+        "react-dom": "catalog:",
+        "tailwind-merge": "catalog:",
+      },
+      "devDependencies": {
+        "@alchemy.run/frontend-frameworks": "catalog:",
+        "@astrojs/check": "catalog:",
+        "@cloudflare/workers-types": "catalog:",
+        "@effect/platform-bun": "catalog:",
+        "@effect/platform-node": "catalog:",
+        "@effect/vitest": "catalog:",
+        "@emnapi/core": "catalog:",
+        "@emnapi/runtime": "catalog:",
+        "@jakebodea/config": "workspace:*",
+        "@tailwindcss/vite": "catalog:",
+        "@types/bun": "catalog:",
+        "@types/react": "catalog:",
+        "@types/react-dom": "catalog:",
+        "alchemy": "catalog:",
+        "tailwindcss": "catalog:",
+        "tw-animate-css": "catalog:",
+        "typescript": "catalog:",
+        "vitest": "catalog:",
+        "wrangler": "catalog:",
+      },
+    },
     "packages/cloudflare-kit": {
       "name": "@jakebodea/cloudflare-kit",
       "dependencies": {
@@ -999,6 +1040,8 @@
     "@sindresorhus/merge-streams": ["@sindresorhus/merge-streams@4.0.0", "", {}, "sha512-tlqY9xq5ukxTUZBmoOp+m61cqwQD5pHJtFY3Mn8CA8ps6yghLH/Hw8UPdqg4OLmFW3IFlcXnQNmo/dh8HzXYIQ=="],
 
     "@sites/access-electric": ["@sites/access-electric@workspace:apps/access-electric"],
+
+    "@sites/ms-custom-homes": ["@sites/ms-custom-homes@workspace:apps/ms-custom-homes"],
 
     "@smithy/types": ["@smithy/types@4.19.0", "", { "dependencies": { "tslib": "^2.6.2" } }, "sha512-r7jh49VJxGerfAcTQA6gXcKc+98zOp/tqRwzYjgOE+iSQsP6cEU1hq2QzbuipmP68QtYdY9wKEhiCQZIzHgZ4Q=="],
 

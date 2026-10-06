@@ -1,0 +1,122 @@
+---
+import ArrowUpRight from "@lucide/astro/icons/arrow-up-right";
+
+import Logo from "@/components/brand/logo.astro";
+import type { NavItem } from "@/lib/content";
+import { isExternal } from "@/lib/content";
+import MobileNav from "./islands/mobile-nav";
+import ButtonLink from "./button-link.astro";
+
+interface Props {
+  title: string;
+  items: readonly NavItem[];
+  /** Float transparent over a full-bleed hero until the page scrolls (header.ts sets `data-scrolled`). */
+  overlay?: boolean;
+}
+
+const { items, overlay = false, title } = Astro.props;
+const current = Astro.url.pathname;
+const isActive = (url: string) =>
+  url === "/" ? current === "/" : current === url || current.startsWith(`${url}/`);
+---
+
+<header
+  class:list={["site-header group/header sticky top-0 z-40", { "is-overlay": overlay }]}
+  data-header
+>
+  <div class="header-surface absolute inset-0 -z-10 border-b border-border/80 bg-background/92 backdrop-blur-md transition-opacity duration-500" aria-hidden="true"></div>
+  <div class="container-page flex h-20 items-center justify-between gap-6 sm:h-24">
+    <a href="/" class="relative flex shrink-0 items-center" aria-label={`${title}, home`}>
+      <Logo variant="horizontal" class="logo-dark h-11 w-auto transition-opacity duration-500 sm:h-13" />
+      <Logo variant="horizontal" tone="white" class="logo-light absolute inset-y-0 left-0 h-11 w-auto opacity-0 transition-opacity duration-500 sm:h-13" />
+    </a>
+    <nav aria-label="Main" class="header-ink hidden items-center gap-1 transition-colors duration-500 lg:flex">
+      {items.map((item) => {
+        const external = isExternal(item.url);
+        return (
+          <a
+            href={item.url}
+            target={external ? "_blank" : undefined}
+            rel={external ? "noopener" : undefined}
+            aria-current={!external && isActive(item.url) ? "page" : undefined}
+            class="nav-link label-caps relative inline-flex items-center gap-1 px-4 py-3"
+          >
+            {item.label}
+            {external && <ArrowUpRight class="size-3 opacity-60" aria-hidden="true" />}
+          </a>
+        );
+      })}
+      <ButtonLink href="/contact" variant="hairline" size="cta" class="header-cta ml-4">Start your project</ButtonLink>
+    </nav>
+    <div class="header-ink transition-colors duration-500 lg:hidden">
+      <MobileNav client:media="(max-width: 1023px)" title={title} items={[...items]} currentPath={current} />
+    </div>
+  </div>
+</header>
+
+<script>
+  import "@/scripts/header";
+</script>
+
+<style>
+  .nav-link::after {
+    content: "";
+    position: absolute;
+    right: 1rem;
+    bottom: 0.45rem;
+    left: 1rem;
+    height: 1px;
+    background: var(--brand-champagne);
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.5s var(--ease-out-expo);
+  }
+
+  .nav-link:hover::after,
+  .nav-link[aria-current="page"]::after {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+
+  .header-ink {
+    color: var(--brand-slate);
+  }
+
+  /*
+   * Over the hero: the header keeps its sticky slot but pulls the hero up beneath
+   * it (negative margin), staying transparent until the page scrolls. Only with
+   * JS, which is what restores the solid header (header.ts).
+   */
+  :global(.js) .is-overlay {
+    margin-bottom: -5rem;
+  }
+
+  @media (min-width: 40rem) {
+    :global(.js) .is-overlay {
+      margin-bottom: -6rem;
+    }
+  }
+
+  :global(.js) .is-overlay:not([data-scrolled]) .header-surface,
+  :global(.js) .is-overlay:not([data-scrolled]) :global(.logo-dark) {
+    opacity: 0;
+  }
+
+  :global(.js) .is-overlay:not([data-scrolled]) :global(.logo-light) {
+    opacity: 1;
+  }
+
+  :global(.js) .is-overlay:not([data-scrolled]) .header-ink {
+    color: white;
+  }
+
+  :global(.js) .is-overlay:not([data-scrolled]) :global(.header-cta) {
+    border-color: rgb(255 255 255 / 0.5);
+    color: white;
+  }
+
+  :global(.js) .is-overlay:not([data-scrolled]) :global(.header-cta):hover {
+    background: white;
+    color: var(--brand-slate);
+  }
+</style>
