@@ -18,6 +18,10 @@ describe(affectedSites, () => {
     expect(affectedSites(["bun.lock"], sites)).toStrictEqual(sites);
   });
 
+  it("verifies every site when the Lighthouse budgets change", () => {
+    expect(affectedSites(["lighthouserc.json"], sites)).toStrictEqual(sites);
+  });
+
   it("deploys nothing for docs-only changes", () => {
     expect(affectedSites(["docs/stack.md", "AGENTS.md"], sites)).toStrictEqual(
       []
