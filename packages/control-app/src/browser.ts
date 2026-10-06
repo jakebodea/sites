@@ -68,6 +68,28 @@ const newContext = async (
   });
 };
 
+/**
+ * Waits (capped) for rendered, on-page images still downloading, so large
+ * photos are painted before a capture and are not mistaken for broken ones.
+ */
+const waitForImages = async (page: Page): Promise<void> => {
+  await Promise.race([
+    page.evaluate(async () => {
+      const width = document.documentElement.clientWidth;
+      await Promise.allSettled(
+        [...document.images].flatMap((image) => {
+          const box = image.getBoundingClientRect();
+          const onPage = box.right > 0 && box.left < width;
+          return !image.complete && onPage && image.checkVisibility()
+            ? [image.decode()]
+            : [];
+        })
+      );
+    }),
+    page.waitForTimeout(IMAGE_LOAD_CAP_MS),
+  ]);
+};
+
 /** Scrolls through the page so lazy images load, then returns to the top. */
 const loadEverything = async (page: Page): Promise<void> => {
   const height = await page.evaluate(() => document.body.scrollHeight);
@@ -96,31 +118,17 @@ const loadEverything = async (page: Page): Promise<void> => {
     }),
     page.waitForTimeout(ANIMATION_CAP_MS),
   ]);
+  await waitForImages(page);
 };
 
 /**
- * Images that failed to load, after giving the ones still downloading a moment
- * to finish. Not every unloaded image is broken: lazy images under a `hidden
+ * Images that failed to load (`loadEverything` already waited for downloads).
+ * Not every unloaded image is broken: lazy images under a `hidden
  * lg:block` ancestor never load at this width, and lazy cards off to the side
  * of a horizontal carousel load only once swiped into view. Both are skipped.
  */
-const brokenImages = async (page: Page): Promise<string[]> => {
-  await Promise.race([
-    page.evaluate(async () => {
-      const width = document.documentElement.clientWidth;
-      await Promise.allSettled(
-        [...document.images].flatMap((image) => {
-          const box = image.getBoundingClientRect();
-          const onPage = box.right > 0 && box.left < width;
-          return !image.complete && onPage && image.checkVisibility()
-            ? [image.decode()]
-            : [];
-        })
-      );
-    }),
-    page.waitForTimeout(IMAGE_LOAD_CAP_MS),
-  ]);
-  return await page.evaluate(() => {
+const brokenImages = async (page: Page): Promise<string[]> =>
+  await page.evaluate(() => {
     const width = document.documentElement.clientWidth;
     const broken: string[] = [];
     for (const image of document.images) {
@@ -133,7 +141,6 @@ const brokenImages = async (page: Page): Promise<string[]> => {
     }
     return broken;
   });
-};
 
 /**
  * Signs in to EmDash with its dev-only bypass (seeds the site's content on
