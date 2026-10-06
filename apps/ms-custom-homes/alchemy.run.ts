@@ -1,6 +1,7 @@
 import {
   BUILD_INPUTS_FILE,
   TURNSTILE_TEST_KEYS,
+  WORKER_COMPATIBILITY,
   devPort,
   monitoringProviders,
   productionDeployRefusal,
@@ -125,7 +126,10 @@ export default Alchemy.Stack(
           };
 
     const website = yield* Cloudflare.Website.Astro("Website", {
-      compatibility: { date: "2026-09-01", flags: ["nodejs_compat"] },
+      compatibility: {
+        date: WORKER_COMPATIBILITY.date,
+        flags: [...WORKER_COMPATIBILITY.flags],
+      },
       crons: stage.production ? [EMDASH_CRON, BACKUP_CRON] : [EMDASH_CRON],
       dev: { port, strictPort: true },
       domain: stage.production ? site.domain : undefined,

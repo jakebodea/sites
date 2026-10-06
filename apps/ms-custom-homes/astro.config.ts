@@ -9,7 +9,10 @@ import { d1, r2 } from "@emdash-cms/cloudflare";
 import { emdashOnAlchemyAliases } from "@jakebodea/cloudflare-kit/emdash/alchemy-workarounds";
 import { emailPlugin } from "@jakebodea/cloudflare-kit/emdash/email-plugin";
 import { seedMedia } from "@jakebodea/cloudflare-kit/emdash/seed-media";
-import { readBuildInputs } from "@jakebodea/cloudflare-kit/infra";
+import {
+  WORKER_COMPATIBILITY,
+  readBuildInputs,
+} from "@jakebodea/cloudflare-kit/infra";
 import tailwindcss from "@tailwindcss/vite";
 import { defineConfig, fontProviders } from "astro/config";
 import emdash from "emdash/astro";
@@ -30,8 +33,8 @@ const standaloneAdapter = standalone
   ? [
       distilledCloudflare({
         vite: {
-          compatibilityDate: "2026-09-01",
-          compatibilityFlags: ["nodejs_compat"],
+          compatibilityDate: WORKER_COMPATIBILITY.date,
+          compatibilityFlags: [...WORKER_COMPATIBILITY.flags],
         },
       }),
     ]
