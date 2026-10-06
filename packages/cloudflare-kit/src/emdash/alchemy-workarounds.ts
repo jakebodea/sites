@@ -44,6 +44,12 @@ export const emdashOnAlchemyAliases = (workerEntry: string): AliasEntry[] => [
     replacement: "@alchemy.run/frontend-frameworks/astro/entrypoints/server.js",
   },
   {
+    // Alchemy's noop service deletes the output format, so EmDash's endpoint serves
+    // originals. Restore Astro's format/width URLs; only the endpoint transforms bytes.
+    find: /^.*\/assets\/services\/noop(?:\.js)?$/u,
+    replacement: "@astrojs/cloudflare/image-service-workerd",
+  },
+  {
     // 3. Alchemy installs a passthrough `/_image` endpoint that EmDash cannot wrap; serve
     //    EmDash's Cloudflare endpoint (reads media from R2, resizes with the IMAGES binding).
     find: /^.*\/image-passthrough-endpoint\.js$/u,

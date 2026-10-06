@@ -25,11 +25,14 @@ Guiding principle: be all-in on Cloudflare + Alchemy + Effect, add as few vendor
 
 ### EmDash on Alchemy workarounds (verified live 2026-10-05)
 
-Alchemy's Astro adapter pins its own Worker entry and image endpoint. Three Vite aliases in the site's `astro.config` fix it; keep them in one commented block so they're easy to delete when Alchemy supports a custom entry:
+Alchemy's Astro adapter pins its own Worker entry and image endpoint. Four Vite aliases in the site's `astro.config` fix it; keep them in one commented block so they're easy to delete when Alchemy supports a custom entry:
 
 1. Alchemy's pinned entry (`@alchemy.run/frontend-frameworks/astro/entrypoints/server`) → `src/worker.ts` (keeps EmDash's `scheduled()` cron + `PluginBridge`).
 2. `@astrojs/cloudflare/entrypoints/server` → Alchemy's vendored `.../entrypoints/server.js`.
-3. Alchemy's `image-passthrough-endpoint.js` → `@emdash-cms/cloudflare/image-endpoint` (+ bind `IMAGES: Cloudflare.Images.Images("IMAGES")`).
+3. Astro’s `assets/services/noop` → `@astrojs/cloudflare/image-service-workerd`: Alchemy forces the noop service, which removes the output format. Restore format and responsive width URLs so the endpoint transforms instead of streaming originals.
+4. Alchemy's `image-passthrough-endpoint.js` → `@emdash-cms/cloudflare/image-endpoint` (+ bind `IMAGES: Cloudflare.Images.Images("IMAGES")`).
+
+The CMS sites authorize only their configured hostname’s `/_emdash/api/media/file/**` path for image optimization (localhost in credential-free audits). Astro’s `site` does not populate EmDash’s image source allowlist, so this pattern is explicit. Local built-Worker verification on 2026-10-06 confirmed resized WebP output and rejection of unapproved external origins; deployed verification remains required.
 
 Also:
 
