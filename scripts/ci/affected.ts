@@ -17,6 +17,7 @@ const SHARED_PATHS = [
   /^turbo\.json$/u,
   /^tsconfig\.json$/u,
   /^bunfig\.toml$/u,
+  /^lighthouserc\.json$/u,
 ];
 
 export const affectedSites = (
