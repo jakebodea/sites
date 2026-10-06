@@ -16,12 +16,23 @@ const site = {
 describe(resolveStage, () => {
   it("serves prod from the custom domain", () => {
     expect(resolveStage(site, "prod")).toStrictEqual({
+      domain: "example.com",
       kind: "production",
       origin: "https://example.com",
       production: true,
       stage: "prod",
       workerName: "example-prod",
     });
+  });
+
+  it("serves prod from workers.dev until the site has a domain", () => {
+    expect(resolveStage({ ...site, domain: null }, "prod")).toMatchObject({
+      origin: "https://example-prod.acme.workers.dev",
+      production: true,
+    });
+    expect(
+      resolveStage({ ...site, domain: null }, "prod").domain
+    ).toBeUndefined();
   });
 
   it("serves every other stage from workers.dev", () => {

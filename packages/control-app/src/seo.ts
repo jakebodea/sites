@@ -17,10 +17,17 @@ export interface SeoFinding {
   readonly detail: string;
 }
 
-/** Non-production stages live on workers.dev or localhost; production is the custom domain. */
+/**
+ * Non-production stages live on workers.dev or localhost. Production is the
+ * custom domain, or `<site>-prod.<account>.workers.dev` for a site without one
+ * (Worker names are `<site>-<stage>`).
+ */
 export const isProductionOrigin = (origin: string): boolean => {
   const { hostname } = new URL(origin);
-  return hostname !== "localhost" && !hostname.endsWith(".workers.dev");
+  if (hostname.endsWith(".workers.dev")) {
+    return hostname.split(".")[0]?.endsWith("-prod") ?? false;
+  }
+  return hostname !== "localhost";
 };
 
 export interface SeoOptions {

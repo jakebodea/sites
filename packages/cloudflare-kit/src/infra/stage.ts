@@ -2,7 +2,7 @@
  * Stage naming and per-stage origins, shared by every site's `alchemy.run.ts`
  * and the CI scripts so they agree on what a stage is called and where it lives.
  *
- * - `prod`: the live site on the custom domain.
+ * - `prod`: the live site on the custom domain, or on workers.dev until the site has one.
  * - `pr-<n>`: a pull request preview, destroyed when the PR closes.
  * - `dev-<worktree>`: a developer's `alchemy dev` stage (one per git worktree).
  * - anything else (for example `ae-preview`): a named, long-lived preview.
@@ -13,8 +13,12 @@ export type StageKind = "production" | "pull-request" | "development" | "named";
 export interface SiteIdentity {
   /** Short kebab-case id; prefixes every Worker name (`<id>-<stage>`). */
   readonly id: string;
-  /** Production hostname, attached as a custom domain on `prod` only. */
-  readonly domain: string;
+  /**
+   * Production hostname, attached as a custom domain on `prod` only. Leave it
+   * unset until the zone is on the Cloudflare account: attaching a domain the
+   * account doesn't own fails the deploy, so prod serves from workers.dev instead.
+   */
+  readonly domain: string | null;
   /** The Cloudflare account's `workers.dev` subdomain, which non-prod stages are served from. */
   readonly workersSubdomain: string;
 }
@@ -27,6 +31,8 @@ export interface StageSettings {
   readonly workerName: string;
   /** Public origin visitors use for this stage. */
   readonly origin: string;
+  /** Custom domain to attach: the site's domain on `prod`, otherwise none. */
+  readonly domain: string | undefined;
 }
 
 const PULL_REQUEST_STAGE = /^pr-[1-9]\d*$/u;
@@ -58,11 +64,14 @@ export const resolveStage = (
   const kind = stageKind(stage);
   const production = kind === "production";
   const workerName = `${site.id}-${stage}`;
+  const domain = production && site.domain !== null ? site.domain : undefined;
   return {
+    domain,
     kind,
-    origin: production
-      ? `https://${site.domain}`
-      : `https://${workerName}.${site.workersSubdomain}.workers.dev`,
+    origin:
+      domain === undefined
+        ? `https://${workerName}.${site.workersSubdomain}.workers.dev`
+        : `https://${domain}`,
     production,
     stage,
     workerName,

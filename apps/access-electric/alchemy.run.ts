@@ -132,7 +132,7 @@ export default Alchemy.Stack(
       },
       crons: stage.production ? [EMDASH_CRON, BACKUP_CRON] : [EMDASH_CRON],
       dev: { port, strictPort: true },
-      domain: stage.production ? site.domain : undefined,
+      domain: stage.domain,
       env,
       memo: {
         // Hash the app, the lockfile, workspace packages it imports (auto), and the

@@ -9,7 +9,7 @@ Most of the checklist is automated. `bun run app -- seo` crawls every sitemap pa
 
 ```bash
 bun run app -- seo                    # local dev stage
-bun run app -- seo --url https://…    # any deployed stage; production rules apply off workers.dev/localhost
+bun run app -- seo --url https://…    # any deployed stage; production rules apply to the custom domain and <site>-prod.*.workers.dev
 ```
 
 Errors must be zero. Warnings are judgment calls: fix them in code, or leave them to editors when they're about content (a long project name: the editor sets an SEO title in the entry's SEO panel).

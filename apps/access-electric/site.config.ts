@@ -32,8 +32,12 @@ export const site = {
   /** Appended to meta descriptions too short for a search snippet (see `metaDescription`). */
   descriptionContext:
     "Commercial electrical construction by Access Electric across Southern California.",
-  /** Attached as a custom domain on the `prod` stage only. */
-  domain: "accesselectricinc.com",
+  /**
+   * Attached as a custom domain on the `prod` stage only. Unset until the zone is
+   * on the Cloudflare account (attaching an unowned domain fails the deploy), so
+   * prod serves from workers.dev for now. Intended domain: accesselectricinc.com.
+   */
+  domain: null,
   /** Prefixes Worker names (`access-electric-<stage>`) and the Alchemy stack. */
   id: "access-electric",
   /**

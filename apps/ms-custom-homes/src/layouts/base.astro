@@ -64,7 +64,7 @@ const analytics = {
   enabled: env.STAGE === "prod",
   projectKey: env.POSTHOG_PROJECT_KEY,
   proxyPath: env.POSTHOG_PROXY_PATH,
-  siteHost: site.domain,
+  siteHost: new URL(origin).hostname,
   uiHost: env.POSTHOG_HOST.replace(".i.posthog.com", ".posthog.com"),
 };
 ---

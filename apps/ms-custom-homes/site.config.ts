@@ -40,8 +40,12 @@ export const site = {
   /** Appended to meta descriptions too short for a search snippet (see `metaDescription`). */
   descriptionContext:
     "Custom homes and remodels by MS Custom Homes, Inc. in Orange County, California.",
-  /** Attached as a custom domain on the `prod` stage only. */
-  domain: "mscustomhomesinc.net",
+  /**
+   * Attached as a custom domain on the `prod` stage only. Unset until the zone is
+   * on the Cloudflare account (attaching an unowned domain fails the deploy), so
+   * prod serves from workers.dev for now. Intended domain: mscustomhomesinc.net.
+   */
+  domain: null,
   /** Prefixes Worker names (`ms-custom-homes-<stage>`) and the Alchemy stack. */
   id: "ms-custom-homes",
   /**

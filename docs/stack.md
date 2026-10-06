@@ -77,7 +77,7 @@ No Infisical, no 1Password.
 
 - `dev-<worktree>`: per-worktree `alchemy dev` stage (parallel agents never collide).
 - `pr-<n>`: per-PR preview, destroyed on close.
-- `prod`: custom domain attached only here; deploys only from CI on `main`.
+- `prod`: custom domain attached only here (left unset until the zone is on the account, so prod serves from workers.dev); deploys only from CI on `main`.
 - State: `Cloudflare.state()`.
 
 ## DevOps
