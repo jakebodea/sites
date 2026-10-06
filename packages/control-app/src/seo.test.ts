@@ -62,12 +62,15 @@ describe(pageFindings, () => {
 });
 
 describe("origins", () => {
-  it("treats localhost and workers.dev as non-production", () => {
+  it("treats localhost and non-prod workers.dev stages as non-production", () => {
     expect(isProductionOrigin("http://localhost:4591")).toBeFalsy();
     expect(
       isProductionOrigin("https://site-pr-4.acct.workers.dev")
     ).toBeFalsy();
     expect(isProductionOrigin("https://example.com")).toBeTruthy();
+    expect(
+      isProductionOrigin("https://site-prod.acct.workers.dev")
+    ).toBeTruthy();
   });
 
   it("keeps same-origin paths only", () => {

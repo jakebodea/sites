@@ -27,8 +27,12 @@ export const site = {
   /** Appended to meta descriptions too short for a search snippet (see `metaDescription`). */
   descriptionContext:
     "Websites, web apps, and technical consulting by Jake Bodea at JBO Labs.",
-  /** Attached as a custom domain on the `prod` stage only. */
-  domain: "jbolabs.com",
+  /**
+   * Attached as a custom domain on the `prod` stage only. Unset until the zone is
+   * on the Cloudflare account (attaching an unowned domain fails the deploy), so
+   * prod serves from workers.dev for now. Intended domain: jbolabs.com.
+   */
+  domain: null,
   /** Prefixes Worker names (`jbolabs-<stage>`) and the Alchemy stack. */
   id: "jbolabs",
   name: "JBO Labs",

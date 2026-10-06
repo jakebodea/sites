@@ -66,7 +66,7 @@ The Alchemy profile comes from `ALCHEMY_PROFILE` (e.g. `ALCHEMY_PROFILE=admin`).
 - Monitoring: Cloudflare Workers Logs/traces everywhere; Axiom datasets + monitors on prod with `AXIOM_TOKEN`.
 - Backups: D1 Time Travel + daily dump of D1 and media into the retained `Backups` bucket (prod).
 - Secrets: no Infisical/1Password. Main-checkout `.env`, GitHub environment secrets, `Alchemy.Random`.
-- Stages: `dev-<worktree>` (local), `pr-<n>` (previews, destroyed on close), `prod` (custom domain).
+- Stages: `dev-<worktree>` (local), `pr-<n>` (previews, destroyed on close), `prod` (custom domain; `<site>-prod.jakebodea.workers.dev` while `site.config.ts` has no `domain`, since attaching an unowned domain fails the deploy).
 
 ## Style
 
