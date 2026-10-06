@@ -23,4 +23,4 @@ Each enquiry is written to the `leads` table in the site's D1 database, then ema
 
 ## Domain
 
-`domain` is `null` until the zone is on the Cloudflare account, so prod serves from `https://jbolabs-prod.jakebodea.workers.dev`. Set it (for example `"jbolabs.com"`) and merge; the next prod deploy attaches it.
+Production serves at `https://jbolabs.com`. Alchemy attaches the apex and `www` hostnames. The Worker permanently redirects HTTP, `www`, and its old workers.dev hostname to HTTPS on the apex, preserving the path and query. Preview stages retain their workers.dev URLs.

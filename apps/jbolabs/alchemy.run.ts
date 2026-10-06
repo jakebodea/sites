@@ -107,7 +107,10 @@ export default Alchemy.Stack(
       },
       crons: stage.production ? [BACKUP_CRON] : [],
       dev: { port, strictPort: true },
-      domain: stage.domain,
+      domain:
+        stage.domain === undefined
+          ? undefined
+          : { aliases: [`www.${stage.domain}`], name: stage.domain },
       env,
       memo: {
         // Hash the app, the lockfile, workspace packages it imports (auto), and the
