@@ -30,7 +30,7 @@ bun run app -- smoke --url <stage url>
 2. Fix the cause in code (the stack, `@jakebodea/cloudflare-kit/infra`, or the site) and redeploy.
 3. If the stage's data is wedged (for example EmDash answering "EmDash is not initialized" because a cancelled request left its migration lock held), ask, then `alchemy destroy --stage <stage>` and deploy it again. Do not edit tables to unstick it.
 
-Known causes: seed images missing on deployed stages came from Workers' same-zone `fetch()` going to the (nonexistent) `workers.dev` origin; `WORKER_COMPATIBILITY` now sets `global_fetch_strictly_public`. A stuck migration lock came from `app seed` aborting a slow first setup request; setup requests now get 180 s.
+Known causes: seed images missing on deployed stages came from Workers' same-zone `fetch()` going to the (nonexistent) `workers.dev` origin; `WORKER_COMPATIBILITY` now sets `global_fetch_strictly_public`. A stuck migration lock came from a short-deadline request (`app seed`, then the prod smoke check) aborting the first request on a fresh database; CI now runs `emdash migrate` in the deploy, before any request.
 
 ## CI control plane (once per repo, then to rotate)
 
