@@ -120,12 +120,26 @@ jobs:
     needs: [affected, lint-test, verify]
     if: always()
     runs-on: ubuntu-latest
+    permissions:
+      actions: write
     outputs:
       sites: ${{ needs.affected.outputs.sites }}
     steps:
       - name: Require every gate
-        if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')
+        if: contains(needs.*.result, 'failure')
         run: exit 1
+      # A newer run cancels a superseded run's gates: report cancelled, not failed. Either
+      # way the check is not a success, so it still blocks merging.
+      - name: Mirror a cancelled gate
+        if: contains(needs.*.result, 'cancelled')
+        run: |
+          gh run cancel "$RUN" --repo "$REPO"
+          sleep 120
+          exit 1
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          RUN: ${{ github.run_id }}
 
   dependency-review:
     # GitHub supports dependency review only on public repos or with Advanced Security;
