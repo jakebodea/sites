@@ -1,6 +1,6 @@
 # Stack and decisions
 
-The reference for how Jake builds marketing sites and products. Decided 2026-10-05 after reviewing T3 Code, Executor v2, pcobooster, shouldertap, and the earlier sites (Black Swan Realty, Access Electric, MS Homes). Change a decision by editing this file in the same PR as the code.
+The reference for how Jake builds marketing sites and products. Decided 2026-10-05 after reviewing T3 Code, Executor v2, pcobooster, shouldertap, and the earlier sites (Black Swan Realty, Access Electric, MS Homes). This file lists current choices. Why a one-way choice was made lives in [`docs/adr/`](adr/), one dated record per decision. To change a decision, edit this file in the same PR as the code, and add an ADR (from [`adr/template.md`](adr/template.md)) when the reasons matter later.
 
 Guiding principle: be all-in on Cloudflare + Alchemy + Effect, add as few vendors as possible, and make every repo something an agent can change _and prove_ on its own.
 
@@ -20,7 +20,7 @@ Guiding principle: be all-in on Cloudflare + Alchemy + Effect, add as few vendor
 - **shadcn/ui as React islands** only where interactive (mobile nav, gallery, contact form). Tailwind v4. Mobile-first, accessible, Core Web Vitals budgets.
 - **Effect on the server only** (contact form, email). React islands stay plain React.
 - **Content**: client-editable through EmDash. **CMS login**: EmDash invites + passkeys; invite the client as **Editor**; finish EmDash setup immediately after the first prod deploy (whoever completes setup first becomes Admin).
-- **Contact form**: Turnstile → store lead → Cloudflare Email notification. Verification outages, save failures, and defects log recoverable lead details with a request ID and email `ALERT_EMAIL`. Visitor rejection never alerts; inbox delivery failure logs and the visitor still succeeds.
+- **Contact form**: Turnstile → store lead → email the client through Cloudflare Email Service. Until the site has a verified sender (`EMAIL_FROM`), mail is logged, not sent. Failure alerts are under [Analytics, logs, monitoring](#analytics-logs-monitoring).
 - **Hosting**: all client sites in Jake's Cloudflare account; hand off later with Alchemy adopt/transfer if a client wants ownership.
 
 ### EmDash on Alchemy workarounds (verified live 2026-10-05)
@@ -59,12 +59,13 @@ Local verification runs entirely under `alchemy dev`, which (as of `alchemy@2.0.
 
 ## Analytics, logs, monitoring
 
-- **Client traffic**: Cloudflare Web Analytics, one prod-only `Cloudflare.Rum.Site` per site, managed by Alchemy. The shared beacon only renders on the production origin hostname or its `www` form. Dev and preview collect no traffic. Cookieless, no consent banner.
-- **Client stats**: `@eisbachcode/emdash-plugin-analytics@0.3.1` in EmDash. Its settings come from Worker bindings on the minute cron, before EmDash runs scheduled tasks. Only changed rows are written; tokens are encrypted and compared by plaintext and key fingerprint. Fresh databases retry on the next tick. Non-prod uses demo data and deletes Cloudflare settings. jbolabs has no CMS and uses the Cloudflare dashboard.
-- **Analytics credentials**: `stacks/github.ts` creates an account-owned token with only Account Analytics Read and writes `CF_ANALYTICS_API_TOKEN` into the production GitHub environment. Each CMS stage generates a canonical base64url `EMDASH_ENCRYPTION_KEY` with `Alchemy.Random`. A missing prod API token warns and leaves the plugin's setup check visible.
-- **Client alerts**: the shared contact pipeline logs `lead submit failed` with lead details and `requestId`, then emails the private `ALERT_EMAIL` when a verified sender exists. Until then, Workers Logs are the recovery path. No PostHog or Axiom on client sites. See [ADR 0001](adr/0001-client-site-analytics-and-alerting.md).
-- **Logs/traces**: Cloudflare native Workers Logs and traces always on through `siteObservability`.
-- **Products**: PostHog remains the default for funnels, replay, flags, experiments, and errors. Manage it through a custom Alchemy provider on `@distilled.cloud/posthog` when the first product needs it. The removed client-site browser/server/proxy code remains in git history. Use Axiom when a product needs log search and retention beyond Workers Logs.
+Why each client-site choice was made, and how it is built: [ADR 0001](adr/0001-client-site-analytics-and-alerting.md).
+
+- **Client traffic**: Cloudflare Web Analytics, one prod-only `Cloudflare.Rum.Site` per site. Cookieless, no consent banner. Dev and preview collect nothing.
+- **Client stats**: `@eisbachcode/emdash-plugin-analytics` in the EmDash admin. Its settings come from Worker bindings, never the settings form. Dev and preview show demo data. jbolabs has no CMS and uses the Cloudflare dashboard.
+- **Client alerts**: a contact submission that may be lost is logged with the lead and emailed to `ALERT_EMAIL` once the site has a verified sender. No PostHog or Axiom on client sites.
+- **Logs and traces**: Cloudflare Workers Logs and traces on every stage, through `siteObservability`.
+- **Products**: PostHog for funnels, replay, flags, experiments, and errors, through a custom Alchemy provider on `@distilled.cloud/posthog`. Axiom when a product needs log search and retention beyond Workers Logs.
 - Disable Cloudflare Web Analytics edge auto-injection on product zones (`Cloudflare.Rum.Site`).
 
 ## Secrets
@@ -111,7 +112,7 @@ An agent's work isn't done until it's proven on the real running surface.
 
 ## Agent docs
 
-T3 Code / Executor style: root `AGENTS.md` (+ `CLAUDE.md` symlink) with stack map, commands, never-break rules, definition of done; `CONTEXT.md` domain glossary; skills in `.agents/skills/` (`new-site`, `deploy`, `add-section`, `control-app`, `ultracite`, `shadcn`).
+T3 Code / Executor style: root `AGENTS.md` (+ `CLAUDE.md` symlink) with stack map, commands, never-break rules, definition of done; `CONTEXT.md` domain glossary; `docs/stack.md` current choices; `docs/adr/` decision records; skills in `.agents/skills/` (`new-site`, `deploy`, `add-section`, `control-app`, `ultracite`, `shadcn`).
 
 ## Open items
 

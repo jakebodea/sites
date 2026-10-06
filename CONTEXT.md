@@ -19,3 +19,11 @@ Shared vocabulary for this repo. Use these words; avoid the listed alternatives.
 **Control plane**: the repo-level stacks in `stacks/` (GitHub environments, deploy tokens, remote cache), as opposed to site stacks.
 
 **Workaround**: one of the documented EmDash-on-Alchemy shims (Vite aliases, SSR pre-bundling). Each names the upstream gap it covers.
+
+**Web Analytics**: Cloudflare's cookieless traffic measurement, one `Cloudflare.Rum.Site` per site on prod. _Avoid_: RUM (the API's name), PostHog (products only).
+
+**Analytics plugin**: `@eisbachcode/emdash-plugin-analytics`, which shows Web Analytics numbers in the EmDash admin. Its settings come from Worker bindings.
+
+**Lead alert**: the email to `ALERT_EMAIL` when a contact submission may be lost (Turnstile unavailable, the save failed). _Avoid_: lead notification (the email the client gets for every lead).
+
+**ADR**: one dated decision record in `docs/adr/`. Superseded, never rewritten.

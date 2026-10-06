@@ -2,7 +2,7 @@
 
 A monorepo of client marketing sites. Each site is an Astro + EmDash CMS app on Cloudflare Workers, deployed with Alchemy v2. Server code is Effect 4. The reference site is `apps/access-electric`.
 
-Full rationale for every choice: [docs/stack.md](docs/stack.md). Domain terms: [CONTEXT.md](CONTEXT.md).
+Current choices: [docs/stack.md](docs/stack.md). Why each one-way choice was made: [docs/adr/](docs/adr/). Domain terms: [CONTEXT.md](CONTEXT.md).
 
 ## Map
 
@@ -18,6 +18,7 @@ Full rationale for every choice: [docs/stack.md](docs/stack.md). Domain terms: [
 | `packages/config` | tsconfig + strict oxlint/oxfmt presets + local lint rules |
 | `stacks/` | Repo-level Alchemy stacks: `github.ts` (CI control plane), `turbo-cache.ts` (remote cache) |
 | `scripts/ci/` | Logic the GitHub workflows call (tested TypeScript, thin YAML) |
+| `docs/` | `stack.md` (current choices), `adr/` (one dated record per decision, from `adr/template.md`) |
 
 `packages/*` will move to the `@jakebodea/*` toolkit repo: never import from `apps/` into `packages/`.
 
@@ -59,14 +60,7 @@ The Alchemy profile comes from `ALCHEMY_PROFILE` (e.g. `ALCHEMY_PROFILE=admin`).
 
 ## Decisions
 
-- Hosting: every client site lives in Jake's Cloudflare account; hand off later with Alchemy adopt.
-- CMS login: EmDash invites + passkeys. Finish EmDash setup right after the first prod deploy (whoever completes setup first becomes admin), then invite the client as **Editor**.
-- Email: Cloudflare Email Service (`EMAIL_FROM` once a domain is verified); logged, not sent, until then.
-- Analytics: Cloudflare Web Analytics on prod, cookieless, no consent banner. EmDash sites show stats through the Analytics plugin; its settings reconcile from bindings every minute. Dev and preview use demo data. See [ADR 0001](docs/adr/0001-client-site-analytics-and-alerting.md). PostHog is for products only.
-- Monitoring: Cloudflare Workers Logs/traces everywhere. Contact failures log recoverable lead details and email `ALERT_EMAIL` once `EMAIL_FROM` is verified. Inbox delivery failures log only because the lead is already saved.
-- Backups: D1 Time Travel + daily dump of D1 and media into the retained `Backups` bucket (prod).
-- Secrets: no Infisical/1Password. Main-checkout `.env`, GitHub environment secrets, `Alchemy.Random`.
-- Stages: `dev-<worktree>` (local), `pr-<n>` (previews, destroyed on close), `prod` (custom domain; `<site>-prod.jakebodea.workers.dev` while `site.config.ts` has no `domain`, since attaching an unowned domain fails the deploy).
+Hosting, CMS login, email, analytics, monitoring, backups, secrets, and stages are decided. Read [docs/stack.md](docs/stack.md) before changing any of them, and the linked ADR for why. A change to a decision edits `docs/stack.md` in the same PR. An `/architect` run writes its design into a new ADR.
 
 ## Style
 
