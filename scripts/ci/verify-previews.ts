@@ -16,15 +16,13 @@ import pLimit from "p-limit";
 
 import { command } from "./command.ts";
 import { controlCheck } from "./control-check.ts";
+import { lighthouse } from "./lighthouse.ts";
 
 const Deployments = Schema.fromJsonString(
   Schema.Array(
     Schema.Struct({ site: Schema.String, url: Schema.NullOr(Schema.String) })
   )
 );
-/** Pages held to the performance budgets: the landing page and the conversion page. */
-const BUDGET_PATHS = ["/", "/contact"];
-
 const root = path.resolve(import.meta.dirname, "../..");
 const production = process.argv.includes("--production");
 const output = path.join(root, ".artifacts", "ci");
@@ -69,21 +67,7 @@ const results = await Promise.all(
           }
           if (!production) {
             await browser(async () => {
-              const directory = path.join(output, site, "lighthouse");
-              mkdirSync(directory, { recursive: true });
-              await command(
-                "bunx",
-                [
-                  "@lhci/cli@0.15.1",
-                  "autorun",
-                  `--config=${path.join(root, "lighthouserc.json")}`,
-                  `--upload.outputDir=${directory}`,
-                  ...BUDGET_PATHS.map(
-                    (route) => `--collect.url=${url}${route}`
-                  ),
-                ],
-                directory
-              );
+              await lighthouse(url, path.join(output, site, "lighthouse"));
             });
           }
           return true;

@@ -62,8 +62,8 @@ jobs:
           echo "sites=$sites" >> "$GITHUB_OUTPUT"
         env:
           BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
-      - name: Prepare local SEO build inputs
-        run: bun scripts/ci/local-seo.ts --prepare --sites "$SITES"
+      - name: Prepare local verification build inputs
+        run: bun scripts/ci/local-verify.ts --prepare --sites "$SITES"
         env:
           SITES: ${{ steps.affected.outputs.sites }}
       - name: Typecheck, test, build (affected, cached)
@@ -75,15 +75,19 @@ jobs:
         with:
           path: .turbo/cache
           key: ${{ steps.turbo-cache.outputs.cache-primary-key }}
-      - name: Audit affected sites locally before deployment
-        run: bun scripts/ci/local-seo.ts --sites "$SITES"
+      # Miniflare supports Node; use its native runtime rather than Bun's subprocess emulation.
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: "24"
+      - name: Required smoke, SEO and Lighthouse for affected sites
+        run: node scripts/ci/local-verify.ts --sites "$SITES"
         env:
           SITES: ${{ steps.affected.outputs.sites }}
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         if: always()
         with:
-          name: local-seo-verification
-          path: .artifacts/ci/local-seo/
+          name: required-site-verification
+          path: .artifacts/ci/local-verification/
           if-no-files-found: ignore
 
   dependency-review:

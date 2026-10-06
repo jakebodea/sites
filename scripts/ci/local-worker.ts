@@ -1,5 +1,7 @@
+import { randomUUID } from "node:crypto";
 import { existsSync, readFileSync, readdirSync } from "node:fs";
 import path from "node:path";
+import { setTimeout as delay } from "node:timers/promises";
 
 import {
   TURNSTILE_TEST_KEYS,
@@ -31,6 +33,7 @@ const text = (value: string) =>
 
 /** Execute Alchemy's standalone build with disposable, local-only bindings. */
 export const localWorker = async (directory: string, cms: boolean) => {
+  const scope = `audit-${randomUUID()}`;
   const server = path.join(directory, "dist/server");
   const modules: NonNullable<WorkerOptions["config"]["manifest"]>["modules"] =
     {};
@@ -52,14 +55,14 @@ export const localWorker = async (directory: string, cms: boolean) => {
     AXIOM_LOGS_URL: text(""),
     AXIOM_TRACES_DATASET: text(""),
     AXIOM_TRACES_URL: text(""),
-    BACKUPS: { name: "local-seo-backups", type: "r2" },
-    DB: { id: "local-seo-db", type: "d1" },
+    BACKUPS: { name: `${scope}-backups`, type: "r2" },
+    DB: { id: `${scope}-db`, type: "d1" },
     LEAD_NOTIFY_FROM: text(""),
     LEAD_NOTIFY_TO: text(""),
     POSTHOG_HOST: text(""),
     POSTHOG_PROJECT_KEY: text(""),
     POSTHOG_PROXY_PATH: text(""),
-    SESSION: { id: "local-seo-session", type: "kv" },
+    SESSION: { id: `${scope}-session`, type: "kv" },
     SITE_ORIGIN: text("http://localhost"),
     STAGE: text("dev-seo"),
     TURNSTILE_SECRET_KEY: text(TURNSTILE_TEST_KEYS.secretKey),
@@ -75,18 +78,18 @@ export const localWorker = async (directory: string, cms: boolean) => {
     compatibilityFlags: [...WORKER_COMPATIBILITY.flags],
     env,
     manifest: { mainModule: "entry.mjs", modules, modulesRoot: server },
-    name: "local-seo",
+    name: scope,
   } satisfies WorkerOptions["config"];
   if (cms) {
     env.IMAGES = { type: "images" };
-    env.MEDIA = { name: "local-seo-media", type: "r2" };
+    env.MEDIA = { name: `${scope}-media`, type: "r2" };
   }
   const worker: WorkerOptions = { config };
   if (cms) {
     const mediaBase = readBuildInputs(directory).seedMediaBase;
     if (mediaBase === undefined) {
       throw new Error(
-        "Prepare local SEO build inputs before running a CMS audit"
+        "Prepare local verification build inputs before running a CMS audit"
       );
     }
     const base = new URL(mediaBase.endsWith("/") ? mediaBase : `${mediaBase}/`);
@@ -127,18 +130,30 @@ export const localWorker = async (directory: string, cms: boolean) => {
     };
   }
   const runtime = new Miniflare({ cf: false, port: 0, workers: [worker] });
+  const startup = new AbortController();
   try {
-    const url = await runtime.ready;
-    url.hostname = "localhost";
-    config.env.SITE_ORIGIN = text(url.origin);
-    await runtime.setOptions({
-      cf: false,
-      port: Number(url.port),
-      workers: [worker],
-    });
-    return { origin: url.origin, runtime };
+    // Bound the native process boot, separately from EmDash's 180 s migrations.
+    return await Promise.race([
+      (async () => {
+        const url = await runtime.ready;
+        url.hostname = "localhost";
+        config.env.SITE_ORIGIN = text(url.origin);
+        await runtime.setOptions({
+          cf: false,
+          port: Number(url.port),
+          workers: [worker],
+        });
+        return { origin: url.origin, runtime };
+      })(),
+      (async () => {
+        await delay(30_000, undefined, { signal: startup.signal });
+        throw new Error("Local Worker startup exceeded 30 s");
+      })(),
+    ]);
   } catch (error) {
     await runtime.dispose();
     throw error;
+  } finally {
+    startup.abort();
   }
 };
