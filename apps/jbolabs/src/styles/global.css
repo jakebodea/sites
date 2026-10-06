@@ -1,47 +1,80 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+/* Dark mode follows a `.dark` class on <html>, set before paint in base.astro. */
+@custom-variant dark (&:where(.dark, .dark *));
+
 /*
- * JBO Labs design tokens. Deliberately quiet: warm paper, near-black ink, one
- * hairline grey, and a single green used only for the availability dot.
- * shadcn/ui primitives read the semantic names (--primary, --muted, ...), so
- * restyling the site starts here.
+ * JBO Labs design tokens. Bright and cool: white paper, blue-black ink, hairline
+ * greys, and one blue that marks interaction (links, focus, selection) and the
+ * last step of each timeline. shadcn/ui primitives read the semantic names
+ * (--primary, --muted, ...), so restyling the site starts here. `--panel` is the
+ * feature panel (the speed tile, the closing call to action): ink in light mode,
+ * a lifted grey in dark mode.
  */
 :root {
-  --paper: oklch(0.985 0.004 85);
-  --ink: oklch(0.2 0.006 270);
-  --ink-soft: oklch(0.36 0.006 270);
-  --signal: oklch(0.68 0.15 150);
+  --paper: oklch(1 0 0);
+  --ink: oklch(0.18 0.012 265);
+  --ink-soft: oklch(0.38 0.012 265);
+  --signal: oklch(0.56 0.19 258);
+  --signal-soft: oklch(0.96 0.025 258);
+  --panel: var(--ink);
+  --panel-foreground: var(--paper);
 
   --background: var(--paper);
   --foreground: var(--ink);
-  --card: oklch(0.995 0.002 85);
+  --card: oklch(1 0 0);
   --card-foreground: var(--foreground);
   --popover: var(--card);
   --popover-foreground: var(--foreground);
   --primary: var(--ink);
   --primary-foreground: var(--paper);
-  --secondary: oklch(0.955 0.005 85);
+  --secondary: oklch(0.975 0.003 265);
   --secondary-foreground: var(--ink);
-  --muted: oklch(0.955 0.005 85);
-  --muted-foreground: oklch(0.5 0.008 270);
-  --accent: oklch(0.94 0.006 85);
+  --muted: oklch(0.975 0.003 265);
+  --muted-foreground: oklch(0.52 0.012 265);
+  --accent: oklch(0.96 0.004 265);
   --accent-foreground: var(--ink);
   --destructive: oklch(0.55 0.2 27);
-  --border: oklch(0.9 0.006 85);
-  --input: oklch(0.86 0.006 85);
-  --ring: oklch(0.55 0.01 270);
+  --border: oklch(0.925 0.004 265);
+  --input: oklch(0.88 0.005 265);
+  --ring: var(--signal);
   --radius: 0.625rem;
+  color-scheme: light;
+}
+
+/* Dark mode: charcoal greys rather than black, with the same cool tint. */
+.dark {
+  --paper: oklch(0.3 0.006 265);
+  --ink: oklch(0.965 0.003 265);
+  --ink-soft: oklch(0.84 0.006 265);
+  --signal: oklch(0.7 0.15 258);
+  --signal-soft: oklch(0.4 0.06 258);
+  --panel: oklch(0.37 0.007 265);
+  --panel-foreground: var(--ink);
+
+  --card: oklch(0.335 0.006 265);
+  --secondary: oklch(0.34 0.006 265);
+  --muted: oklch(0.34 0.006 265);
+  --muted-foreground: oklch(0.8 0.008 265);
+  --accent: oklch(0.38 0.007 265);
+  --destructive: oklch(0.68 0.17 25);
+  --border: oklch(0.4 0.007 265);
+  --input: oklch(0.46 0.008 265);
+  color-scheme: dark;
 }
 
 @theme inline {
   --font-sans: var(--font-body), ui-sans-serif, system-ui, sans-serif;
-  --font-serif: var(--font-accent), ui-serif, Georgia, serif;
+  --font-display: var(--font-wordmark), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-label), ui-monospace, monospace;
 
   --color-ink: var(--ink);
   --color-ink-soft: var(--ink-soft);
   --color-signal: var(--signal);
+  --color-signal-soft: var(--signal-soft);
+  --color-panel: var(--panel);
+  --color-panel-foreground: var(--panel-foreground);
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -76,19 +109,21 @@
   html {
     -webkit-text-size-adjust: 100%;
     scroll-padding-top: 6rem;
+    scrollbar-color: var(--input) transparent;
+    accent-color: var(--signal);
+    caret-color: var(--signal);
   }
 
   body {
     @apply bg-background text-foreground font-sans antialiased;
     -webkit-tap-highlight-color: transparent;
-    font-feature-settings: "ss01", "cv11";
   }
 
   h1,
   h2,
   h3,
   h4 {
-    @apply text-foreground font-medium tracking-[-0.025em] text-balance;
+    @apply text-foreground font-semibold tracking-[-0.015em] text-balance;
   }
 
   p {
@@ -96,13 +131,17 @@
   }
 
   ::selection {
-    @apply bg-ink text-background;
+    @apply bg-signal/15 text-foreground;
+  }
+
+  :focus-visible {
+    @apply outline-signal outline-2 outline-offset-2;
   }
 }
 
-/* Narrow, centered column: the site reads like a well-set letter, not a dashboard. */
+/* One wide, centered column shared by every section so edges line up down the page. */
 @utility container-page {
-  @apply mx-auto w-full max-w-5xl px-6 sm:px-10;
+  @apply mx-auto w-full max-w-6xl px-6 sm:px-10;
 }
 
 /* Bottom padding that clears the iPhone home indicator. */
@@ -110,14 +149,16 @@
   padding-bottom: max(1.25rem, env(safe-area-inset-bottom));
 }
 
-/* Small monospace section label, e.g. "01  What I do". */
-@utility label-mono {
-  @apply text-muted-foreground font-mono text-[0.72rem] tracking-[0.08em] uppercase;
+/*
+ * Display headlines follow the wordmark: lowercase Montserrat, hairline-light,
+ * with `*emphasized*` words (src/content) set bold like "jbo" in the logo.
+ */
+@utility display {
+  @apply font-display font-light tracking-[-0.025em] lowercase;
 }
 
-/* The italic serif accent used for emphasized words in headlines (`*like this*` in src/content). */
-@utility accent-serif {
-  @apply font-serif font-normal tracking-normal italic;
+@utility headline-strong {
+  @apply font-bold tracking-[-0.035em];
 }
 
 /* Long-form copy (src/components/prose.astro). */
@@ -149,12 +190,12 @@
 @keyframes rise {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(8px);
   }
 }
 
 .rise {
-  animation: rise 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  animation: rise 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 @media (prefers-reduced-motion: reduce) {

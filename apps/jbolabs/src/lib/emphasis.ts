@@ -1,6 +1,6 @@
 /**
  * Headlines are plain strings in `src/content`; wrapping words in asterisks (`I build
- * *considered* websites`) sets them in the italic serif accent. A lone or
+ * *considered* websites`) sets them bold against the light display weight. A lone or
  * unmatched asterisk renders as typed.
  */
 export interface Segment {

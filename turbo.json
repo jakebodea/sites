@@ -35,6 +35,7 @@
       "dependsOn": ["^typecheck", "sync"],
       "inputs": [
         "$TURBO_DEFAULT$",
+        ".build-inputs.json",
         "!**/*.md",
         "!.turbo/**",
         "!node_modules/**",

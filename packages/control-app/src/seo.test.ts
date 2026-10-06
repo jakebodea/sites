@@ -53,6 +53,23 @@ describe(pageFindings, () => {
     ]);
   });
 
+  it("checks content locally without enforcing deployed headers or timing", () => {
+    expect(
+      pageFindings(page({ robotsHeader: "noindex", ttfbMs: 2000 }), {
+        checks: "content",
+        origin: "https://example.com",
+        production: true,
+      })
+    ).toStrictEqual([]);
+    expect(
+      pageFindings(page({ h1Count: 0 }), {
+        checks: "content",
+        origin: "http://localhost",
+        production: false,
+      }).map((item) => item.rule)
+    ).toStrictEqual(["one-h1"]);
+  });
+
   it("asks deep pages for breadcrumbs and one h1", () => {
     expect(rules(page({ h1Count: 2, jsonLdTypes: [] }))).toStrictEqual([
       "one-h1",

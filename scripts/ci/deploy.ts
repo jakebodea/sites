@@ -38,6 +38,13 @@ if (destroy && stage === "prod") {
   throw new Error("Refusing to destroy prod from CI.");
 }
 
+// GitHub expands an unset secret or variable to "", which would read as a
+// configured-but-empty setting (an API token of "" provisions a feature and
+// fails auth). Drop empty values so optional settings stay unset.
+const deployEnv = Object.fromEntries(
+  Object.entries(process.env).filter(([, value]) => value !== "")
+);
+
 const deployments = sites.map((site) => {
   const output = execFileSync(
     "bun",
@@ -49,7 +56,7 @@ const deployments = sites.map((site) => {
       "--yes",
       "--no-input",
     ],
-    { cwd: path.join(root, "apps", site), encoding: "utf-8", env: process.env }
+    { cwd: path.join(root, "apps", site), encoding: "utf-8", env: deployEnv }
   );
   process.stdout.write(output);
   return { site, url: URL_OUTPUT.exec(output)?.groups?.url ?? null };

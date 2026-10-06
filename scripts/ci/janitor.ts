@@ -1,7 +1,8 @@
 /**
- * Destroys preview stages whose pull request is closed (the cleanup workflow
+ * Finds preview stages whose pull request is closed or has no preview label (the cleanup workflow
  * can miss some: cancelled runs, force-closed PRs). Finds `<site>-pr-<n>`
- * Workers through the Cloudflare API and keeps any whose PR is still open.
+ * Workers through the read-only Cloudflare API. Prints PR numbers for the workflow,
+ * which rechecks current state and destroys through Alchemy under each PR's stage lock.
  *
  *   CLOUDFLARE_API_TOKEN=... CLOUDFLARE_ACCOUNT_ID=... GH_TOKEN=... bun scripts/ci/janitor.ts
  */
@@ -19,11 +20,11 @@ const OpenPulls = Schema.fromJsonString(
   Schema.Array(Schema.Struct({ number: Schema.Number }))
 );
 
-/** Preview stages to destroy: deployed `pr-<n>` stages whose PR is not open. */
+/** Preview stages to destroy: deployed `pr-<n>` stages whose PR is not open and labeled preview. */
 export const staleStages = (
   workerNames: readonly string[],
   sites: readonly string[],
-  openPulls: ReadonlySet<number>
+  previewPulls: ReadonlySet<number>
 ): { site: string; stage: string }[] =>
   workerNames.flatMap((name) => {
     const site = sites.find((candidate) => name.startsWith(`${candidate}-`));
@@ -31,7 +32,7 @@ export const staleStages = (
     const pull = Number(stage.slice("pr-".length));
     return site !== undefined &&
       isPullRequestStage(stage) &&
-      !openPulls.has(pull)
+      !previewPulls.has(pull)
       ? [{ site, stage }]
       : [];
   });
@@ -51,7 +52,18 @@ if (import.meta.main) {
   const open = Schema.decodeUnknownSync(OpenPulls)(
     execFileSync(
       "gh",
-      ["pr", "list", "--state", "open", "--json", "number", "--limit", "500"],
+      [
+        "pr",
+        "list",
+        "--state",
+        "open",
+        "--json",
+        "number",
+        "--label",
+        "preview",
+        "--limit",
+        "500",
+      ],
       {
         encoding: "utf-8",
       }
@@ -62,16 +74,6 @@ if (import.meta.main) {
     listSites(root),
     new Set(open.map((pull) => pull.number))
   );
-  for (const { site, stage } of stale) {
-    process.stdout.write(`destroying ${site} ${stage}\n`);
-    execFileSync(
-      "bun",
-      ["alchemy", "destroy", "--stage", stage, "--yes", "--no-input"],
-      {
-        cwd: path.join(root, "apps", site),
-        stdio: "inherit",
-      }
-    );
-  }
-  process.stdout.write(`${stale.length} stale preview stage(s) destroyed\n`);
+  const pulls = [...new Set(stale.map(({ stage }) => Number(stage.slice(3))))];
+  process.stdout.write(`${JSON.stringify(pulls)}\n`);
 }

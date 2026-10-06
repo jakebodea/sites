@@ -1,6 +1,5 @@
 ---
 import Headline from "@/components/headline.astro";
-import SectionLabel from "@/components/section-label.astro";
 import type { ListSection } from "@/content/types";
 
 interface Props {
@@ -11,16 +10,18 @@ const { value } = Astro.props;
 ---
 
 <!-- `id` is the hero's default "How I work" anchor (#process). -->
-<section id="process" class="container-page py-20 sm:py-28">
-  <div class="border-t border-border pt-10">
-    {value.label && <SectionLabel label={value.label} />}
-    <h2 class="mt-6 max-w-2xl text-3xl leading-tight sm:text-4xl"><Headline text={value.headline} /></h2>
-    <ol class="mt-14 grid gap-x-10 gap-y-12 sm:grid-cols-2 lg:grid-cols-4">
+<section id="process" class="bg-muted py-20 sm:py-28">
+  <div class="container-page">
+    <h2 class="display max-w-2xl text-4xl leading-[1.08] sm:text-5xl"><Headline text={value.headline} /></h2>
+    <ol class="mt-14 grid gap-10 sm:grid-cols-2 lg:grid-cols-4 lg:gap-8">
       {value.items.map((step, index) => (
-        <li class="space-y-3">
-          <span class="font-mono text-xs text-muted-foreground">{String(index + 1).padStart(2, "0")}</span>
-          <h3 class="text-lg">{step.title}</h3>
-          <p class="text-[0.95rem] leading-relaxed text-muted-foreground">{step.body}</p>
+        <li class="relative">
+          <div class="flex items-center gap-3" aria-hidden="true">
+            <span class:list={["size-2.5 shrink-0 rounded-full ring-4 ring-muted", index === value.items.length - 1 ? "bg-signal" : "bg-ink"]}></span>
+            <span class="hidden h-px flex-1 bg-input lg:block"></span>
+          </div>
+          <h3 class="mt-6 text-lg font-medium tracking-[-0.015em]">{step.title}</h3>
+          <p class="mt-2 max-w-xs leading-relaxed text-muted-foreground">{step.body}</p>
         </li>
       ))}
     </ol>

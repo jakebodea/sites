@@ -69,7 +69,16 @@ export default defineConfig({
       weights: [400, 500, 600],
     },
   ],
-  image: { layout: "constrained", responsiveStyles: true },
+  image: {
+    layout: "constrained",
+    remotePatterns: [
+      {
+        hostname: new URL(inputs.origin ?? "http://localhost").hostname,
+        pathname: "/_emdash/api/media/file/**",
+      },
+    ],
+    responsiveStyles: true,
+  },
   integrations: [
     ...standaloneAdapter,
     seedMedia({ mediaBase: inputs.seedMediaBase }),
