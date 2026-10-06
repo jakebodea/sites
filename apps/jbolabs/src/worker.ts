@@ -1,7 +1,7 @@
 /**
  * Worker entry. Alchemy's pinned entry is aliased here (`workerEntryAlias` in
  * `@jakebodea/cloudflare-kit/emdash/alchemy-workarounds`), so this wraps
- * Alchemy's Astro handler and adds three site concerns:
+ * Alchemy's Astro handler and adds two site concerns:
  *
  * - the daily backup cron (prod only, where `BACKUPS` is bound);
  * - `X-Robots-Tag: noindex` on every non-prod stage, so previews never get

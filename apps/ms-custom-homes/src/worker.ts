@@ -1,3 +1,11 @@
+/**
+ * Worker entry. Alchemy's pinned entry is aliased here (see
+ * `@jakebodea/cloudflare-kit/emdash/alchemy-workarounds`), so this wraps
+ * EmDash's entry. The kit's `siteScheduled` owns the crons (analytics plugin
+ * settings, EmDash's minute tick, the prod backup). Non-prod stages send
+ * `X-Robots-Tag: noindex` so previews never get indexed (a header, not
+ * robots.txt, because a Disallow hides the noindex).
+ */
 import handler from "@emdash-cms/cloudflare/worker";
 import { siteScheduled } from "@jakebodea/cloudflare-kit/emdash/worker";
 

@@ -1,3 +1,13 @@
+/**
+ * The contact-form pipeline every site shares:
+ *
+ *   validate -> verify Turnstile -> persist lead -> notify by email
+ *
+ * Persisting the lead is the point of no return. A failure before it (Turnstile
+ * unavailable, the save itself) may lose the enquiry, so it is logged with the
+ * lead and emailed to `ALERT_EMAIL`. A failure after it only logs: the lead is
+ * safe in the CMS and the visitor still sees success.
+ */
 import { Cause, Config, Context, Effect, Layer, Option, Schema } from "effect";
 
 import { Email } from "./email.ts";
