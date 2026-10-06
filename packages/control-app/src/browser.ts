@@ -17,6 +17,8 @@ export const DEFAULT_WIDTHS = [1280, 375] as const;
 const PHONE_MAX_WIDTH = 480;
 const SCROLL_STEP_PX = 600;
 const SETTLE_MS = 400;
+/** Longest wait for running CSS animations and transitions before a capture. */
+const ANIMATION_CAP_MS = 6000;
 
 export interface PageReport {
   readonly path: string;
@@ -75,6 +77,23 @@ const loadEverything = async (page: Page): Promise<void> => {
     window.scrollTo(0, 0);
   });
   await page.waitForTimeout(SETTLE_MS);
+  // Scroll reveals and entrance animations started during the scroll-through must
+  // finish, or the capture shows them half-faded. Looping animations never finish.
+  await Promise.race([
+    page.evaluate(async () => {
+      await Promise.allSettled(
+        document
+          .getAnimations()
+          .flatMap((animation) =>
+            animation.effect?.getTiming().iterations ===
+            Number.POSITIVE_INFINITY
+              ? []
+              : [animation.finished]
+          )
+      );
+    }),
+    page.waitForTimeout(ANIMATION_CAP_MS),
+  ]);
 };
 
 const brokenImages = async (page: Page): Promise<string[]> =>
