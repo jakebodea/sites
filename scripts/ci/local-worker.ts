@@ -49,24 +49,23 @@ export const localWorker = async (directory: string, cms: boolean) => {
     }
   }
   const env: NonNullable<WorkerOptions["config"]["env"]> = {
+    ALERT_EMAIL: text(""),
     ASSETS: { type: "assets" },
-    AXIOM_INGEST_TOKEN: text(""),
-    AXIOM_LOGS_DATASET: text(""),
-    AXIOM_LOGS_URL: text(""),
-    AXIOM_TRACES_DATASET: text(""),
-    AXIOM_TRACES_URL: text(""),
     BACKUPS: { name: `${scope}-backups`, type: "r2" },
+    CF_ANALYTICS_API_TOKEN: text(""),
     DB: { id: `${scope}-db`, type: "d1" },
     LEAD_NOTIFY_FROM: text(""),
+    LEAD_NOTIFY_FROM_NAME: text(""),
     LEAD_NOTIFY_TO: text(""),
-    POSTHOG_HOST: text(""),
-    POSTHOG_PROJECT_KEY: text(""),
-    POSTHOG_PROXY_PATH: text(""),
     SESSION: { id: `${scope}-session`, type: "kv" },
     SITE_ORIGIN: text("http://localhost"),
     STAGE: text("dev-seo"),
     TURNSTILE_SECRET_KEY: text(TURNSTILE_TEST_KEYS.secretKey),
     TURNSTILE_SITE_KEY: text(TURNSTILE_TEST_KEYS.siteKey),
+    WEB_ANALYTICS_ACCOUNT_ID: text(""),
+    WEB_ANALYTICS_HOSTS: text(""),
+    WEB_ANALYTICS_SITE_TAG: text(""),
+    WEB_ANALYTICS_TOKEN: text(""),
   };
   const config = {
     assets: {

@@ -39,7 +39,7 @@ if (destroy && stage === "prod") {
 }
 
 // GitHub expands an unset secret or variable to "", which would read as a
-// configured-but-empty setting (an Axiom token of "" provisions monitoring and
+// configured-but-empty setting (an API token of "" provisions a feature and
 // fails auth). Drop empty values so optional settings stay unset.
 const deployEnv = Object.fromEntries(
   Object.entries(process.env).filter(([, value]) => value !== "")

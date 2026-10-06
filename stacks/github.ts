@@ -32,6 +32,8 @@ const sitePermissions: Cloudflare.ApiToken.PermissionGroupRef[] = [
 
 /** Production also attaches custom domains to the site zones. */
 const productionPermissions: Cloudflare.ApiToken.PermissionGroupRef[] = [
+  // Rum site creation is expected to require this; the first production deploy must verify it.
+  "Account Settings Write",
   "Zone Read",
   "DNS Write",
   "Workers Routes Write",
@@ -122,6 +124,30 @@ export default Alchemy.Stack(
         repository: repo,
         value: token.value,
       });
+      if (environment.name === "production") {
+        const analyticsToken = yield* Cloudflare.ApiToken.AccountApiToken(
+          `AnalyticsReadToken${deployTokens.generation}`,
+          {
+            accountId: repository.accountId,
+            expiresOn: deployTokens.expiresOn,
+            name: `${repo}-analytics-read-g${deployTokens.generation}`,
+            policies: [
+              {
+                effect: "allow",
+                permissionGroups: ["Account Analytics Read"],
+                resources: account,
+              },
+            ],
+          }
+        );
+        yield* GitHub.Secret("ProductionAnalyticsToken", {
+          environment: githubEnvironment,
+          name: "CF_ANALYTICS_API_TOKEN",
+          owner,
+          repository: repo,
+          value: analyticsToken.value,
+        });
+      }
       yield* GitHub.Variable(`${environment.id}CloudflareAccount`, {
         environment: githubEnvironment,
         name: "CLOUDFLARE_ACCOUNT_ID",

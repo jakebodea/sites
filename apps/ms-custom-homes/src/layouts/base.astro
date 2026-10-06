@@ -7,12 +7,11 @@
 import "@/styles/global.css";
 
 import { Font } from "astro:assets";
-import { env } from "cloudflare:workers";
 import { EmDashBodyEnd, EmDashBodyStart, EmDashHead } from "emdash/ui";
 import { createPublicPageContext } from "emdash/page";
 import { documentTitle, metaDescription } from "@jakebodea/cloudflare-kit/seo";
 
-import AnalyticsScript from "@/components/analytics-script.astro";
+import WebAnalyticsBeacon from "@jakebodea/cloudflare-kit/astro/web-analytics-beacon.astro";
 import AnnouncementBar from "@/components/announcement-bar.astro";
 import SiteFooter from "@/components/site-footer.astro";
 import SiteHeader from "@/components/site-header.astro";
@@ -60,13 +59,6 @@ const page = createPublicPageContext({
   title: fullTitle,
 });
 
-const analytics = {
-  enabled: env.STAGE === "prod",
-  projectKey: env.POSTHOG_PROJECT_KEY,
-  proxyPath: env.POSTHOG_PROXY_PATH,
-  siteHost: new URL(origin).hostname,
-  uiHost: env.POSTHOG_HOST.replace(".i.posthog.com", ".posthog.com"),
-};
 ---
 
 <!doctype html>
@@ -94,7 +86,7 @@ const analytics = {
       <slot />
     </main>
     <SiteFooter title={chrome.title} tagline={chrome.tagline} items={chrome.footer} announcement={chrome.announcement} />
-    {analytics.enabled && analytics.projectKey !== "" && <AnalyticsScript config={analytics} />}
+    <WebAnalyticsBeacon />
     <EmDashBodyEnd page={page} />
     <script>
       import "@/scripts/reveal";

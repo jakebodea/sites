@@ -18,3 +18,15 @@ export const deployTokens = {
   expiresOn: "2027-10-05T23:59:59Z",
   generation: 1,
 } as const;
+
+/**
+ * The studio domain (bought 2026-10-06, managed by `stacks/studio.ts`). Every
+ * site sends lead notifications and alerts from `sender`, and alerts go to
+ * `alertInbox`, which forwards to a private inbox.
+ */
+export const studio = {
+  alertInbox: "alerts@jbolabs.com",
+  domain: "jbolabs.com",
+  sender: "sites@mail.jbolabs.com",
+  sendingSubdomain: "mail.jbolabs.com",
+} as const;

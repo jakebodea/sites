@@ -17,6 +17,7 @@
     "@astrojs/cloudflare": "catalog:",
     "@astrojs/react": "catalog:",
     "@base-ui/react": "catalog:",
+    "@eisbachcode/emdash-plugin-analytics": "catalog:",
     "@emdash-cms/cloudflare": "catalog:",
     "@jakebodea/cloudflare-kit": "workspace:*",
     "@lucide/astro": "catalog:",

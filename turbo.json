@@ -52,7 +52,12 @@
       "outputs": []
     },
     "//#test:root": {
-      "inputs": ["vitest.config.ts", "scripts/**"],
+      "inputs": [
+        "vitest.config.ts",
+        "scripts/**",
+        "stacks/*.ts",
+        ".github/workflows/*.yml"
+      ],
       "outputs": []
     },
     "sync": {

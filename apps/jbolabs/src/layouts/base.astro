@@ -2,15 +2,14 @@
 /**
  * Page shell: head tags (title, description, canonical, Open Graph,
  * structured data), fonts, header and footer, the referral-link memory, and
- * analytics on prod when a PostHog key is set.
+ * Cloudflare Web Analytics on prod.
  */
 import "@/styles/global.css";
 
 import { Font } from "astro:assets";
-import { env } from "cloudflare:workers";
 import { documentTitle, metaDescription } from "@jakebodea/cloudflare-kit/seo";
 
-import AnalyticsScript from "@/components/analytics-script.astro";
+import WebAnalyticsBeacon from "@jakebodea/cloudflare-kit/astro/web-analytics-beacon.astro";
 import SiteFooter from "@/components/site-footer.astro";
 import SiteHeader from "@/components/site-header.astro";
 import StructuredData from "@/components/structured-data.astro";
@@ -33,13 +32,6 @@ const pageDescription = metaDescription(description ?? site.description, site.de
 const canonical = `${origin}${Astro.url.pathname === "/" ? "/" : Astro.url.pathname.replace(/\/$/u, "")}`;
 const ogImage = `${origin}/og-default.png`;
 
-const analytics = {
-  enabled: env.STAGE === "prod",
-  projectKey: env.POSTHOG_PROJECT_KEY,
-  proxyPath: env.POSTHOG_PROXY_PATH,
-  siteHost: new URL(origin).hostname,
-  uiHost: env.POSTHOG_HOST.replace(".i.posthog.com", ".posthog.com"),
-};
 ---
 
 <!doctype html>
@@ -85,7 +77,7 @@ const analytics = {
       <slot />
     </main>
     <SiteFooter title={site.name} tagline={site.tagline} items={footerNav} />
-    {analytics.enabled && analytics.projectKey !== "" && <AnalyticsScript config={analytics} />}
+    <WebAnalyticsBeacon />
     <script>
       import "@/scripts/referral";
     </script>

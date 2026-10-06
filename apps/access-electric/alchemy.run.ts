@@ -3,11 +3,12 @@ import {
   TURNSTILE_TEST_KEYS,
   WORKER_COMPATIBILITY,
   devPort,
-  monitoringProviders,
   productionDeployRefusal,
   resolveStage,
-  siteAnalytics,
-  siteMonitoring,
+  webAnalytics,
+  leadMail,
+  emdashSecrets,
+  siteObservability,
   siteSecrets,
   writeBuildInputs,
 } from "@jakebodea/cloudflare-kit/infra";
@@ -16,8 +17,7 @@ import {
  *
  *   D1 (EmDash content) + R2 (media) + Images binding + session KV (auto)
  *   + Turnstile widget + every-minute cron (EmDash scheduled publishing)
- *   prod only: custom domain, retained backups bucket + daily backup cron,
- *              Axiom datasets/monitors (when AXIOM_TOKEN is set)
+ *   prod only: custom domain, retained backups bucket + daily backup cron
  *
  * Deploy: `bun alchemy deploy --stage <stage> --profile <profile>` from this
  * directory (see .agents/skills/deploy). Never export CLOUDFLARE_* variables.
@@ -27,8 +27,9 @@ import { AlchemyContext } from "alchemy/AlchemyContext";
 import * as Cloudflare from "alchemy/Cloudflare";
 import { RandomProvider } from "alchemy/Random";
 import * as RemovalPolicy from "alchemy/RemovalPolicy";
-import { Config, Effect, Layer, Option } from "effect";
+import { Effect, Layer } from "effect";
 
+import { studio } from "../../stacks/config.ts";
 import { site } from "./site.config.ts";
 import { BACKUP_CRON, EMDASH_CRON } from "./src/lib/schedule.ts";
 
@@ -37,12 +38,7 @@ const root = import.meta.dirname;
 export default Alchemy.Stack(
   site.id,
   {
-    // Axiom loads only on prod with AXIOM_TOKEN set (see monitoringProviders).
-    providers: Layer.mergeAll(
-      Cloudflare.providers(),
-      monitoringProviders(),
-      RandomProvider()
-    ),
+    providers: Layer.mergeAll(Cloudflare.providers(), RandomProvider()),
     secrets: siteSecrets(root),
     state: Cloudflare.state(),
   },
@@ -59,9 +55,7 @@ export default Alchemy.Stack(
     const origin = dev ? `http://localhost:${port}` : stage.origin;
 
     // Build inputs the Astro config reads (origin, seed media, CMS email sender).
-    const emailFrom = Option.getOrUndefined(
-      yield* Config.String("EMAIL_FROM").pipe(Config.option)
-    );
+    const emailFrom = studio.sender;
     writeBuildInputs(root, {
       emailFrom,
       emailFromName: `${site.shortName} website`,
@@ -90,20 +84,15 @@ export default Alchemy.Stack(
           mode: "managed",
           name: stage.workerName,
         });
-    const analytics = yield* siteAnalytics;
-    const monitoring = yield* siteMonitoring(stage);
-    const leadInbox = {
-      LEAD_NOTIFY_FROM: emailFrom ?? "",
-      LEAD_NOTIFY_TO: Option.getOrElse(
-        yield* Config.String("LEAD_NOTIFY_TO").pipe(Config.option),
-        () => ""
-      ),
-    };
-
     const bindings = {
-      ...analytics,
-      ...monitoring.env,
-      ...leadInbox,
+      ...(yield* webAnalytics(stage)),
+      ...leadMail(stage, {
+        alertInbox: studio.alertInbox,
+        emailFrom,
+        fromName: `${site.name} website`,
+        inbox: site.leadInbox,
+      }),
+      ...(yield* emdashSecrets),
       BACKUPS: backups,
       DB: database,
       // EmDash's /_image endpoint resizes media with this binding.
@@ -150,7 +139,7 @@ export default Alchemy.Stack(
         lockfile: true,
       },
       name: stage.workerName,
-      observability: monitoring.observability,
+      observability: siteObservability(stage),
     });
 
     return {

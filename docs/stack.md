@@ -1,6 +1,6 @@
 # Stack and decisions
 
-The reference for how Jake builds marketing sites and products. Decided 2026-10-05 after reviewing T3 Code, Executor v2, pcobooster, shouldertap, and the earlier sites (Black Swan Realty, Access Electric, MS Homes). Change a decision by editing this file in the same PR as the code.
+The reference for how Jake builds marketing sites and products. Decided 2026-10-05 after reviewing T3 Code, Executor v2, pcobooster, shouldertap, and the earlier sites (Black Swan Realty, Access Electric, MS Homes). This file lists current choices. Why a one-way choice was made lives in [`docs/adr/`](adr/), one dated record per decision. To change a decision, edit this file in the same PR as the code, and add an ADR (from [`adr/template.md`](adr/template.md)) when the reasons matter later.
 
 Guiding principle: be all-in on Cloudflare + Alchemy + Effect, add as few vendors as possible, and make every repo something an agent can change _and prove_ on its own.
 
@@ -8,7 +8,7 @@ Guiding principle: be all-in on Cloudflare + Alchemy + Effect, add as few vendor
 
 | Repo | Holds |
 | --- | --- |
-| `sites` (this one, private) | Marketing sites and small side projects. `apps/<site>`, one Alchemy stack per site, Turborepo. |
+| `sites` (this one, public) | Marketing sites and small side projects. `apps/<site>`, one Alchemy stack per site, Turborepo. |
 | One repo per product | pcobooster, shouldertap, future products. Own CI, owners, upgrade pace. A product's own marketing site lives in the product repo. |
 | `jakebodea/toolkit` (later) | Public `@jakebodea/*` packages: `config`, `cloudflare-kit`, `proof`, `control-app`, `agent-skills`. Extracted from this repo's `packages/` once the Access Electric reference build is reviewed. Consumed from npm, pinned, upgraded by Renovate. |
 
@@ -18,9 +18,9 @@ Guiding principle: be all-in on Cloudflare + Alchemy + Effect, add as few vendor
 
 - **Astro + EmDash CMS** on **Alchemy v2** (`Cloudflare.Website.Astro`): D1 (content), R2 (media), Images binding (resizing), auto-provisioned KV (sessions), every-minute cron (EmDash scheduled publishing). Zero client JS by default.
 - **shadcn/ui as React islands** only where interactive (mobile nav, gallery, contact form). Tailwind v4. Mobile-first, accessible, Core Web Vitals budgets.
-- **Effect on the server only** (contact form, analytics, email). React islands stay plain React.
+- **Effect on the server only** (contact form, email). React islands stay plain React.
 - **Content**: client-editable through EmDash. **CMS login**: EmDash invites + passkeys; invite the client as **Editor**; finish EmDash setup immediately after the first prod deploy (whoever completes setup first becomes Admin).
-- **Contact form**: Turnstile → store lead → Cloudflare Email notification → server-side PostHog `lead submitted`.
+- **Contact form**: Turnstile → store lead → email the client through Cloudflare Email Service. Sender and alert inbox come from `studio` in `stacks/config.ts`; the client inbox is `site.leadInbox`. jbolabs.com is registered (Cloudflare Registrar) and `stacks/studio.ts` manages its zone, registrar settings, `mail.jbolabs.com` sending subdomain, and Email Routing. Mail is logged instead of sent only when `studio.sender` is unset. Failure alerts are under [Analytics, logs, monitoring](#analytics-logs-monitoring).
 - **Hosting**: all client sites in Jake's Cloudflare account; hand off later with Alchemy adopt/transfer if a client wants ownership.
 
 ### EmDash on Alchemy workarounds (verified live 2026-10-05)
@@ -46,7 +46,7 @@ Also:
 - **Workers Paid is required.** On the Free plan's 10 ms CPU limit, EmDash's server rendering hits "Worker exceeded resource limits" (error 1102) under modest concurrency. The account was upgraded on 2026-10-05; afterwards ae-preview served 40 concurrent requests and a full smoke run with no failures.
 - **Layering**: never import `@jakebodea/cloudflare-kit/infra` from runtime code; it pulls Alchemy's deploy-time modules into the Worker.
 
-Local verification runs entirely under `alchemy dev`, which (as of `alchemy@2.0.0-beta.80`) emulates Workers, D1, R2, KV, Queues, Secrets Store, and Images locally; only Turnstile (test keys), Email, and Axiom are cloud-only. Spike notes: `spikes/emdash-alchemy/README.md`.
+Local verification runs entirely under `alchemy dev`, which (as of `alchemy@2.0.0-beta.80`) emulates Workers, D1, R2, KV, Queues, Secrets Store, and Images locally; only Turnstile (test keys) and Email are cloud-only. Spike notes: `spikes/emdash-alchemy/README.md`.
 
 - **SEO**: SSR everywhere; EmDash sitemap/robots; non-prod stages send `X-Robots-Tag: noindex` from the worker; `@jakebodea/cloudflare-kit/seo` keeps titles and descriptions inside snippet budgets and builds BreadcrumbList JSON-LD. The `seo` skill maps the full checklist to automated rules and the manual launch steps (Search Console, copy review, E-E-A-T, backlinks).
 
@@ -62,9 +62,13 @@ Local verification runs entirely under `alchemy dev`, which (as of `alchemy@2.0.
 
 ## Analytics, logs, monitoring
 
-- **PostHog** for product/web analytics and errors. Browser: posthog-js with an event allowlist and URL scrubbing, sent through a same-Worker proxy at a randomized path (`Alchemy.Random`), **cookieless (`persistence: "memory"`) on client sites, no consent banner**, collect only on the prod stage + hostname. Server: Effect `Analytics` service over posthog-node (`flushAt: 1`, `captureImmediate` in `waitUntil`). PostHog project/dashboards as code via a custom Alchemy provider on `@distilled.cloud/posthog` (Executor v2 pattern).
-- **Logs/traces**: Cloudflare native Workers Logs + tracing (`Cloudflare.Telemetry()`) always on.
-- **Monitoring**: **Axiom** via Alchemy's native provider (prod datasets, monitors on server errors and `lead submit failed`, email notifier) + a scheduled smoke workflow over every prod site.
+Why each client-site choice was made, and how it is built: [ADR 0001](adr/0001-client-site-analytics-and-alerting.md).
+
+- **Client traffic**: Cloudflare Web Analytics, one prod-only `Cloudflare.Rum.Site` per site. Cookieless, no consent banner. Dev and preview collect nothing.
+- **Client stats**: `@eisbachcode/emdash-plugin-analytics` in the EmDash admin. Its settings come from Worker bindings, never the settings form. Dev and preview show demo data. jbolabs has no CMS and uses the Cloudflare dashboard.
+- **Client alerts**: a contact submission that may be lost is logged with the lead and emailed to the committed `studio.alertInbox` (`alerts@jbolabs.com`) on prod. Alerts name the site and include its origin. No PostHog or Axiom on client sites.
+- **Logs and traces**: Cloudflare Workers Logs and traces on every stage, through `siteObservability`.
+- **Products**: PostHog for funnels, replay, flags, experiments, and errors, through a custom Alchemy provider on `@distilled.cloud/posthog`. Axiom when a product needs log search and retention beyond Workers Logs.
 - Disable Cloudflare Web Analytics edge auto-injection on product zones (`Cloudflare.Rum.Site`).
 
 ## Secrets
@@ -72,7 +76,7 @@ Local verification runs entirely under `alchemy dev`, which (as of `alchemy@2.0.
 No Infisical, no 1Password.
 
 - Local: one `.env` in the **main checkout** only. Worktrees get a symlink (`scripts/setup-worktree.ts` via `t3.json` `runOnWorktreeCreate` + lefthook `post-checkout`), and Alchemy's DotEnv provider reads the main checkout's file via `git rev-parse --path-format=absolute --git-common-dir` as a fallback.
-- CI: GitHub environment secrets (`preview`, `production`), written by `stacks/github.ts`.
+- CI: every workflow variable and secret is written by Alchemy in `stacks/`. `scripts/ci/workflow-env.test.ts` rejects references without a stack writer. Email addresses are committed configuration, not secrets. `FORWARD_TO` is the real inbox that `stacks/studio.ts` registers as the Email Routing destination.
 - Generated secrets: `Alchemy.Random`. Shared rotatable secrets: Cloudflare Secrets Store.
 - Cloudflare credentials: Alchemy profiles (`~/.alchemy`), never exported env vars.
 
@@ -113,12 +117,12 @@ An agent's work isn't done until it's proven on the real running surface.
 
 ## Agent docs
 
-T3 Code / Executor style: root `AGENTS.md` (+ `CLAUDE.md` symlink) with stack map, commands, never-break rules, definition of done; `CONTEXT.md` domain glossary; skills in `.agents/skills/` (`new-site`, `deploy`, `add-section`, `control-app`, `ultracite`, `shadcn`).
+T3 Code / Executor style: root `AGENTS.md` (+ `CLAUDE.md` symlink) with stack map, commands, never-break rules, definition of done; `CONTEXT.md` domain glossary; `docs/stack.md` current choices; `docs/adr/` decision records; skills in `.agents/skills/` (`new-site`, `deploy`, `add-section`, `control-app`, `ultracite`, `shadcn`).
 
 ## Open items
 
 - Consider Workers Cache in front of each site's Worker (Alchemy `cache` prop + `Cache-Control`) to cut CPU per visit.
 - Get a scoped `agent` Alchemy profile; re-auth the `default` OAuth profile from a real terminal.
-- PostHog project, Axiom token, real domains (for email + prod), GitHub repo for this monorepo.
+- Apply the CI control-plane changes with explicit authorization to provision the analytics-read token. Verify that Account Settings Write permits Rum site creation on the first prod deploy. Real domains and verified senders are still needed for email.
 - File Alchemy issues: supported custom Worker entry for `Website.Astro`; `config:` path bug; EmDash image endpoint support; SSR dep-optimizer instability under the workerd dev runner (stale chunks / duplicate React); dev proxy resetting curl connections.
 - Extract `@jakebodea/*` toolkit; adopt in pcobooster (drop Infisical, add control-app, fake Planning Center, per-worktree stages) and shouldertap.

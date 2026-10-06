@@ -29,25 +29,35 @@ export const site = {
 
   description:
     "Commercial electrical contractor serving Southern California since 2001. A Certified Women's Business Enterprise.",
+
   /** Appended to meta descriptions too short for a search snippet (see `metaDescription`). */
   descriptionContext:
     "Commercial electrical construction by Access Electric across Southern California.",
+
   /**
    * Attached as a custom domain on the `prod` stage only. Unset until the zone is
    * on the Cloudflare account (attaching an unowned domain fails the deploy), so
    * prod serves from workers.dev for now. Intended domain: accesselectricinc.com.
    */
   domain: null,
+
   /** Prefixes Worker names (`access-electric-<stage>`) and the Alchemy stack. */
   id: "access-electric",
+
+  // The client's notification address, filled in when known.
+  leadInbox: null,
+
   /**
    * Public base URL EmDash downloads seed images from when the stage cannot
    * serve them itself (local workerd: EmDash's SSRF guard refuses localhost).
    * Deployed stages use their own `/_seed/media`.
    */
   localSeedMediaBase: "https://accesselectricinc.com/media",
+
   name: "Access Electric, Inc.",
+
   shortName: "Access Electric",
+
   /** The Cloudflare account's workers.dev subdomain (non-prod stages live there). */
   workersSubdomain: "jakebodea",
 } as const;

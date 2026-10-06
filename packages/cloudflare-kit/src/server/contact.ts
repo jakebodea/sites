@@ -1,22 +1,22 @@
 /**
  * The contact-form pipeline every site shares:
  *
- *   validate -> verify Turnstile -> persist lead -> notify by email -> capture analytics
+ *   validate -> verify Turnstile -> persist lead -> notify by email
  *
- * Persisting the lead is the point of no return. After that, a failed email or
- * analytics call is logged and the visitor still sees success: the enquiry is
- * safe in the CMS either way.
+ * Persisting the lead is the point of no return. A failure before it (Turnstile
+ * unavailable, the save itself) may lose the enquiry, so it is logged with the
+ * lead and emailed to `ALERT_EMAIL`. A failure after it only logs: the lead is
+ * safe in the CMS and the visitor still sees success.
  */
-import { Config, Context, Effect, Layer, Option, Schema } from "effect";
+import { Cause, Config, Context, Effect, Layer, Option, Schema } from "effect";
 
-import { Analytics } from "./analytics.ts";
 import { Email } from "./email.ts";
 import type { EmailAddress } from "./email.ts";
 import { LeadStore } from "./leads.ts";
-import type { Lead } from "./leads.ts";
+import type { Lead, LeadNotSaved } from "./leads.ts";
+import type { TurnstileRejected, TurnstileUnavailable } from "./turnstile.ts";
 import { Turnstile } from "./turnstile.ts";
 
-/** Logged by the contact action when a submission fails; an Axiom monitor alerts on it. */
 export const LEAD_SUBMIT_FAILED = "lead submit failed";
 
 const WHITESPACE = /\s/u;
@@ -53,13 +53,6 @@ export type LeadAnswer = typeof LeadAnswer.Type;
 
 /** What the browser sends. Field limits double as spam guards. */
 export const ContactForm = Schema.Struct({
-  /** The page view's PostHog ids, so the server event joins the visitor's session. */
-  analytics: Schema.optional(
-    Schema.Struct({
-      distinctId: Schema.optional(Schema.String),
-      sessionId: Schema.optional(Schema.String),
-    })
-  ),
   answers: Schema.optional(
     Schema.Array(LeadAnswer).check(Schema.isMaxLength(MAX_LEAD_ANSWERS))
   ),
@@ -83,15 +76,28 @@ export type ContactForm = typeof ContactForm.Type;
 export interface ContactRequest {
   readonly sourcePath: string;
   readonly remoteIp?: string;
-  readonly distinctId?: string;
-  readonly sessionId?: string;
+  readonly requestId: string;
 }
 
-/** Who is told about new leads; absent until the site has a verified sending domain. */
-export class LeadInbox extends Context.Service<
-  LeadInbox,
-  Option.Option<{ readonly from: EmailAddress; readonly to: string }>
->()("@jakebodea/cloudflare-kit/LeadInbox") {}
+export interface LeadMailRoutes {
+  readonly name: string;
+  readonly siteOrigin: string;
+  readonly from: Option.Option<EmailAddress>;
+  readonly inbox: Option.Option<string>;
+  readonly alert: Option.Option<string>;
+}
+
+export class LeadMail extends Context.Service<LeadMail, LeadMailRoutes>()(
+  "@jakebodea/cloudflare-kit/LeadMail"
+) {}
+
+export interface LeadFailure {
+  readonly form: Omit<ContactForm, "turnstileToken">;
+  readonly sourcePath: string;
+  readonly requestId: string;
+  readonly stage: "verify" | "save";
+  readonly error: string;
+}
 
 const nonEmpty = (name: string) =>
   Config.String(name).pipe(
@@ -99,24 +105,23 @@ const nonEmpty = (name: string) =>
     Config.map(Option.filter((value) => value !== ""))
   );
 
-/**
- * Reads `LEAD_NOTIFY_FROM` (a verified sender) and `LEAD_NOTIFY_TO`; both must
- * be set to enable notifications. `LEAD_NOTIFY_FROM_NAME` names the sender.
- */
-export const LeadInboxFromConfig = Layer.effect(
-  LeadInbox,
-  Effect.gen(function* leadInboxFromConfig() {
+export const LeadMailFromConfig = Layer.effect(
+  LeadMail,
+  Effect.gen(function* leadMailFromConfig() {
     const from = yield* nonEmpty("LEAD_NOTIFY_FROM");
-    const to = yield* nonEmpty("LEAD_NOTIFY_TO");
+    const inbox = yield* nonEmpty("LEAD_NOTIFY_TO");
+    const alert = yield* nonEmpty("ALERT_EMAIL");
     const name = yield* Config.String("LEAD_NOTIFY_FROM_NAME").pipe(
       Config.withDefault("Website")
     );
-    return Option.all({ from, to }).pipe(
-      Option.map((inbox) => ({
-        from: { email: inbox.from, name },
-        to: inbox.to,
-      }))
-    );
+    const siteOrigin = yield* Config.String("SITE_ORIGIN");
+    return {
+      alert,
+      from: from.pipe(Option.map((address) => ({ email: address, name }))),
+      inbox,
+      name,
+      siteOrigin,
+    };
   })
 );
 
@@ -135,6 +140,56 @@ export const leadNotificationText = (lead: Lead): string =>
     lead.message,
   ].join("\n");
 
+export const leadFailureText = (
+  failure: LeadFailure,
+  siteOrigin: string
+): string =>
+  [
+    `Site: ${siteOrigin}`,
+    `Request: ${failure.requestId}`,
+    `Step: ${failure.stage}`,
+    `Error: ${failure.error}`,
+    "",
+    leadNotificationText({ ...failure.form, sourcePath: failure.sourcePath }),
+  ].join("\n");
+
+const reportLeadFailure = Effect.fn("reportLeadFailure")(
+  function* reportLeadFailure(failure: LeadFailure) {
+    yield* Effect.logError(LEAD_SUBMIT_FAILED).pipe(
+      Effect.annotateLogs({
+        error: failure.error,
+        lead: leadNotificationText({
+          ...failure.form,
+          sourcePath: failure.sourcePath,
+        }),
+        requestId: failure.requestId,
+        step: failure.stage,
+      })
+    );
+    const mail = yield* LeadMail;
+    const email = yield* Email;
+    yield* Option.match(Option.all({ from: mail.from, to: mail.alert }), {
+      onNone: () => Effect.void,
+      onSome: ({ from, to }) =>
+        email
+          .send({
+            from,
+            replyTo: failure.form.email,
+            subject: `Lead submission failed: ${mail.name} [${failure.requestId}]`,
+            text: leadFailureText(failure, mail.siteOrigin),
+            to,
+          })
+          .pipe(
+            Effect.catchCause(() =>
+              Effect.logError("lead failure alert email failed").pipe(
+                Effect.annotateLogs({ requestId: failure.requestId })
+              )
+            )
+          ),
+    });
+  }
+);
+
 export const submitContact = Effect.fn("submitContact")(function* submitContact(
   form: ContactForm,
   request: ContactRequest
@@ -142,28 +197,42 @@ export const submitContact = Effect.fn("submitContact")(function* submitContact(
   const turnstile = yield* Turnstile;
   const leads = yield* LeadStore;
   const email = yield* Email;
-  const inbox = yield* LeadInbox;
-  const analytics = yield* Analytics;
-
-  yield* turnstile.verify({
-    remoteIp: request.remoteIp,
-    token: form.turnstileToken,
-  });
-
-  const lead: Lead = {
-    answers: form.answers,
-    company: form.company,
-    email: form.email,
-    message: form.message,
-    name: form.name,
-    phone: form.phone,
-    referrer: form.referrer,
+  const mail = yield* LeadMail;
+  const { turnstileToken, ...details } = form;
+  const failure = (
+    stage: LeadFailure["stage"],
+    error: string
+  ): LeadFailure => ({
+    error,
+    form: details,
+    requestId: request.requestId,
     sourcePath: request.sourcePath,
-  };
-  const { id } = yield* leads.save(lead);
+    stage,
+  });
+  const alertFailure =
+    (stage: LeadFailure["stage"]) =>
+    (
+      cause: Cause.Cause<
+        TurnstileRejected | TurnstileUnavailable | LeadNotSaved
+      >
+    ) => {
+      const error = Cause.findErrorOption(cause);
+      if (Option.isSome(error) && error.value._tag === "TurnstileRejected") {
+        return Effect.void;
+      }
+      return reportLeadFailure(
+        failure(stage, Option.isSome(error) ? error.value._tag : "Defect")
+      );
+    };
+  yield* turnstile
+    .verify({ remoteIp: request.remoteIp, token: turnstileToken })
+    .pipe(Effect.tapCause(alertFailure("verify")));
+  const lead: Lead = { ...details, sourcePath: request.sourcePath };
+  const { id } = yield* leads
+    .save(lead)
+    .pipe(Effect.tapCause(alertFailure("save")));
   yield* Effect.annotateCurrentSpan("lead.id", id);
-
-  yield* Option.match(inbox, {
+  yield* Option.match(Option.all({ from: mail.from, to: mail.inbox }), {
     onNone: () =>
       Effect.logInfo("lead saved; email notifications are not configured"),
     onSome: ({ from, to }) =>
@@ -179,18 +248,12 @@ export const submitContact = Effect.fn("submitContact")(function* submitContact(
           to,
         })
         .pipe(
-          Effect.catchTag("EmailFailed", (error) =>
-            Effect.logError("lead notification failed", error)
+          Effect.catchCause(() =>
+            Effect.logError("lead notification failed").pipe(
+              Effect.annotateLogs({ leadId: id, requestId: request.requestId })
+            )
           )
         ),
   });
-
-  yield* analytics.capture({
-    distinctId: request.distinctId,
-    event: "lead submitted",
-    properties: { source_path: lead.sourcePath },
-    sessionId: request.sessionId,
-  });
-
   return { leadId: id };
 });

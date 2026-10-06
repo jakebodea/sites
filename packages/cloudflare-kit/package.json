@@ -5,28 +5,30 @@
   "type": "module",
   "exports": {
     "./server": "./src/server/index.ts",
-    "./analytics/client": "./src/analytics/client.ts",
-    "./analytics/privacy": "./src/analytics/privacy.ts",
     "./infra": "./src/infra/index.ts",
     "./emdash/email-plugin": "./src/emdash/email-plugin.ts",
     "./emdash/seed-media": "./src/emdash/seed-media.ts",
     "./emdash/alchemy-workarounds": "./src/emdash/alchemy-workarounds.ts",
     "./emdash/env-types": "./src/emdash/env-types.ts",
     "./infra/stage": "./src/infra/stage.ts",
-    "./seo": "./src/seo.ts"
+    "./seo": "./src/seo.ts",
+    "./env": "./src/env.ts",
+    "./astro/web-analytics-beacon.astro": "./src/astro/web-analytics-beacon.astro",
+    "./emdash/analytics": "./src/emdash/analytics.ts",
+    "./emdash/worker": "./src/emdash/worker.ts"
   },
   "scripts": {
     "test": "vitest run",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "effect": "catalog:",
-    "posthog-js": "catalog:",
-    "posthog-node": "catalog:"
+    "@eisbachcode/emdash-plugin-analytics": "catalog:",
+    "effect": "catalog:"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "catalog:",
     "@effect/vitest": "catalog:",
+    "@emdash-cms/cloudflare": "catalog:",
     "@jakebodea/config": "workspace:*",
     "@types/bun": "catalog:",
     "alchemy": "catalog:",
@@ -36,6 +38,7 @@
     "vitest": "catalog:"
   },
   "peerDependencies": {
+    "@emdash-cms/cloudflare": "catalog:",
     "alchemy": "catalog:",
     "astro": "catalog:",
     "emdash": "catalog:"

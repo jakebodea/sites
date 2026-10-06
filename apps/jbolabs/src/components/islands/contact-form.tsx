@@ -1,7 +1,3 @@
-import {
-  analyticsIdentity,
-  captureAnalytics,
-} from "@jakebodea/cloudflare-kit/analytics/client";
 import { actions, isInputError } from "astro:actions";
 import {
   ArrowLeftIcon,
@@ -288,7 +284,6 @@ const ContactForm = ({ turnstileSiteKey }: ContactFormProps) => {
   const referrer = useRef<HTMLInputElement>(null);
   const widget = useRef<HTMLDivElement>(null);
   const steps = useRef<(HTMLElement | null)[]>([]);
-  const started = useRef(false);
   const moved = useRef(false);
 
   // Prefill from a referral link (`?ref=`), after hydration so SSR markup matches.
@@ -347,13 +342,6 @@ const ContactForm = ({ turnstileSiteKey }: ContactFormProps) => {
     };
   }, [turnstileSiteKey, reachedEnd]);
 
-  const onFirstInput = () => {
-    if (!started.current) {
-      started.current = true;
-      captureAnalytics("contact form started");
-    }
-  };
-
   const goTo = (index: number) => {
     moved.current = true;
     setCurrent(index);
@@ -383,7 +371,6 @@ const ContactForm = ({ turnstileSiteKey }: ContactFormProps) => {
         value instanceof File ? [] : (choice(SERVICES, value) ?? [])
       );
     const { error } = await actions.contact({
-      analytics: analyticsIdentity(),
       budget: choice(BUDGETS, field(data, "budget")),
       company: optional(field(data, "company")),
       email: field(data, "email"),
@@ -396,11 +383,9 @@ const ContactForm = ({ turnstileSiteKey }: ContactFormProps) => {
       website: optional(field(data, "website")),
     });
     if (error === undefined) {
-      captureAnalytics("contact form submitted");
       setStatus({ state: "sent" });
       return;
     }
-    captureAnalytics("contact form failed", { form_error: error.code });
     setStatus({
       message: isInputError(error)
         ? "Please check your details and try again."
@@ -439,7 +424,6 @@ const ContactForm = ({ turnstileSiteKey }: ContactFormProps) => {
       onSubmit={(event) => {
         void onSubmit(event);
       }}
-      onInput={onFirstInput}
       noValidate={false}
       className="flex flex-col gap-10"
     >

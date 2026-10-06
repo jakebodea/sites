@@ -2,7 +2,7 @@
 
 A monorepo of client marketing sites. Each site is an Astro + EmDash CMS app on Cloudflare Workers, deployed with Alchemy v2. Server code is Effect 4. The reference site is `apps/access-electric`.
 
-Full rationale for every choice: [docs/stack.md](docs/stack.md). Domain terms: [CONTEXT.md](CONTEXT.md).
+Current choices: [docs/stack.md](docs/stack.md). Why each one-way choice was made: [docs/adr/](docs/adr/). Domain terms: [CONTEXT.md](CONTEXT.md).
 
 ## Map
 
@@ -12,12 +12,13 @@ Full rationale for every choice: [docs/stack.md](docs/stack.md). Domain terms: [
 | `apps/jbolabs/` | The exception: Jake's own studio site has no CMS. Copy lives in `src/content/*.ts` and leads go to a D1 table |
 | `apps/<site>/src/components/islands/` | The only client JS: shadcn React islands (nav, gallery, contact form) |
 | `apps/<site>/src/components/ui/` | Vendored shadcn primitives. Add variants here; never restyle them at call sites |
-| `packages/cloudflare-kit` | Shared code: Effect server services (`./server`), browser analytics (`./analytics/*`), Alchemy helpers (`./infra`), EmDash glue (`./emdash/*`) |
+| `packages/cloudflare-kit` | Shared code: Effect server services (`./server`), Web Analytics bindings/beacon, Alchemy helpers (`./infra`), EmDash glue (`./emdash/*`) |
 | `packages/control-app` | `bun run app -- …`: run, sign in, screenshot, record, smoke-test a site |
 | `packages/proof` | `bun run proof -- …`: revision-bound proof receipts |
 | `packages/config` | tsconfig + strict oxlint/oxfmt presets + local lint rules |
 | `stacks/` | Repo-level Alchemy stacks: `github.ts` (CI control plane), `turbo-cache.ts` (remote cache) |
 | `scripts/ci/` | Logic the GitHub workflows call (tested TypeScript, thin YAML) |
+| `docs/` | `stack.md` (current choices), `adr/` (one dated record per decision, from `adr/template.md`) |
 
 `packages/*` will move to the `@jakebodea/*` toolkit repo: never import from `apps/` into `packages/`.
 
@@ -59,14 +60,7 @@ The Alchemy profile comes from `ALCHEMY_PROFILE` (e.g. `ALCHEMY_PROFILE=admin`).
 
 ## Decisions
 
-- Hosting: every client site lives in Jake's Cloudflare account; hand off later with Alchemy adopt.
-- CMS login: EmDash invites + passkeys. Finish EmDash setup right after the first prod deploy (whoever completes setup first becomes admin), then invite the client as **Editor**.
-- Email: Cloudflare Email Service (`EMAIL_FROM` once a domain is verified); logged, not sent, until then.
-- Analytics: PostHog, cookieless (`persistence: "memory"`), allowlisted events, no consent banner.
-- Monitoring: Cloudflare Workers Logs/traces everywhere; Axiom datasets + monitors on prod with `AXIOM_TOKEN`.
-- Backups: D1 Time Travel + daily dump of D1 and media into the retained `Backups` bucket (prod).
-- Secrets: no Infisical/1Password. Main-checkout `.env`, GitHub environment secrets, `Alchemy.Random`.
-- Stages: `dev-<worktree>` (local), `pr-<n>` (previews, destroyed on close), `prod` (custom domain; `<site>-prod.jakebodea.workers.dev` while `site.config.ts` has no `domain`, since attaching an unowned domain fails the deploy).
+Hosting, CMS login, email, analytics, monitoring, backups, secrets, and stages are decided. Read [docs/stack.md](docs/stack.md) before changing any of them, and the linked ADR for why. A change to a decision edits `docs/stack.md` in the same PR. An `/architect` run writes its design into a new ADR.
 
 ## Style
 
