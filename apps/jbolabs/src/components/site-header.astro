@@ -1,6 +1,7 @@
 ---
 import type { Link } from "@/content/types";
 import MobileNav from "./islands/mobile-nav";
+import ThemeToggle from "./islands/theme-toggle";
 import ButtonLink from "./button-link.astro";
 import Wordmark from "./wordmark.astro";
 
@@ -15,12 +16,12 @@ const isActive = (url: string) =>
   url === "/" ? current === "/" : current === url || current.startsWith(`${url}/`);
 ---
 
-<header class="sticky top-0 z-40 bg-background/85 backdrop-blur-md supports-backdrop-filter:bg-background/70">
-  <div class="container-page flex h-18 items-center justify-between gap-6 sm:h-22">
+<header class="sticky top-0 z-40 bg-background">
+  <div class="container-page flex h-15 items-center justify-between gap-6 sm:h-16">
     <a href="/" class="rounded-sm" aria-label={`${title}, home`}>
       <Wordmark title={title} />
     </a>
-    <nav aria-label="Main" class="hidden items-center gap-8 md:flex">
+    <nav aria-label="Main" class="hidden items-center gap-6 md:flex">
       {
         items.map((item) => (
           <a
@@ -32,8 +33,12 @@ const isActive = (url: string) =>
           </a>
         ))
       }
+      <ThemeToggle client:idle />
       <ButtonLink href="/contact" size="cta">Start a project</ButtonLink>
     </nav>
-    <MobileNav client:media="(max-width: 767px)" title={title} items={[...items]} currentPath={current} />
+    <div class="flex items-center gap-1 md:hidden">
+      <ThemeToggle client:media="(max-width: 767px)" />
+      <MobileNav client:media="(max-width: 767px)" title={title} items={[...items]} currentPath={current} />
+    </div>
   </div>
 </header>

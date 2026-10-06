@@ -2,15 +2,13 @@
 interface Props {
   title: string;
   intro?: string | undefined;
-  eyebrow?: string | undefined;
 }
 
-const { eyebrow, intro, title } = Astro.props;
+const { intro, title } = Astro.props;
 ---
 
-<section class="container-page pt-16 pb-12 sm:pt-28 sm:pb-16">
-  {eyebrow && <p class="label-mono mb-6">{eyebrow}</p>}
-  <h1 class="rise max-w-3xl text-4xl leading-[1.08] sm:text-6xl">{title}</h1>
+<section class="container-page pt-14 pb-12 sm:pt-24 sm:pb-16">
+  <h1 class="rise display max-w-3xl text-[2.6rem] leading-[1.05] sm:text-[4.25rem] sm:leading-[1.02]">{title}</h1>
   {intro && <p class="rise mt-6 max-w-2xl text-lg leading-relaxed text-muted-foreground sm:text-xl [animation-delay:80ms]">{intro}</p>}
   <slot />
 </section>

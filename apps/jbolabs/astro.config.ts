@@ -50,17 +50,17 @@ export default defineConfig({
     {
       cssVariable: "--font-body",
       fallbacks: ["ui-sans-serif", "system-ui", "sans-serif"],
-      name: "Geist",
+      name: "Figtree",
       provider: fontProviders.google(),
-      weights: [400, 500],
+      weights: [400, 500, 600],
     },
     {
-      cssVariable: "--font-accent",
-      fallbacks: ["ui-serif", "Georgia", "serif"],
-      name: "Instrument Serif",
+      // The wordmark's face: bold "jbo", hairline "labs". Headlines borrow both ends.
+      cssVariable: "--font-wordmark",
+      fallbacks: ["ui-sans-serif", "system-ui", "sans-serif"],
+      name: "Montserrat",
       provider: fontProviders.google(),
-      styles: ["italic"],
-      weights: [400],
+      weights: [200, 300, 700],
     },
     {
       cssVariable: "--font-label",

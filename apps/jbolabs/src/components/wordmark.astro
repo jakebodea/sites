@@ -1,7 +1,8 @@
 ---
 /**
- * The text wordmark: `site.name` from site.config.ts, so renaming the studio
- * needs no new artwork. The small ink square is the only "logo".
+ * The text wordmark, set like the logo: lowercase Montserrat with the first
+ * word bold ("jbo") and the rest hairline ("labs"). It reads `site.name` from
+ * site.config.ts, so renaming the studio needs no new artwork.
  */
 interface Props {
   title: string;
@@ -9,9 +10,9 @@ interface Props {
 }
 
 const { class: className, title } = Astro.props;
+const [lead = "", ...rest] = title.toLowerCase().split(" ");
 ---
 
-<span class:list={["inline-flex items-center gap-2.5 text-[0.95rem] font-medium tracking-[-0.01em]", className]}>
-  <span class="size-2.5 rounded-[3px] bg-ink" aria-hidden="true"></span>
-  {title}
+<span class:list={["font-display text-[1.45rem] leading-none tracking-[-0.03em]", className]}>
+  <span class="font-bold">{lead}</span><span class="font-extralight">{rest.join("")}</span>
 </span>

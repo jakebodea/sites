@@ -36,6 +36,7 @@ export const about = {
 export const contact = {
   description:
     "Tell Jake about your website, web app, or consulting project. A few details up front make the first conversation far more useful.",
+  headline: "Let's build *something good.*",
   intro:
     "Tell me about what you are building. A few details now make our first conversation far more useful.",
   nextSteps: [

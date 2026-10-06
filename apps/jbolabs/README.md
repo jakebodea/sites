@@ -11,7 +11,7 @@ Jake's own studio site. Unlike the client sites it has no CMS: every word lives 
 | Intake form options (services, budgets, timelines) | `src/lib/intake-options.ts` |
 | Share image and favicons | `brand/render.py`, then commit `public/` |
 
-Headlines take `*emphasis*` for the serif italic accent.
+Headlines take `*emphasis*` to set words bold against the light display weight.
 
 ## Referrals
 
