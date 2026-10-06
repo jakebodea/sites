@@ -114,7 +114,8 @@ jobs:
     env:
       CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
       CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
-      POSTHOG_PROJECT_KEY: ${{ vars.POSTHOG_PROJECT_KEY }}
+      CF_ANALYTICS_API_TOKEN: ${{ secrets.CF_ANALYTICS_API_TOKEN }}
+      ALERT_EMAIL: ${{ secrets.ALERT_EMAIL }}
       EMAIL_FROM: ${{ vars.EMAIL_FROM }}
       LEAD_NOTIFY_TO: ${{ vars.LEAD_NOTIFY_TO }}
     steps:
