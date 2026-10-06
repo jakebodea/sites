@@ -6,7 +6,7 @@
  * `scripts/ci/deploy.ts`; results land in `.artifacts/ci/`.
  *
  *   bun scripts/ci/verify-previews.ts               # previews
- *   bun scripts/ci/verify-previews.ts --production  # smoke only, never fail on Lighthouse noise
+ *   bun scripts/ci/verify-previews.ts --production  # no Lighthouse: never fail on its noise
  */
 import { mkdirSync, readFileSync } from "node:fs";
 import path from "node:path";
@@ -44,20 +44,20 @@ const results = await Promise.all(
           if (url === null) {
             throw new Error("deploy reported no URL");
           }
-          if (!production) {
-            await command(
-              "bun",
-              [
-                "packages/control-app/src/cli.ts",
-                "seed",
-                "--site",
-                site,
-                "--url",
-                url,
-              ],
-              root
-            );
-          }
+          // A fresh CMS stage serves no pages until setup applies its seed. Seeding skips any
+          // stage whose setup already started, so it never overwrites a client's edits.
+          await command(
+            "bun",
+            [
+              "packages/control-app/src/cli.ts",
+              "seed",
+              "--site",
+              site,
+              "--url",
+              url,
+            ],
+            root
+          );
           const checks = await Promise.all([
             controlCheck({ name: "smoke", origin: url, output, site }),
             controlCheck({ name: "seo", origin: url, output, site }),

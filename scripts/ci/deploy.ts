@@ -8,14 +8,17 @@
  * Production deploys are refused outside CI by each site's stack.
  */
 import { execFileSync } from "node:child_process";
-import { writeFileSync } from "node:fs";
+import { existsSync, writeFileSync } from "node:fs";
 import path from "node:path";
 
 import { listSites } from "@jakebodea/control-app/site";
 import { Schema } from "effect";
 
+import { migrateDatabase } from "./migrate.ts";
+
 const SiteList = Schema.fromJsonString(Schema.Array(Schema.String));
 const URL_OUTPUT = /url:\s*'(?<url>https?:\/\/[^']+)'/u;
+const DATABASE_OUTPUT = /databaseId:\s*'(?<id>[0-9a-f-]{36})'/u;
 
 const flag = (name: string): string | undefined => {
   const index = process.argv.indexOf(name);
@@ -46,6 +49,7 @@ const deployEnv = Object.fromEntries(
 );
 
 const deployments = sites.map((site) => {
+  const directory = path.join(root, "apps", site);
   const output = execFileSync(
     "bun",
     [
@@ -56,9 +60,16 @@ const deployments = sites.map((site) => {
       "--yes",
       "--no-input",
     ],
-    { cwd: path.join(root, "apps", site), encoding: "utf-8", env: deployEnv }
+    { cwd: directory, encoding: "utf-8", env: deployEnv }
   );
   process.stdout.write(output);
+  if (!destroy && existsSync(path.join(directory, "seed/seed.json"))) {
+    const databaseId = DATABASE_OUTPUT.exec(output)?.groups?.id;
+    if (databaseId === undefined) {
+      throw new Error(`${site}: deploy reported no databaseId`);
+    }
+    migrateDatabase(directory, databaseId, deployEnv);
+  }
   return { site, url: URL_OUTPUT.exec(output)?.groups?.url ?? null };
 });
 

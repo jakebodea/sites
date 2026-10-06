@@ -39,7 +39,8 @@ Also:
 - **No `adapter`** in the Astro config. CI builds without Cloudflare credentials via `ASTRO_STANDALONE_BUILD=1 astro build`, which adds Alchemy's adapter directly.
 - **Default config filename** (`astro.config.ts`): Alchemy's `config:` prop double-joins paths.
 - **Vite SSR pre-bundling** (`vite.ssr.optimizeDeps` in `astro.config.ts`): include EmDash's CommonJS deps (`sanitize-html`, `@lingui/core`) and the Effect stack, exclude `emdash` itself, and set `noDiscovery: true`. Without it, workerd's dev runner can't evaluate CJS, and late re-optimizations leave stale chunks or two React copies ("Invalid hook call").
-- **Fresh stages boot empty**: EmDash applies the seed during first-run setup. Previews are seeded with `bun run app -- seed --url <stage>` (setup API, admin account left unclaimed); production waits for a human to finish setup.
+- **Fresh stages boot empty**: EmDash applies the seed during first-run setup. CI seeds every deployed CMS stage, production included, through the setup API (`bun run app -- seed --url <stage>`), leaving the admin account unclaimed for the client. Seeding skips a stage whose setup already started, so after launch content changes happen in the CMS, never from `seed.json`.
+- **Core migrations run in the deploy, not on a request**: `scripts/ci/deploy.ts` runs `emdash migrate` against each CMS site's D1 right after `alchemy deploy` (EmDash's deployment-managed migrations). A request that runs them on a fresh database and is cut off leaves the migration lock held for good; that wedged the first prod deploys on 2026-10-06. Runtime mode stays `auto` until the deploy step has proven reliable, then moves to `check`.
 - **R2 buckets** need `forceDestroy: true` on non-prod stages, or `destroy` fails.
 - **The first request after a fresh deploy** can 503 while EmDash migrates; warm it up.
 - **bun** needs `[install] peer = false`, or installing `@alchemy.run/frontend-frameworks` hangs.

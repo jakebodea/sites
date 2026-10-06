@@ -64,7 +64,7 @@ export default Alchemy.Stack(
       seedMediaBase: dev ? site.localSeedMediaBase : `${origin}/_seed/media`,
     });
 
-    const database = yield* Cloudflare.D1.Database("Database").pipe(keep);
+    const database = yield* Cloudflare.D1.Database("Content").pipe(keep);
     const media = yield* Cloudflare.R2.Bucket("Media", {
       // Disposable stages must empty the bucket to delete it.
       forceDestroy: !stage.production,
