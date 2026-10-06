@@ -54,7 +54,7 @@ export default Alchemy.Stack(
     });
     const { owner } = repository;
     const repo = repository.repository;
-    yield* GitHub.Secret("TurboToken", {
+    yield* GitHub.Secret("TurboTokenSecret", {
       name: "TURBO_TOKEN",
       owner,
       repository: repo,

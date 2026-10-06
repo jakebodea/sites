@@ -4,7 +4,7 @@
   "globalDependencies": ["tsconfig.json", "packages/config/tsconfig.base.json"],
   "tasks": {
     "typecheck": {
-      "dependsOn": ["^typecheck", "sync"],
+      "dependsOn": ["sync"],
       "inputs": [
         "$TURBO_DEFAULT$",
         "!**/*.md",
@@ -18,7 +18,7 @@
       "outputs": []
     },
     "test": {
-      "dependsOn": ["^typecheck", "sync"],
+      "dependsOn": ["sync"],
       "inputs": [
         "$TURBO_DEFAULT$",
         "!**/*.md",
@@ -32,7 +32,7 @@
       "outputs": []
     },
     "build": {
-      "dependsOn": ["^typecheck", "sync"],
+      "dependsOn": ["sync"],
       "inputs": [
         "$TURBO_DEFAULT$",
         ".build-inputs.json",
