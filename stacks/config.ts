@@ -19,10 +19,15 @@ export const deployTokens = {
   generation: 1,
 } as const;
 
-// jbolabs.com is not registered yet; keep sending off until its sending subdomain exists.
+/**
+ * The studio domain (bought 2026-10-06, managed by `stacks/studio.ts`). Every
+ * site sends lead notifications and alerts from `sender`, and alerts go to
+ * `alertInbox`, which forwards to a private inbox.
+ */
 export const studio = {
   alertInbox: "alerts@jbolabs.com",
   domain: "jbolabs.com",
-  // SAFETY: Intentionally absent; set to "sites@mail.jbolabs.com" once stacks/studio.ts is deployed.
+  // SAFETY: unset until `stacks/studio.ts` is deployed and the sending subdomain is enabled.
   sender: undefined as string | undefined,
+  sendingSubdomain: "mail.jbolabs.com",
 } as const;
