@@ -19,6 +19,8 @@ const SCROLL_STEP_PX = 600;
 const SETTLE_MS = 400;
 /** Longest wait for running CSS animations and transitions before a capture. */
 const ANIMATION_CAP_MS = 6000;
+/** Longest wait for images still downloading before they count as broken. */
+const IMAGE_LOAD_CAP_MS = 10_000;
 
 export interface PageReport {
   readonly path: string;
@@ -97,20 +99,41 @@ const loadEverything = async (page: Page): Promise<void> => {
 };
 
 /**
- * Images that failed to load. Images not rendered at this width (a `hidden
- * lg:block` ancestor) are skipped: lazy images there never load, by design.
+ * Images that failed to load, after giving the ones still downloading a moment
+ * to finish. Not every unloaded image is broken: lazy images under a `hidden
+ * lg:block` ancestor never load at this width, and lazy cards off to the side
+ * of a horizontal carousel load only once swiped into view. Both are skipped.
  */
-const brokenImages = async (page: Page): Promise<string[]> =>
-  await page.evaluate(() => {
+const brokenImages = async (page: Page): Promise<string[]> => {
+  await Promise.race([
+    page.evaluate(async () => {
+      const width = document.documentElement.clientWidth;
+      await Promise.allSettled(
+        [...document.images].flatMap((image) => {
+          const box = image.getBoundingClientRect();
+          const onPage = box.right > 0 && box.left < width;
+          return !image.complete && onPage && image.checkVisibility()
+            ? [image.decode()]
+            : [];
+        })
+      );
+    }),
+    page.waitForTimeout(IMAGE_LOAD_CAP_MS),
+  ]);
+  return await page.evaluate(() => {
+    const width = document.documentElement.clientWidth;
     const broken: string[] = [];
     for (const image of document.images) {
+      const box = image.getBoundingClientRect();
+      const onPage = box.right > 0 && box.left < width;
       const loaded = image.complete && image.naturalWidth > 0;
-      if (image.checkVisibility() && !loaded) {
+      if (onPage && image.checkVisibility() && !loaded) {
         broken.push(image.currentSrc || image.src);
       }
     }
     return broken;
   });
+};
 
 /**
  * Signs in to EmDash with its dev-only bypass (seeds the site's content on
