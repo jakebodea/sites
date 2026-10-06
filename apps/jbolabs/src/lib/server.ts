@@ -5,7 +5,6 @@
  */
 import {
   AnalyticsPostHog,
-  AxiomTelemetry,
   EmailLog,
   LeadInboxFromConfig,
   TurnstileLive,
@@ -17,7 +16,6 @@ import { env, waitUntil } from "cloudflare:workers";
 import { ConfigProvider, Layer } from "effect";
 import { FetchHttpClient } from "effect/http";
 
-import { site } from "../../site.config.ts";
 import { LeadStoreD1 } from "./leads.ts";
 
 export { waitUntil } from "cloudflare:workers";
@@ -55,8 +53,7 @@ export const contactLayer = () =>
       ? EmailLog
       : emailCloudflare(emailBinding(env.EMAIL)),
     LeadInboxFromConfig,
-    AnalyticsPostHog,
-    AxiomTelemetry({ environment: env.STAGE, serviceName: site.id })
+    AnalyticsPostHog
   ).pipe(
     Layer.provide(FetchHttpClient.layer),
     Layer.provide(Layer.succeed(WaitUntil, waitUntil)),

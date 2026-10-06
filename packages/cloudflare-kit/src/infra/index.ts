@@ -1,6 +1,6 @@
 export { DEFAULT_POSTHOG_HOST, siteAnalytics } from "./analytics.ts";
 export { WORKER_COMPATIBILITY } from "./compatibility.ts";
-export { monitoringProviders, siteMonitoring } from "./monitoring.ts";
+export { siteObservability } from "./observability.ts";
 export {
   mainCheckoutEnvFiles,
   mainCheckoutRoot,

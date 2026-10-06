@@ -9,7 +9,7 @@ import { PostHog } from "posthog-node";
 import { WaitUntil } from "./runtime.ts";
 
 /** The only events the server sends. */
-export type ServerEvent = "lead submitted";
+export type ServerEvent = "lead submitted" | "lead submit failed";
 
 export interface ServerEventCapture {
   readonly event: ServerEvent;

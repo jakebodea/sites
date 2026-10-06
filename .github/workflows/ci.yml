@@ -117,8 +117,6 @@ jobs:
       POSTHOG_PROJECT_KEY: ${{ vars.POSTHOG_PROJECT_KEY }}
       EMAIL_FROM: ${{ vars.EMAIL_FROM }}
       LEAD_NOTIFY_TO: ${{ vars.LEAD_NOTIFY_TO }}
-      AXIOM_TOKEN: ${{ secrets.AXIOM_TOKEN }}
-      ALERT_EMAIL: ${{ vars.ALERT_EMAIL }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:

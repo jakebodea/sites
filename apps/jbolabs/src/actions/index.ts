@@ -1,5 +1,5 @@
 import {
-  LEAD_SUBMIT_FAILED,
+  reportLeadFailure,
   runRequest,
   submitContact,
 } from "@jakebodea/cloudflare-kit/server";
@@ -36,7 +36,7 @@ export const server = {
         Effect.tapError((error) =>
           error._tag === "SchemaError" || error._tag === "TurnstileRejected"
             ? Effect.void
-            : Effect.logError(LEAD_SUBMIT_FAILED, error)
+            : reportLeadFailure(error)
         ),
         Effect.withSpan("action.contact")
       );

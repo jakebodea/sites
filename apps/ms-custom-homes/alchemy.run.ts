@@ -3,11 +3,10 @@ import {
   TURNSTILE_TEST_KEYS,
   WORKER_COMPATIBILITY,
   devPort,
-  monitoringProviders,
   productionDeployRefusal,
   resolveStage,
   siteAnalytics,
-  siteMonitoring,
+  siteObservability,
   siteSecrets,
   writeBuildInputs,
 } from "@jakebodea/cloudflare-kit/infra";
@@ -16,8 +15,7 @@ import {
  *
  *   D1 (EmDash content) + R2 (media) + Images binding + session KV (auto)
  *   + Turnstile widget + every-minute cron (EmDash scheduled publishing)
- *   prod only: custom domain, retained backups bucket + daily backup cron,
- *              Axiom datasets/monitors (when AXIOM_TOKEN is set)
+ *   prod only: custom domain, retained backups bucket + daily backup cron
  *
  * Deploy: `bun alchemy deploy --stage <stage> --profile <profile>` from this
  * directory (see .agents/skills/deploy). Never export CLOUDFLARE_* variables.
@@ -37,12 +35,7 @@ const root = import.meta.dirname;
 export default Alchemy.Stack(
   site.id,
   {
-    // Axiom loads only on prod with AXIOM_TOKEN set (see monitoringProviders).
-    providers: Layer.mergeAll(
-      Cloudflare.providers(),
-      monitoringProviders(),
-      RandomProvider()
-    ),
+    providers: Layer.mergeAll(Cloudflare.providers(), RandomProvider()),
     secrets: siteSecrets(root),
     state: Cloudflare.state(),
   },
@@ -91,7 +84,6 @@ export default Alchemy.Stack(
           name: stage.workerName,
         });
     const analytics = yield* siteAnalytics;
-    const monitoring = yield* siteMonitoring(stage);
     const leadInbox = {
       LEAD_NOTIFY_FROM: emailFrom ?? "",
       LEAD_NOTIFY_TO: Option.getOrElse(
@@ -102,7 +94,6 @@ export default Alchemy.Stack(
 
     const bindings = {
       ...analytics,
-      ...monitoring.env,
       ...leadInbox,
       BACKUPS: backups,
       DB: database,
@@ -150,7 +141,7 @@ export default Alchemy.Stack(
         lockfile: true,
       },
       name: stage.workerName,
-      observability: monitoring.observability,
+      observability: siteObservability(stage),
     });
 
     return {

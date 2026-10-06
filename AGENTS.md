@@ -63,7 +63,7 @@ The Alchemy profile comes from `ALCHEMY_PROFILE` (e.g. `ALCHEMY_PROFILE=admin`).
 - CMS login: EmDash invites + passkeys. Finish EmDash setup right after the first prod deploy (whoever completes setup first becomes admin), then invite the client as **Editor**.
 - Email: Cloudflare Email Service (`EMAIL_FROM` once a domain is verified); logged, not sent, until then.
 - Analytics: PostHog, cookieless (`persistence: "memory"`), allowlisted events, no consent banner.
-- Monitoring: Cloudflare Workers Logs/traces everywhere; Axiom datasets + monitors on prod with `AXIOM_TOKEN`.
+- Monitoring: Cloudflare Workers Logs/traces everywhere. No Axiom on client sites: a PostHog alert on the `lead submit failed` event is the one alert (see docs/stack.md).
 - Backups: D1 Time Travel + daily dump of D1 and media into the retained `Backups` bucket (prod).
 - Secrets: no Infisical/1Password. Main-checkout `.env`, GitHub environment secrets, `Alchemy.Random`.
 - Stages: `dev-<worktree>` (local), `pr-<n>` (previews, destroyed on close), `prod` (custom domain; `<site>-prod.jakebodea.workers.dev` while `site.config.ts` has no `domain`, since attaching an unowned domain fails the deploy).

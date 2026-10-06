@@ -13,6 +13,7 @@ export {
   LeadInboxFromConfig,
   MAX_LEAD_ANSWERS,
   leadNotificationText,
+  reportLeadFailure,
   submitContact,
 } from "./contact.ts";
 export type { ContactRequest } from "./contact.ts";
@@ -34,8 +35,7 @@ export {
   TurnstileRejected,
   TurnstileUnavailable,
 } from "./turnstile.ts";
-export { AxiomTelemetry, runRequest } from "./telemetry.ts";
-export type { TelemetryResource } from "./telemetry.ts";
+export { runRequest } from "./request.ts";
 export {
   BackupFailed,
   dumpDatabase,

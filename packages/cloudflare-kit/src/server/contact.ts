@@ -10,14 +10,15 @@
 import { Config, Context, Effect, Layer, Option, Schema } from "effect";
 
 import { Analytics } from "./analytics.ts";
+import type { ServerEvent } from "./analytics.ts";
 import { Email } from "./email.ts";
 import type { EmailAddress } from "./email.ts";
 import { LeadStore } from "./leads.ts";
 import type { Lead } from "./leads.ts";
 import { Turnstile } from "./turnstile.ts";
 
-/** Logged by the contact action when a submission fails; an Axiom monitor alerts on it. */
-export const LEAD_SUBMIT_FAILED = "lead submit failed";
+/** Logged and captured in PostHog when a submission fails; a PostHog alert watches for it. */
+export const LEAD_SUBMIT_FAILED = "lead submit failed" satisfies ServerEvent;
 
 const WHITESPACE = /\s/u;
 
@@ -194,3 +195,18 @@ export const submitContact = Effect.fn("submitContact")(function* submitContact(
 
   return { leadId: id };
 });
+
+/**
+ * For a submission that failed after validation and Turnstile: the visitor's
+ * enquiry may be lost, so it is logged and captured for the PostHog alert.
+ */
+export const reportLeadFailure = Effect.fn("reportLeadFailure")(
+  function* reportLeadFailure(error: { readonly _tag: string }) {
+    yield* Effect.logError(LEAD_SUBMIT_FAILED, error);
+    const analytics = yield* Analytics;
+    yield* analytics.capture({
+      event: LEAD_SUBMIT_FAILED,
+      properties: { error: error._tag },
+    });
+  }
+);

@@ -43,7 +43,7 @@ Also:
 - **Workers Paid is required.** On the Free plan's 10 ms CPU limit, EmDash's server rendering hits "Worker exceeded resource limits" (error 1102) under modest concurrency. The account was upgraded on 2026-10-05; afterwards ae-preview served 40 concurrent requests and a full smoke run with no failures.
 - **Layering**: never import `@jakebodea/cloudflare-kit/infra` from runtime code; it pulls Alchemy's deploy-time modules into the Worker.
 
-Local verification runs entirely under `alchemy dev`, which (as of `alchemy@2.0.0-beta.80`) emulates Workers, D1, R2, KV, Queues, Secrets Store, and Images locally; only Turnstile (test keys), Email, and Axiom are cloud-only. Spike notes: `spikes/emdash-alchemy/README.md`.
+Local verification runs entirely under `alchemy dev`, which (as of `alchemy@2.0.0-beta.80`) emulates Workers, D1, R2, KV, Queues, Secrets Store, and Images locally; only Turnstile (test keys) and Email are cloud-only. Spike notes: `spikes/emdash-alchemy/README.md`.
 
 - **SEO**: SSR everywhere; EmDash sitemap/robots; non-prod stages send `X-Robots-Tag: noindex` from the worker; `@jakebodea/cloudflare-kit/seo` keeps titles and descriptions inside snippet budgets and builds BreadcrumbList JSON-LD. The `seo` skill maps the full checklist to automated rules and the manual launch steps (Search Console, copy review, E-E-A-T, backlinks).
 
@@ -61,7 +61,8 @@ Local verification runs entirely under `alchemy dev`, which (as of `alchemy@2.0.
 
 - **PostHog** for product/web analytics and errors. Browser: posthog-js with an event allowlist and URL scrubbing, sent through a same-Worker proxy at a randomized path (`Alchemy.Random`), **cookieless (`persistence: "memory"`) on client sites, no consent banner**, collect only on the prod stage + hostname. Server: Effect `Analytics` service over posthog-node (`flushAt: 1`, `captureImmediate` in `waitUntil`). PostHog project/dashboards as code via a custom Alchemy provider on `@distilled.cloud/posthog` (Executor v2 pattern).
 - **Logs/traces**: Cloudflare native Workers Logs + tracing (`Cloudflare.Telemetry()`) always on.
-- **Monitoring**: **Axiom** via Alchemy's native provider (prod datasets, monitors on server errors and `lead submit failed`, email notifier) + a scheduled smoke workflow over every prod site.
+- **Monitoring (client sites)**: **no Axiom**. The contact form is the only server path that loses money when it breaks, so a failed submission is captured as the PostHog `lead submit failed` event (`reportLeadFailure`) and a PostHog alert on that event is the one alert. Everything else is debugged from Workers Logs, and CI verifies each prod site after every deploy. Axiom (a token, datasets, an ingest token, a log destination, and monitors per site) was more moving parts than low-traffic brochure sites need, and an unset token broke the first jbolabs prod deploy.
+- **Monitoring (products)**: reach for **Axiom** (Alchemy's native provider) when a product needs log search and retention beyond Workers Logs' few days, or alerting faster than PostHog's scheduled checks.
 - Disable Cloudflare Web Analytics edge auto-injection on product zones (`Cloudflare.Rum.Site`).
 
 ## Secrets
@@ -114,6 +115,6 @@ T3 Code / Executor style: root `AGENTS.md` (+ `CLAUDE.md` symlink) with stack ma
 
 - Consider Workers Cache in front of each site's Worker (Alchemy `cache` prop + `Cache-Control`) to cut CPU per visit.
 - Get a scoped `agent` Alchemy profile; re-auth the `default` OAuth profile from a real terminal.
-- PostHog project, Axiom token, real domains (for email + prod), GitHub repo for this monorepo.
+- PostHog project (plus the `lead submit failed` alert), real domains (for email + prod), GitHub repo for this monorepo.
 - File Alchemy issues: supported custom Worker entry for `Website.Astro`; `config:` path bug; EmDash image endpoint support; SSR dep-optimizer instability under the workerd dev runner (stale chunks / duplicate React); dev proxy resetting curl connections.
 - Extract `@jakebodea/*` toolkit; adopt in pcobooster (drop Infisical, add control-app, fake Planning Center, per-worktree stages) and shouldertap.

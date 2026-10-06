@@ -14,4 +14,4 @@ Ask the user for: business name, domain (or none yet), brand colors/logo, and th
 5. **Preview deploy** (ask first): open a PR; CI deploys `pr-<n>` and comments the URL. Or `cd apps/<site> && ALCHEMY_PROFILE=admin bun alchemy deploy --stage <name>-preview`.
 6. **Production** happens on merge to `main` (CI). Immediately after the first prod deploy, the user opens `https://<domain>/_emdash/admin` (the prod workers.dev address while there is no domain) and completes setup. Passkeys are bound to the hostname, so prefer finishing setup once the custom domain is attached with their own passkey: whoever finishes setup first becomes admin. Then work the launch checklist in the `seo` skill (Search Console, old-site redirects, copy review).
 7. **Client access**: in the CMS, Users → Invite → role **Editor**. Until email is configured, copy the invite link and send it yourself.
-8. **Optional per site**: PostHog project key, verified email sender (`EMAIL_FROM`), Axiom token.
+8. **Optional per site**: PostHog project key and verified email sender (`EMAIL_FROM`).

@@ -24,11 +24,6 @@ declare namespace Cloudflare {
     POSTHOG_HOST: string;
     POSTHOG_PROJECT_KEY: string;
     POSTHOG_PROXY_PATH: string;
-    AXIOM_INGEST_TOKEN: string;
-    AXIOM_LOGS_DATASET: string;
-    AXIOM_LOGS_URL: string;
-    AXIOM_TRACES_DATASET: string;
-    AXIOM_TRACES_URL: string;
   }
 }
 

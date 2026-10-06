@@ -7,6 +7,7 @@ import {
   ContactForm,
   LeadInbox,
   leadNotificationText,
+  reportLeadFailure,
   submitContact,
 } from "./contact.ts";
 import { Email, EmailFailed } from "./email.ts";
@@ -175,6 +176,20 @@ describe(submitContact, () => {
         Effect.provide(Layer.merge(layer({ inbox: false }), TurnstileAllowAll))
       );
       expect(yield* Ref.get(emails)).toHaveLength(0);
+    })
+  );
+});
+
+describe(reportLeadFailure, () => {
+  it.effect("captures the failure for the PostHog alert", () =>
+    Effect.gen(function* captureFailure() {
+      const { events, layer } = yield* recorder;
+      yield* reportLeadFailure({ _tag: "LeadNotSaved" }).pipe(
+        Effect.provide(layer())
+      );
+      expect(yield* Ref.get(events)).toStrictEqual([
+        { event: "lead submit failed", properties: { error: "LeadNotSaved" } },
+      ]);
     })
   );
 });
