@@ -1,0 +1,36 @@
+---
+import { getSeoMeta } from "emdash";
+
+import PageBlocks from "@/components/blocks/page-blocks.astro";
+import PageHeader from "@/components/page-header.astro";
+import ProjectGrid from "@/components/project-grid.astro";
+import Base from "@/layouts/base.astro";
+import { getPage, getProjects } from "@/lib/content";
+
+const [{ entry: page, cacheHint }, projects] = await Promise.all([getPage("portfolio"), getProjects()]);
+if (Astro.cache?.enabled) {
+  for (const hint of [cacheHint, projects.cacheHint]) {
+    Astro.cache.set(hint);
+  }
+}
+const title = page?.data.title ?? "Portfolio";
+const seo = page ? getSeoMeta(page, { defaultDescription: page.data.intro, path: "/portfolio", siteUrl: Astro.url.origin }) : undefined;
+---
+
+<Base
+  title={seo?.title ?? title}
+  description={seo?.description}
+  image={seo?.ogImage}
+  robots={seo?.robots}
+  content={page ? { collection: "pages", id: page.data.id, slug: page.id } : undefined}
+>
+  <PageHeader title={title} intro={page?.data.intro} eyebrow="Our work" />
+  <section class="container-page py-20 sm:py-28">
+    {projects.entries.length > 0 ? (
+      <ProjectGrid projects={projects.entries} />
+    ) : (
+      <p class="py-16 text-center text-muted-foreground">New projects are coming soon.</p>
+    )}
+  </section>
+  {page && <div {...page.edit.content}><PageBlocks value={page.data.content} /></div>}
+</Base>

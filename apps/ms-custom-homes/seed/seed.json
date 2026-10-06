@@ -1,0 +1,1547 @@
+{
+  "$schema": "https://emdashcms.com/seed.schema.json",
+  "version": "1",
+  "meta": {
+    "name": "MS Custom Homes",
+    "description": "Custom home builder site: pages built from sections, a project portfolio, and a lead inbox.",
+    "author": "Jake Bodea"
+  },
+  "settings": {
+    "title": "MS Custom Homes, Inc.",
+    "tagline": "Custom homes and remodels in Orange County, built on budget and on time.",
+    "timezone": "America/Los_Angeles"
+  },
+  "blockTypes": [
+    {
+      "slug": "hero",
+      "label": "Hero",
+      "description": "Full-screen headline over a photo slideshow, with the animated logo.",
+      "category": "Sections",
+      "currentVersion": 1,
+      "versions": [
+        {
+          "version": 1,
+          "fields": [
+            {
+              "slug": "eyebrow",
+              "label": "Small line above the headline",
+              "type": "string"
+            },
+            {
+              "slug": "headline",
+              "label": "Headline",
+              "type": "string",
+              "required": true
+            },
+            {
+              "slug": "subheadline",
+              "label": "Subheadline",
+              "type": "text"
+            },
+            {
+              "slug": "slides",
+              "label": "Photos",
+              "type": "repeater",
+              "required": true,
+              "validation": {
+                "minItems": 1,
+                "maxItems": 6,
+                "subFields": [
+                  {
+                    "slug": "image",
+                    "label": "Photo",
+                    "type": "image"
+                  }
+                ]
+              }
+            },
+            {
+              "slug": "primary_cta_label",
+              "label": "Primary button label",
+              "type": "string"
+            },
+            {
+              "slug": "primary_cta_url",
+              "label": "Primary button link",
+              "type": "string",
+              "validation": {
+                "pattern": "^(?:$|(?:https?://|mailto:|tel:|/(?!/)|#).+)$"
+              }
+            },
+            {
+              "slug": "secondary_cta_label",
+              "label": "Secondary button label",
+              "type": "string"
+            },
+            {
+              "slug": "secondary_cta_url",
+              "label": "Secondary button link",
+              "type": "string",
+              "validation": {
+                "pattern": "^(?:$|(?:https?://|mailto:|tel:|/(?!/)|#).+)$"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "statement",
+      "label": "Statement",
+      "description": "One large sentence or two, centered, with the monogram.",
+      "category": "Sections",
+      "currentVersion": 1,
+      "versions": [
+        {
+          "version": 1,
+          "fields": [
+            {
+              "slug": "eyebrow",
+              "label": "Eyebrow",
+              "type": "string"
+            },
+            {
+              "slug": "text",
+              "label": "Statement",
+              "type": "text",
+              "required": true
+            },
+            {
+              "slug": "signature",
+              "label": "Signed by",
+              "type": "string"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "services",
+      "label": "Services",
+      "description": "What the business builds, each with a photo.",
+      "category": "Sections",
+      "currentVersion": 1,
+      "versions": [
+        {
+          "version": 1,
+          "fields": [
+            {
+              "slug": "eyebrow",
+              "label": "Eyebrow",
+              "type": "string"
+            },
+            {
+              "slug": "headline",
+              "label": "Headline",
+              "type": "string",
+              "required": true
+            },
+            {
+              "slug": "intro",
+              "label": "Intro",
+              "type": "text"
+            },
+            {
+              "slug": "items",
+              "label": "Services",
+              "type": "repeater",
+              "required": true,
+              "validation": {
+                "minItems": 1,
+                "maxItems": 6,
+                "subFields": [
+                  {
+                    "slug": "title",
+                    "label": "Title",
+                    "type": "string",
+                    "required": true
+                  },
+                  {
+                    "slug": "body",
+                    "label": "Description",
+                    "type": "text",
+                    "required": true
+                  },
+                  {
+                    "slug": "image",
+                    "label": "Photo",
+                    "type": "image"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "featured_projects",
+      "label": "Featured projects",
+      "description": "Projects marked Featured, shown automatically.",
+      "category": "Sections",
+      "currentVersion": 1,
+      "versions": [
+        {
+          "version": 1,
+          "fields": [
+            {
+              "slug": "eyebrow",
+              "label": "Eyebrow",
+              "type": "string"
+            },
+            {
+              "slug": "headline",
+              "label": "Headline",
+              "type": "string",
+              "required": true
+            },
+            {
+              "slug": "intro",
+              "label": "Intro",
+              "type": "text"
+            },
+            {
+              "slug": "link_label",
+              "label": "Link label",
+              "type": "string"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "process",
+      "label": "Process",
+      "description": "Numbered steps, such as how a project runs.",
+      "category": "Sections",
+      "currentVersion": 1,
+      "versions": [
+        {
+          "version": 1,
+          "fields": [
+            {
+              "slug": "eyebrow",
+              "label": "Eyebrow",
+              "type": "string"
+            },
+            {
+              "slug": "headline",
+              "label": "Headline",
+              "type": "string",
+              "required": true
+            },
+            {
+              "slug": "intro",
+              "label": "Intro",
+              "type": "text"
+            },
+            {
+              "slug": "items",
+              "label": "Steps",
+              "type": "repeater",
+              "required": true,
+              "validation": {
+                "minItems": 2,
+                "maxItems": 6,
+                "subFields": [
+                  {
+                    "slug": "title",
+                    "label": "Title",
+                    "type": "string",
+                    "required": true
+                  },
+                  {
+                    "slug": "body",
+                    "label": "Description",
+                    "type": "text",
+                    "required": true
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "story",
+      "label": "Image and text",
+      "description": "A photo beside a heading, text, and an optional button.",
+      "category": "Sections",
+      "currentVersion": 1,
+      "versions": [
+        {
+          "version": 1,
+          "fields": [
+            {
+              "slug": "eyebrow",
+              "label": "Eyebrow",
+              "type": "string"
+            },
+            {
+              "slug": "headline",
+              "label": "Headline",
+              "type": "string",
+              "required": true
+            },
+            {
+              "slug": "body",
+              "label": "Text",
+              "type": "portableText",
+              "required": true
+            },
+            {
+              "slug": "image",
+              "label": "Photo",
+              "type": "image"
+            },
+            {
+              "slug": "image_position",
+              "label": "Photo side",
+              "type": "select",
+              "validation": {
+                "options": ["left", "right"]
+              },
+              "defaultValue": "left"
+            },
+            {
+              "slug": "cta_label",
+              "label": "Button label",
+              "type": "string"
+            },
+            {
+              "slug": "cta_url",
+              "label": "Button link",
+              "type": "string",
+              "validation": {
+                "pattern": "^(?:$|(?:https?://|mailto:|tel:|/(?!/)|#).+)$"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "financing",
+      "label": "Financing offer",
+      "description": "A promotion for a lending partner, with a disclosure line.",
+      "category": "Sections",
+      "currentVersion": 1,
+      "versions": [
+        {
+          "version": 1,
+          "fields": [
+            {
+              "slug": "eyebrow",
+              "label": "Eyebrow",
+              "type": "string"
+            },
+            {
+              "slug": "headline",
+              "label": "Headline",
+              "type": "string",
+              "required": true
+            },
+            {
+              "slug": "body",
+              "label": "Text",
+              "type": "text"
+            },
+            {
+              "slug": "image",
+              "label": "Background photo",
+              "type": "image"
+            },
+            {
+              "slug": "cta_label",
+              "label": "Button label",
+              "type": "string",
+              "required": true
+            },
+            {
+              "slug": "cta_url",
+              "label": "Button link",
+              "type": "string",
+              "required": true,
+              "validation": {
+                "pattern": "^(?:$|(?:https?://|mailto:|tel:|/(?!/)|#).+)$"
+              }
+            },
+            {
+              "slug": "disclosure",
+              "label": "Small print",
+              "type": "text"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "facts",
+      "label": "Facts",
+      "description": "A row of short facts, such as years in business.",
+      "category": "Sections",
+      "currentVersion": 1,
+      "versions": [
+        {
+          "version": 1,
+          "fields": [
+            {
+              "slug": "items",
+              "label": "Facts",
+              "type": "repeater",
+              "required": true,
+              "validation": {
+                "minItems": 1,
+                "maxItems": 4,
+                "subFields": [
+                  {
+                    "slug": "value",
+                    "label": "Value",
+                    "type": "string",
+                    "required": true
+                  },
+                  {
+                    "slug": "label",
+                    "label": "Label",
+                    "type": "string",
+                    "required": true
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "cta_band",
+      "label": "Call to action",
+      "description": "A closing line over a photo with a button.",
+      "category": "Sections",
+      "currentVersion": 1,
+      "versions": [
+        {
+          "version": 1,
+          "fields": [
+            {
+              "slug": "eyebrow",
+              "label": "Eyebrow",
+              "type": "string"
+            },
+            {
+              "slug": "headline",
+              "label": "Headline",
+              "type": "string",
+              "required": true
+            },
+            {
+              "slug": "body",
+              "label": "Text",
+              "type": "text"
+            },
+            {
+              "slug": "image",
+              "label": "Background photo",
+              "type": "image"
+            },
+            {
+              "slug": "cta_label",
+              "label": "Button label",
+              "type": "string"
+            },
+            {
+              "slug": "cta_url",
+              "label": "Button link",
+              "type": "string",
+              "validation": {
+                "pattern": "^(?:$|(?:https?://|mailto:|tel:|/(?!/)|#).+)$"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "rich_text",
+      "label": "Text",
+      "description": "Headings and paragraphs.",
+      "category": "Sections",
+      "currentVersion": 1,
+      "versions": [
+        {
+          "version": 1,
+          "fields": [
+            {
+              "slug": "headline",
+              "label": "Headline",
+              "type": "string"
+            },
+            {
+              "slug": "body",
+              "label": "Text",
+              "type": "portableText",
+              "required": true
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "collections": [
+    {
+      "slug": "home",
+      "label": "Home page",
+      "labelSingular": "Home page",
+      "icon": "house",
+      "sortOrder": 0,
+      "supports": ["drafts", "revisions", "preview", "scheduling", "seo"],
+      "urlPattern": "/",
+      "fields": [
+        {
+          "slug": "title",
+          "label": "Title",
+          "type": "string",
+          "required": true,
+          "searchable": true
+        },
+        {
+          "slug": "intro",
+          "label": "Intro",
+          "type": "text"
+        },
+        {
+          "slug": "content",
+          "label": "Sections",
+          "type": "blocks",
+          "validation": {
+            "allowedTypes": [
+              "hero",
+              "statement",
+              "services",
+              "featured_projects",
+              "process",
+              "story",
+              "financing",
+              "facts",
+              "cta_band",
+              "rich_text"
+            ],
+            "maxItems": 20
+          }
+        }
+      ]
+    },
+    {
+      "slug": "pages",
+      "label": "Pages",
+      "labelSingular": "Page",
+      "icon": "file-text",
+      "sortOrder": 1,
+      "supports": ["drafts", "revisions", "preview", "scheduling", "seo"],
+      "urlPattern": "/{slug}",
+      "fields": [
+        {
+          "slug": "title",
+          "label": "Title",
+          "type": "string",
+          "required": true,
+          "searchable": true
+        },
+        {
+          "slug": "intro",
+          "label": "Intro",
+          "type": "text"
+        },
+        {
+          "slug": "content",
+          "label": "Sections",
+          "type": "blocks",
+          "validation": {
+            "allowedTypes": [
+              "hero",
+              "statement",
+              "services",
+              "featured_projects",
+              "process",
+              "story",
+              "financing",
+              "facts",
+              "cta_band",
+              "rich_text"
+            ],
+            "maxItems": 20
+          }
+        }
+      ]
+    },
+    {
+      "slug": "projects",
+      "label": "Projects",
+      "labelSingular": "Project",
+      "icon": "house-line",
+      "sortOrder": 2,
+      "supports": [
+        "drafts",
+        "revisions",
+        "preview",
+        "scheduling",
+        "search",
+        "seo"
+      ],
+      "urlPattern": "/projects/{slug}",
+      "admin": {
+        "listColumns": ["project_type", "progress", "featured"]
+      },
+      "fields": [
+        {
+          "slug": "title",
+          "label": "Name",
+          "type": "string",
+          "required": true,
+          "searchable": true
+        },
+        {
+          "slug": "project_type",
+          "label": "Type",
+          "type": "select",
+          "required": true,
+          "indexed": true,
+          "validation": {
+            "options": ["custom_home", "remodel", "kitchen", "bath", "outdoor"]
+          },
+          "defaultValue": "remodel"
+        },
+        {
+          "slug": "progress",
+          "label": "Status",
+          "type": "select",
+          "required": true,
+          "indexed": true,
+          "validation": {
+            "options": ["completed", "in_progress"]
+          },
+          "defaultValue": "completed"
+        },
+        {
+          "slug": "featured",
+          "label": "Show on the home page",
+          "type": "boolean",
+          "defaultValue": false
+        },
+        {
+          "slug": "sort_order",
+          "label": "Order (lower shows first)",
+          "type": "integer",
+          "defaultValue": 100
+        },
+        {
+          "slug": "featured_image",
+          "label": "Main photo",
+          "type": "image"
+        },
+        {
+          "slug": "gallery",
+          "label": "More photos",
+          "type": "repeater",
+          "validation": {
+            "maxItems": 40,
+            "subFields": [
+              {
+                "slug": "image",
+                "label": "Photo",
+                "type": "image"
+              }
+            ]
+          }
+        },
+        {
+          "slug": "location",
+          "label": "Location",
+          "type": "string"
+        },
+        {
+          "slug": "summary",
+          "label": "Short description",
+          "type": "text",
+          "searchable": true
+        },
+        {
+          "slug": "details",
+          "label": "Story",
+          "type": "portableText"
+        }
+      ]
+    },
+    {
+      "slug": "leads",
+      "label": "Leads",
+      "labelSingular": "Lead",
+      "icon": "envelope-simple",
+      "sortOrder": 4,
+      "description": "Contact form submissions. Visitors never see these.",
+      "routable": false,
+      "supports": [],
+      "admin": {
+        "listColumns": ["email", "phone"],
+        "quickCreate": false
+      },
+      "fields": [
+        {
+          "slug": "title",
+          "label": "Name",
+          "type": "string",
+          "required": true
+        },
+        {
+          "slug": "email",
+          "label": "Email",
+          "type": "string",
+          "required": true
+        },
+        {
+          "slug": "phone",
+          "label": "Phone",
+          "type": "string"
+        },
+        {
+          "slug": "company",
+          "label": "Project type",
+          "type": "string"
+        },
+        {
+          "slug": "message",
+          "label": "Message",
+          "type": "text",
+          "required": true
+        },
+        {
+          "slug": "source_path",
+          "label": "Submitted from",
+          "type": "string"
+        }
+      ]
+    }
+  ],
+  "menus": [
+    {
+      "name": "primary",
+      "label": "Main navigation",
+      "items": [
+        {
+          "type": "custom",
+          "label": "Portfolio",
+          "url": "/portfolio"
+        },
+        {
+          "type": "custom",
+          "label": "About",
+          "url": "/about"
+        },
+        {
+          "type": "custom",
+          "label": "Financing",
+          "url": "https://equityfast.emortgagecapital.com/?utm_campaign=ms-custom-homes"
+        },
+        {
+          "type": "custom",
+          "label": "Contact",
+          "url": "/contact"
+        }
+      ]
+    },
+    {
+      "name": "footer",
+      "label": "Footer links",
+      "items": [
+        {
+          "type": "custom",
+          "label": "Portfolio",
+          "url": "/portfolio"
+        },
+        {
+          "type": "custom",
+          "label": "About",
+          "url": "/about"
+        },
+        {
+          "type": "custom",
+          "label": "Contact",
+          "url": "/contact"
+        },
+        {
+          "type": "custom",
+          "label": "Privacy",
+          "url": "/privacy"
+        }
+      ]
+    },
+    {
+      "name": "announcement",
+      "label": "Announcement bar (first link shows above the header; remove it to hide the bar)",
+      "items": [
+        {
+          "type": "custom",
+          "label": "Planning a remodel? Explore home equity financing",
+          "url": "https://equityfast.emortgagecapital.com/?utm_campaign=ms-custom-homes"
+        }
+      ]
+    }
+  ],
+  "redirects": [
+    {
+      "source": "/home",
+      "destination": "/",
+      "type": 308,
+      "enabled": true,
+      "groupName": "Site structure"
+    },
+    {
+      "source": "/gallery",
+      "destination": "/portfolio",
+      "type": 301,
+      "enabled": true,
+      "groupName": "Old site"
+    }
+  ],
+  "content": {
+    "home": [
+      {
+        "id": "page-home",
+        "slug": "home",
+        "status": "published",
+        "data": {
+          "title": "Home",
+          "content": [
+            {
+              "_type": "hero",
+              "_version": 1,
+              "_key": "hero",
+              "eyebrow": "Custom homes · Remodels · Orange County",
+              "headline": "Homes built with intention.",
+              "subheadline": "A woman-owned builder creating custom homes and thoughtful remodels, delivered on budget and on time.",
+              "slides": [
+                {
+                  "image": {
+                    "$media": {
+                      "url": "/_seed/media/farmhouse-stair-dining.jpg",
+                      "alt": "Open staircase and dining room in a custom home",
+                      "filename": "farmhouse-stair-dining.jpg"
+                    }
+                  }
+                },
+                {
+                  "image": {
+                    "$media": {
+                      "url": "/_seed/media/ranch-exterior.jpg",
+                      "alt": "Single-story home with black windows",
+                      "filename": "ranch-exterior.jpg"
+                    }
+                  }
+                },
+                {
+                  "image": {
+                    "$media": {
+                      "url": "/_seed/media/kitchen-glass-cabinets.jpg",
+                      "alt": "White kitchen with glass-front cabinets",
+                      "filename": "kitchen-glass-cabinets.jpg"
+                    }
+                  }
+                },
+                {
+                  "image": {
+                    "$media": {
+                      "url": "/_seed/media/backyard-dusk.jpg",
+                      "alt": "Backyard at dusk with landscape lighting",
+                      "filename": "backyard-dusk.jpg"
+                    }
+                  }
+                }
+              ],
+              "primary_cta_label": "Start your project",
+              "primary_cta_url": "/contact",
+              "secondary_cta_label": "View our work",
+              "secondary_cta_url": "/portfolio"
+            },
+            {
+              "_type": "statement",
+              "_version": 1,
+              "_key": "statement",
+              "eyebrow": "Our approach",
+              "text": "A beautiful home starts with a builder who listens. We guide every project from first sketch to final walkthrough, and we keep it on budget and on schedule.",
+              "signature": "Mia Marcantonio, Owner"
+            },
+            {
+              "_type": "services",
+              "_version": 1,
+              "_key": "services",
+              "eyebrow": "What we build",
+              "headline": "No job too big or too small.",
+              "intro": "From a ground-up custom home to a single room, every project gets the same care.",
+              "items": [
+                {
+                  "title": "Custom homes",
+                  "body": "Ground-up homes designed around how you live, coordinated with your architect and engineers from day one.",
+                  "image": {
+                    "$media": {
+                      "url": "/_seed/media/farmhouse-entry-doors.jpg",
+                      "alt": "French double entry doors",
+                      "filename": "farmhouse-entry-doors.jpg"
+                    }
+                  }
+                },
+                {
+                  "title": "Remodels and additions",
+                  "body": "Whole-home renovations, second stories, and additions that feel like they were always there.",
+                  "image": {
+                    "$media": {
+                      "url": "/_seed/media/great-room.jpg",
+                      "alt": "Bright living room with French doors",
+                      "filename": "great-room.jpg"
+                    }
+                  }
+                },
+                {
+                  "title": "Kitchens and baths",
+                  "body": "Cabinetry, stone, tile, and lighting brought together with tight detailing.",
+                  "image": {
+                    "$media": {
+                      "url": "/_seed/media/kitchen-gray-shaker.jpg",
+                      "alt": "Gray shaker kitchen",
+                      "filename": "kitchen-gray-shaker.jpg"
+                    }
+                  }
+                },
+                {
+                  "title": "Outdoor living",
+                  "body": "Landscapes, hardscape, and lighting that extend the home outdoors.",
+                  "image": {
+                    "$media": {
+                      "url": "/_seed/media/backyard-dusk.jpg",
+                      "alt": "Backyard at dusk",
+                      "filename": "backyard-dusk.jpg"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "_type": "featured_projects",
+              "_version": 1,
+              "_key": "work",
+              "eyebrow": "Portfolio",
+              "headline": "Selected work",
+              "intro": "A look at recent homes, remodels, and a custom build in progress.",
+              "link_label": "View the full portfolio"
+            },
+            {
+              "_type": "process",
+              "_version": 1,
+              "_key": "process",
+              "eyebrow": "How we work",
+              "headline": "A clear path from idea to keys.",
+              "items": [
+                {
+                  "title": "Consultation",
+                  "body": "We walk the site, listen to your goals, and talk honestly about budget and timing."
+                },
+                {
+                  "title": "Design and planning",
+                  "body": "We work with your architect and engineers on plans, pricing, and permits, so there are no surprises later."
+                },
+                {
+                  "title": "Construction",
+                  "body": "Licensed, bonded, and insured trade partners build to the plan while you get regular updates."
+                },
+                {
+                  "title": "Walkthrough",
+                  "body": "We review every detail with you and hand over a finished home, on time and on budget."
+                }
+              ]
+            },
+            {
+              "_type": "story",
+              "_version": 1,
+              "_key": "owner",
+              "eyebrow": "Meet the owner",
+              "headline": "Thirty years of building, one standard.",
+              "body": [
+                {
+                  "_type": "block",
+                  "style": "normal",
+                  "_key": "p0",
+                  "children": [
+                    {
+                      "_type": "span",
+                      "_key": "s0",
+                      "text": "Mia Marcantonio began her career at a structural engineering firm in Pasadena working on hospitals and schools, then moved to an architecture firm in Newport Beach. After seven years she turned to residential construction, working for two of the largest custom home builders in Orange County."
+                    }
+                  ]
+                },
+                {
+                  "_type": "block",
+                  "style": "normal",
+                  "_key": "p1",
+                  "children": [
+                    {
+                      "_type": "span",
+                      "_key": "s1",
+                      "text": "She founded MS Custom Homes to build differently: with real attention to each client's wellbeing, and a firm commitment to finishing on budget and on time."
+                    }
+                  ]
+                }
+              ],
+              "image": {
+                "$media": {
+                  "url": "/_seed/media/mia-marcantonio.jpg",
+                  "alt": "Mia Marcantonio, owner of MS Custom Homes",
+                  "filename": "mia-marcantonio.jpg"
+                }
+              },
+              "image_position": "left",
+              "cta_label": "About MS Custom Homes",
+              "cta_url": "/about"
+            },
+            {
+              "_type": "financing",
+              "_version": 1,
+              "_key": "financing",
+              "eyebrow": "Financing",
+              "headline": "Need financing for your project?",
+              "body": "Tap into your home's equity with a home equity line of credit or loan from EquityFast by E Mortgage Capital. Check your options online in minutes, then build with us.",
+              "image": {
+                "$media": {
+                  "url": "/_seed/media/kitchen-glass-cabinets.jpg",
+                  "alt": "White kitchen",
+                  "filename": "kitchen-glass-cabinets.jpg"
+                }
+              },
+              "cta_label": "Explore financing",
+              "cta_url": "https://equityfast.emortgagecapital.com/?utm_campaign=ms-custom-homes",
+              "disclosure": "Financing is provided by E Mortgage Capital, Inc. (NMLS #1416824), not by MS Custom Homes, Inc. Subject to credit approval. Equal Housing Opportunity."
+            },
+            {
+              "_type": "facts",
+              "_version": 1,
+              "_key": "facts",
+              "items": [
+                {
+                  "value": "30",
+                  "label": "Years in construction"
+                },
+                {
+                  "value": "2014",
+                  "label": "Licensed general contractor since"
+                },
+                {
+                  "value": "100%",
+                  "label": "Licensed, bonded, and insured trade partners"
+                },
+                {
+                  "value": "Irvine",
+                  "label": "Woman-owned, serving Orange County"
+                }
+              ]
+            },
+            {
+              "_type": "cta_band",
+              "_version": 1,
+              "_key": "cta",
+              "eyebrow": "Start a conversation",
+              "headline": "Let's build something lasting.",
+              "body": "Tell us about your home, your lot, or the room you have been dreaming about. We will reply within one business day.",
+              "image": {
+                "$media": {
+                  "url": "/_seed/media/farmhouse-entry-doors.jpg",
+                  "alt": "French double entry doors",
+                  "filename": "farmhouse-entry-doors.jpg"
+                }
+              },
+              "cta_label": "Schedule a consultation",
+              "cta_url": "/contact"
+            }
+          ]
+        }
+      }
+    ],
+    "pages": [
+      {
+        "id": "page-about",
+        "slug": "about",
+        "status": "published",
+        "data": {
+          "title": "About",
+          "intro": "A woman-owned custom home builder with nearly thirty years in construction.",
+          "content": [
+            {
+              "_type": "story",
+              "_version": 1,
+              "_key": "story",
+              "eyebrow": "Our story",
+              "headline": "Built on experience, run with heart.",
+              "body": [
+                {
+                  "_type": "block",
+                  "style": "normal",
+                  "_key": "p0",
+                  "children": [
+                    {
+                      "_type": "span",
+                      "_key": "s0",
+                      "text": "Mia Marcantonio has been in the construction industry for close to 30 years. She started at a top structural engineering firm in Pasadena, where the work was hospitals and schools, then moved to an architecture firm in Newport Beach in the same field."
+                    }
+                  ]
+                },
+                {
+                  "_type": "block",
+                  "style": "normal",
+                  "_key": "p1",
+                  "children": [
+                    {
+                      "_type": "span",
+                      "_key": "s1",
+                      "text": "After seven years she made the switch to residential construction, working for two of the largest custom home builders in Orange County. There she honed her skills in custom residential design and building."
+                    }
+                  ]
+                },
+                {
+                  "_type": "block",
+                  "style": "normal",
+                  "_key": "p2",
+                  "children": [
+                    {
+                      "_type": "span",
+                      "_key": "s2",
+                      "text": "With what she learned from her mentors, she founded MS Custom Homes as a woman-owned business. Her approach is different: she cares about each client's wellbeing, and her goal on every project is the same: on budget and on time."
+                    }
+                  ]
+                }
+              ],
+              "image": {
+                "$media": {
+                  "url": "/_seed/media/mia-marcantonio.jpg",
+                  "alt": "Mia Marcantonio, owner of MS Custom Homes",
+                  "filename": "mia-marcantonio.jpg"
+                }
+              },
+              "image_position": "left"
+            },
+            {
+              "_type": "facts",
+              "_version": 1,
+              "_key": "facts",
+              "items": [
+                {
+                  "value": "30",
+                  "label": "Years in construction"
+                },
+                {
+                  "value": "B",
+                  "label": "CSLB general building license #997076"
+                },
+                {
+                  "value": "100%",
+                  "label": "Licensed, bonded, and insured trade partners"
+                },
+                {
+                  "value": "Irvine",
+                  "label": "Woman-owned, serving Orange County"
+                }
+              ]
+            },
+            {
+              "_type": "process",
+              "_version": 1,
+              "_key": "values",
+              "eyebrow": "What you can expect",
+              "headline": "How we take care of you.",
+              "items": [
+                {
+                  "title": "Honest budgets",
+                  "body": "Clear pricing up front and no surprises along the way."
+                },
+                {
+                  "title": "Steady schedules",
+                  "body": "A realistic timeline, managed day to day, so your home is finished when we said it would be."
+                },
+                {
+                  "title": "Trusted partners",
+                  "body": "Every subcontractor, engineer, and architect we work with is licensed, bonded, and insured."
+                },
+                {
+                  "title": "One point of contact",
+                  "body": "You work directly with Mia from the first meeting to the final walkthrough."
+                }
+              ]
+            },
+            {
+              "_type": "financing",
+              "_version": 1,
+              "_key": "financing",
+              "eyebrow": "Financing",
+              "headline": "Need financing?",
+              "body": "Fund a remodel or addition with a home equity line of credit or loan from EquityFast by E Mortgage Capital.",
+              "cta_label": "Explore financing",
+              "cta_url": "https://equityfast.emortgagecapital.com/?utm_campaign=ms-custom-homes",
+              "disclosure": "Financing is provided by E Mortgage Capital, Inc. (NMLS #1416824), not by MS Custom Homes, Inc. Subject to credit approval. Equal Housing Opportunity."
+            },
+            {
+              "_type": "cta_band",
+              "_version": 1,
+              "_key": "cta",
+              "headline": "Ready when you are.",
+              "body": "Tell us about your project and we will be in touch within one business day.",
+              "image": {
+                "$media": {
+                  "url": "/_seed/media/ranch-exterior.jpg",
+                  "alt": "Single-story home exterior",
+                  "filename": "ranch-exterior.jpg"
+                }
+              },
+              "cta_label": "Contact us",
+              "cta_url": "/contact"
+            }
+          ]
+        }
+      },
+      {
+        "id": "page-portfolio",
+        "slug": "portfolio",
+        "status": "published",
+        "data": {
+          "title": "Portfolio",
+          "intro": "Custom homes, remodels, kitchens, baths, and outdoor spaces."
+        }
+      },
+      {
+        "id": "page-contact",
+        "slug": "contact",
+        "status": "published",
+        "data": {
+          "title": "Start your project",
+          "intro": "Tell us a little about what you have in mind. We reply within one business day."
+        }
+      },
+      {
+        "id": "page-privacy",
+        "slug": "privacy",
+        "status": "published",
+        "data": {
+          "title": "Privacy",
+          "intro": "How this site handles analytics and the information you send us.",
+          "content": [
+            {
+              "_type": "rich_text",
+              "_version": 1,
+              "_key": "privacy",
+              "body": [
+                {
+                  "_type": "block",
+                  "style": "normal",
+                  "_key": "p0",
+                  "children": [
+                    {
+                      "_type": "span",
+                      "_key": "s0",
+                      "text": "This site uses anonymous, cookieless analytics to understand which pages are useful. It does not set cookies, store identifiers in your browser, or build a profile of you. Page addresses are recorded without query strings, except campaign tags such as utm_source."
+                    }
+                  ]
+                },
+                {
+                  "_type": "block",
+                  "style": "normal",
+                  "_key": "p1",
+                  "children": [
+                    {
+                      "_type": "span",
+                      "_key": "s1",
+                      "text": "When you send the contact form, we store your name, email, phone, and message so we can reply. We do not sell or share this information, and it is used only to respond to you."
+                    }
+                  ]
+                },
+                {
+                  "_type": "block",
+                  "style": "normal",
+                  "_key": "p2",
+                  "children": [
+                    {
+                      "_type": "span",
+                      "_key": "s2",
+                      "text": "The contact form is protected by Cloudflare Turnstile, which checks that a person, not a bot, is submitting it."
+                    }
+                  ]
+                },
+                {
+                  "_type": "block",
+                  "style": "normal",
+                  "_key": "p3",
+                  "children": [
+                    {
+                      "_type": "span",
+                      "_key": "s3",
+                      "text": "Links to our financing partner take you to E Mortgage Capital's website, which has its own privacy policy."
+                    }
+                  ]
+                },
+                {
+                  "_type": "block",
+                  "style": "normal",
+                  "_key": "p4",
+                  "children": [
+                    {
+                      "_type": "span",
+                      "_key": "s4",
+                      "text": "To ask about or delete information you have sent us, use the contact form and mention this page."
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    ],
+    "projects": [
+      {
+        "id": "project-modern-farmhouse",
+        "slug": "modern-farmhouse",
+        "status": "published",
+        "data": {
+          "title": "Modern Farmhouse",
+          "project_type": "custom_home",
+          "progress": "completed",
+          "featured": true,
+          "sort_order": 10,
+          "featured_image": {
+            "$media": {
+              "url": "/_seed/media/farmhouse-stair-dining.jpg",
+              "alt": "Open staircase beside a dining room and marble kitchen island",
+              "filename": "farmhouse-stair-dining.jpg"
+            }
+          },
+          "summary": "A light-filled two-story home with an open stair, white oak floors, a marble-topped island, and custom built-ins off the dining room.",
+          "gallery": [
+            {
+              "image": {
+                "$media": {
+                  "url": "/_seed/media/farmhouse-entry-doors.jpg",
+                  "alt": "French double entry doors with divided-light glass",
+                  "filename": "farmhouse-entry-doors.jpg"
+                }
+              }
+            },
+            {
+              "image": {
+                "$media": {
+                  "url": "/_seed/media/farmhouse-dining-built-ins.jpg",
+                  "alt": "Dining room with built-in shelving and a blue Dutch door",
+                  "filename": "farmhouse-dining-built-ins.jpg"
+                }
+              }
+            }
+          ]
+        }
+      },
+      {
+        "id": "project-single-story-exterior",
+        "slug": "single-story-exterior",
+        "status": "published",
+        "data": {
+          "title": "Single-Story Exterior",
+          "project_type": "remodel",
+          "progress": "completed",
+          "featured": true,
+          "sort_order": 20,
+          "featured_image": {
+            "$media": {
+              "url": "/_seed/media/ranch-exterior.jpg",
+              "alt": "White single-story home with black windows and a modern garage door",
+              "filename": "ranch-exterior.jpg"
+            }
+          },
+          "summary": "A single-story home refreshed with crisp white siding, black-framed windows, a modern glass garage door, and new landscaping."
+        }
+      },
+      {
+        "id": "project-kitchen-and-bar",
+        "slug": "kitchen-and-bar",
+        "status": "published",
+        "data": {
+          "title": "Kitchen and Bar",
+          "project_type": "kitchen",
+          "progress": "completed",
+          "featured": true,
+          "sort_order": 30,
+          "featured_image": {
+            "$media": {
+              "url": "/_seed/media/kitchen-glass-cabinets.jpg",
+              "alt": "White kitchen with lit glass-front cabinets and a wine refrigerator",
+              "filename": "kitchen-glass-cabinets.jpg"
+            }
+          },
+          "summary": "A white kitchen wall with lit glass-front uppers, double wall ovens, a wine refrigerator, and a subway tile backsplash."
+        }
+      },
+      {
+        "id": "project-backyard-retreat",
+        "slug": "backyard-retreat",
+        "status": "published",
+        "data": {
+          "title": "Backyard Retreat",
+          "project_type": "outdoor",
+          "progress": "completed",
+          "featured": true,
+          "sort_order": 40,
+          "featured_image": {
+            "$media": {
+              "url": "/_seed/media/backyard-dusk.jpg",
+              "alt": "Backyard at dusk with a curved lawn and landscape lighting",
+              "filename": "backyard-dusk.jpg"
+            }
+          },
+          "summary": "A backyard reworked with a curved lawn, drought-tolerant planting, and path lighting that carries the evening."
+        }
+      },
+      {
+        "id": "project-great-room",
+        "slug": "great-room",
+        "status": "published",
+        "data": {
+          "title": "Great Room",
+          "project_type": "remodel",
+          "progress": "completed",
+          "featured": false,
+          "sort_order": 50,
+          "featured_image": {
+            "$media": {
+              "url": "/_seed/media/great-room.jpg",
+              "alt": "Living room with a white sectional and French doors to the garden",
+              "filename": "great-room.jpg"
+            }
+          },
+          "summary": "A bright family room opened to the garden with a wall of French doors."
+        }
+      },
+      {
+        "id": "project-gray-shaker-kitchen",
+        "slug": "gray-shaker-kitchen",
+        "status": "published",
+        "data": {
+          "title": "Gray Shaker Kitchen",
+          "project_type": "kitchen",
+          "progress": "completed",
+          "featured": false,
+          "sort_order": 60,
+          "featured_image": {
+            "$media": {
+              "url": "/_seed/media/kitchen-gray-shaker.jpg",
+              "alt": "Gray shaker kitchen with an island and glass tile backsplash",
+              "filename": "kitchen-gray-shaker.jpg"
+            }
+          },
+          "summary": "Gray shaker cabinetry, quartz counters, a glass mosaic backsplash, and a working island."
+        }
+      },
+      {
+        "id": "project-primary-bath",
+        "slug": "primary-bath",
+        "status": "published",
+        "data": {
+          "title": "Primary Bath",
+          "project_type": "bath",
+          "progress": "completed",
+          "featured": false,
+          "sort_order": 70,
+          "featured_image": {
+            "$media": {
+              "url": "/_seed/media/primary-bath-vanity.jpg",
+              "alt": "Primary bathroom with a stained double vanity and tile wall",
+              "filename": "primary-bath-vanity.jpg"
+            }
+          },
+          "summary": "A double vanity in stained wood under a full-height tile wall and sconce lighting."
+        }
+      },
+      {
+        "id": "project-fireplace-media-wall",
+        "slug": "fireplace-media-wall",
+        "status": "published",
+        "data": {
+          "title": "Fireplace Media Wall",
+          "project_type": "remodel",
+          "progress": "completed",
+          "featured": false,
+          "sort_order": 80,
+          "featured_image": {
+            "$media": {
+              "url": "/_seed/media/media-wall-fireplace.jpg",
+              "alt": "Family room with a stone media wall and linear fireplace",
+              "filename": "media-wall-fireplace.jpg"
+            }
+          },
+          "summary": "A stone-clad media wall with a linear fireplace and floating shelves.",
+          "gallery": [
+            {
+              "image": {
+                "$media": {
+                  "url": "/_seed/media/media-wall-seating.jpg",
+                  "alt": "Seating area facing the fireplace media wall",
+                  "filename": "media-wall-seating.jpg"
+                }
+              }
+            }
+          ]
+        }
+      },
+      {
+        "id": "project-new-construction",
+        "slug": "new-construction",
+        "status": "published",
+        "data": {
+          "title": "New Custom Home",
+          "project_type": "custom_home",
+          "progress": "in_progress",
+          "featured": true,
+          "sort_order": 5,
+          "featured_image": {
+            "$media": {
+              "url": "/_seed/media/new-build-framing-interior.jpg",
+              "alt": "Two-story interior framing with tall windows",
+              "filename": "new-build-framing-interior.jpg"
+            }
+          },
+          "summary": "A two-story custom home in framing. Follow along as it comes together.",
+          "gallery": [
+            {
+              "image": {
+                "$media": {
+                  "url": "/_seed/media/new-build-framing-exterior.jpg",
+                  "alt": "Exterior framing of a two-story home",
+                  "filename": "new-build-framing-exterior.jpg"
+                }
+              }
+            },
+            {
+              "image": {
+                "$media": {
+                  "url": "/_seed/media/new-build-framing-crew.jpg",
+                  "alt": "Crew framing the ground floor walls",
+                  "filename": "new-build-framing-crew.jpg"
+                }
+              }
+            },
+            {
+              "image": {
+                "$media": {
+                  "url": "/_seed/media/new-build-framing-stair.jpg",
+                  "alt": "Framing of a two-story stairwell",
+                  "filename": "new-build-framing-stair.jpg"
+                }
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

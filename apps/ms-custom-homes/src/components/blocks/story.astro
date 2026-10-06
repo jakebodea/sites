@@ -1,0 +1,38 @@
+---
+import { sanitizeHref } from "emdash";
+import { Image, PortableText } from "emdash/ui";
+import type { BlockComponentProps } from "emdash/ui";
+
+import Logo from "@/components/brand/logo.astro";
+import ButtonLink from "@/components/button-link.astro";
+import type { PageContentStoryBlock } from "../../../emdash-env";
+
+type Props = BlockComponentProps<PageContentStoryBlock>;
+
+const { value } = Astro.props;
+const imageRight = value.image_position === "right";
+---
+
+<section class="overflow-hidden bg-stone">
+  <div class="container-page grid items-center gap-14 py-24 sm:py-32 md:grid-cols-[minmax(0,0.85fr)_minmax(0,1fr)] md:gap-20 lg:gap-28">
+    {value.image && (
+      <div class:list={["relative mx-auto w-full max-w-md md:max-w-none", { "md:order-2": imageRight }]}>
+        <div class="absolute -top-6 -left-6 h-full w-full border border-champagne/60" aria-hidden="true"></div>
+        <div class="relative aspect-[4/5] overflow-hidden" data-reveal="mask" style="--reveal-mask: var(--brand-stone)">
+          <Image image={value.image} alt={value.image.alt ?? ""} sizes="(min-width: 768px) 40vw, 90vw" class="reveal-zoom size-full! object-cover" />
+        </div>
+        <Logo variant="mark" tone="white" class="absolute -right-5 -bottom-5 h-24 w-auto bg-slate p-4 sm:h-28" />
+      </div>
+    )}
+    <div>
+      {value.eyebrow && <p class="eyebrow mb-6" data-reveal>{value.eyebrow}</p>}
+      <h2 class="text-4xl sm:text-5xl" data-reveal style="--reveal-delay: 80ms">{value.headline}</h2>
+      <div class="prose-site mt-8" data-reveal style="--reveal-delay: 160ms"><PortableText value={value.body} /></div>
+      {value.cta_label && value.cta_url && (
+        <div data-reveal style="--reveal-delay: 240ms">
+          <ButtonLink href={sanitizeHref(value.cta_url)} variant="hairline" size="cta" class="mt-10">{value.cta_label}</ButtonLink>
+        </div>
+      )}
+    </div>
+  </div>
+</section>

@@ -1,0 +1,15 @@
+{
+  "extends": "@jakebodea/config/tsconfig.base.json",
+  "compilerOptions": {
+    "lib": ["ES2023", "DOM"],
+    "types": ["bun"]
+  },
+  "include": [
+    "alchemy.run.ts",
+    "astro.config.ts",
+    "site.config.ts",
+    "scripts",
+    "vitest.config.ts",
+    "seed"
+  ]
+}

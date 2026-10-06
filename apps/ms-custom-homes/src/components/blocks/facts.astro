@@ -1,0 +1,27 @@
+---
+import type { BlockComponentProps } from "emdash/ui";
+
+import type { PageContentFactsBlock } from "../../../emdash-env";
+
+type Props = BlockComponentProps<PageContentFactsBlock>;
+
+const { value } = Astro.props;
+---
+
+<section class="border-y border-border">
+  <dl class="container-page grid grid-cols-2 lg:grid-cols-4">
+    {value.items.map((item, index) => (
+      <div
+        class:list={[
+          "flex flex-col gap-3 px-2 py-12 sm:px-8 sm:py-16",
+          { "border-l border-border": index % 2 === 1, "lg:border-l": index > 0 },
+        ]}
+        data-reveal
+        style={`--reveal-delay: ${index * 100}ms`}
+      >
+        <dt class="text-sm leading-snug text-muted-foreground">{item.label}</dt>
+        <dd class="order-first font-display text-5xl leading-none text-slate sm:text-6xl">{item.value}</dd>
+      </div>
+    ))}
+  </dl>
+</section>

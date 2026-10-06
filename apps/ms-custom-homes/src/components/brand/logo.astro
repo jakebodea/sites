@@ -1,0 +1,262 @@
+---
+/**
+ * The MS Custom Homes logo as inline SVG, so it can be colored per surface and
+ * animated. Geometry comes from `logo-paths.ts` (generated from the client's
+ * scan by brand/build_logo.py).
+ *
+ * `play="load"` draws the logo once on page load; `play="scroll"` draws it when
+ * it scrolls into view (reveal.ts adds `.is-playing`). Without JavaScript or with
+ * reduced motion, the finished logo shows immediately.
+ */
+import { logoPaths as p } from "./logo-paths";
+
+interface Props {
+  variant?: "mark" | "stacked" | "horizontal";
+  tone?: "brand" | "white" | "slate";
+  play?: "none" | "load" | "scroll";
+  title?: string;
+  class?: string;
+}
+
+const { class: className, play = "none", title, tone = "brand", variant = "mark" } = Astro.props;
+
+const TONES = {
+  brand: { ink: "#6F879D", roof: "#869EB4", window: "#A3BDD4" },
+  slate: { ink: "#2B3A4A", roof: "#3C4D60", window: "#6F879D" },
+  white: { ink: "#FFFFFF", roof: "rgba(255,255,255,0.88)", window: "rgba(255,255,255,0.72)" },
+} as const;
+const colors = TONES[tone];
+
+const [mx0, my0, mx1, my1] = p.markBox;
+const markSize = mx1 - mx0;
+// Horizontal lockup: the mark, then "MS CUSTOM HOMES" with a cap height of about a quarter of the mark.
+const HORIZONTAL_GLYPHS = 13;
+const HORIZONTAL_CAP_RATIO = 0.26;
+const HORIZONTAL_GAP = 70;
+const wordX0 = 132;
+const capHeight = 59.5;
+const baseline = 682.5;
+const wordRight = 1138;
+const hScale = (HORIZONTAL_CAP_RATIO * markSize) / capHeight;
+const hTranslateX = mx1 + HORIZONTAL_GAP - wordX0 * hScale;
+// Optical center: the monogram's visual middle sits a little below the box middle (the roof is light).
+const hTranslateY = (my0 + my1) / 2 + 30 - (baseline - capHeight / 2) * hScale;
+
+const LAYOUTS = {
+  horizontal: {
+    glyphs: p.word.slice(0, HORIZONTAL_GLYPHS),
+    viewBox: `${mx0} ${my0} ${mx1 + HORIZONTAL_GAP + (wordRight - wordX0) * hScale + 10 - mx0} ${my1 - my0}`,
+  },
+  mark: { glyphs: [], viewBox: `${mx0} ${my0} ${markSize} ${my1 - my0}` },
+  stacked: { glyphs: p.word, viewBox: `92 ${my0} 1357 ${700 - my0}` },
+} as const;
+const { glyphs, viewBox } = LAYOUTS[variant];
+const wordTransform = variant === "horizontal" ? `translate(${hTranslateX.toFixed(1)} ${hTranslateY.toFixed(1)}) scale(${hScale.toFixed(4)})` : undefined;
+
+// Several logos can share a page; each needs its own mask id.
+const maskId = `logo-roof-${crypto.randomUUID().slice(0, 8)}`;
+const [cx0, cy0, cx1, cy1] = p.chimney;
+const animated = play !== "none";
+---
+
+<svg
+  viewBox={viewBox}
+  class:list={["logo", { "logo-anim": animated, "is-playing": play === "load" }, className]}
+  data-play={play === "scroll" ? "scroll" : undefined}
+  role={title ? "img" : undefined}
+  aria-label={title}
+  aria-hidden={title ? undefined : "true"}
+  xmlns="http://www.w3.org/2000/svg"
+>
+  {animated && (
+    <defs>
+      <mask id={maskId} maskUnits="userSpaceOnUse" x={mx0} y={my0} width={markSize} height={my1 - my0}>
+        <path class="roof-draw" d={p.roofLine} pathLength="1" fill="none" stroke="white" stroke-width="34" stroke-linecap="square" stroke-linejoin="miter" />
+        <rect class="chimney-rise" x={cx0 - 4} y={cy0 - 4} width={cx1 - cx0 + 8} height={cy1 - cy0 + 4} fill="white" />
+      </mask>
+    </defs>
+  )}
+  <g class="roof">
+    <path d={p.roof} fill={colors.roof} mask={animated ? `url(#${maskId})` : undefined} />
+  </g>
+  <g class="window" fill={colors.window}>
+    {p.windowPanes.map(([a, b, c, d], index) => (
+      <rect class="pane" x={a} y={b} width={c - a} height={d - b} rx="1.5" style={`--i:${index}`} />
+    ))}
+  </g>
+  <path class="monogram" d={p.monogram} fill={colors.ink} fill-rule="evenodd" pathLength="1" stroke={animated ? colors.ink : undefined} stroke-width={animated ? 2 : undefined} />
+  {glyphs.length > 0 && (
+    <g class="word" fill={colors.ink} transform={wordTransform}>
+      {glyphs.map((glyph, index) => (
+        <path class="glyph" d={glyph.d} style={`--i:${index}`} />
+      ))}
+    </g>
+  )}
+</svg>
+
+<style>
+  /* No display rule here: callers set it (e.g. `hidden lg:block`). */
+  .logo {
+    overflow: visible;
+  }
+
+  .pane,
+  .glyph {
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+
+  .chimney-rise {
+    transform-box: fill-box;
+    transform-origin: bottom;
+  }
+
+  /*
+   * The sequence (about 2.6 s): roof draws from the left eave over the ridge,
+   * the chimney rises, window panes light one by one, the monogram is traced in
+   * ink and then filled, and the wordmark settles letter by letter.
+   */
+  .roof-draw {
+    stroke-dasharray: 1;
+  }
+
+  /* Hidden starting state only once JavaScript can start the scroll trigger. */
+  :global(.js) .logo-anim:not(.is-playing) .roof-draw {
+    stroke-dashoffset: 1;
+  }
+
+  :global(.js) .logo-anim:not(.is-playing) .chimney-rise {
+    transform: scaleY(0);
+  }
+
+  :global(.js) .logo-anim:not(.is-playing) .pane,
+  :global(.js) .logo-anim:not(.is-playing) .glyph {
+    opacity: 0;
+  }
+
+  :global(.js) .logo-anim:not(.is-playing) .monogram {
+    fill-opacity: 0;
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+  }
+
+  .logo-anim.is-playing .roof-draw {
+    animation: logo-draw 1.15s cubic-bezier(0.65, 0, 0.35, 1) 0.15s both;
+  }
+
+  .logo-anim.is-playing .chimney-rise {
+    animation: logo-rise 0.55s cubic-bezier(0.16, 1, 0.3, 1) 1.05s both;
+  }
+
+  .logo-anim.is-playing .pane {
+    animation: logo-pane 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: calc(1.2s + var(--i) * 0.09s);
+  }
+
+  .logo-anim.is-playing .monogram {
+    stroke-dasharray: 1;
+    animation:
+      logo-trace 1.6s cubic-bezier(0.65, 0, 0.35, 1) 0.35s both,
+      logo-fill 0.9s ease-out 1.55s both;
+  }
+
+  .logo-anim.is-playing .glyph {
+    animation: logo-glyph 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: calc(1.75s + var(--i) * 0.035s);
+  }
+
+  /* Without animation the trace stroke must not thicken the monogram. */
+  .logo:not(.logo-anim) .monogram {
+    stroke: none;
+  }
+
+  @keyframes logo-draw {
+    from {
+      stroke-dashoffset: 1;
+    }
+
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+
+  @keyframes logo-rise {
+    from {
+      transform: scaleY(0);
+    }
+
+    to {
+      transform: scaleY(1);
+    }
+  }
+
+  @keyframes logo-pane {
+    from {
+      opacity: 0;
+      transform: scale(0.4);
+    }
+
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  @keyframes logo-trace {
+    from {
+      stroke-dashoffset: 1;
+    }
+
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+
+  @keyframes logo-fill {
+    from {
+      fill-opacity: 0;
+      stroke-opacity: 1;
+    }
+
+    to {
+      fill-opacity: 1;
+      stroke-opacity: 0;
+    }
+  }
+
+  @keyframes logo-glyph {
+    from {
+      opacity: 0;
+      transform: translateY(40%);
+      filter: blur(6px);
+    }
+
+    to {
+      opacity: 1;
+      transform: none;
+      filter: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .logo-anim .roof-draw,
+    .logo-anim .monogram {
+      stroke-dashoffset: 0 !important;
+    }
+
+    .logo-anim .chimney-rise {
+      transform: none !important;
+    }
+
+    .logo-anim .pane,
+    .logo-anim .glyph,
+    .logo-anim .monogram,
+    .logo-anim .roof-draw,
+    .logo-anim .chimney-rise {
+      animation: none !important;
+      opacity: 1 !important;
+      fill-opacity: 1 !important;
+      stroke-opacity: 0 !important;
+    }
+  }
+</style>

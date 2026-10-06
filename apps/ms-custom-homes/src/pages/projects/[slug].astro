@@ -1,0 +1,117 @@
+---
+import ArrowLeft from "@lucide/astro/icons/arrow-left";
+import ArrowRight from "@lucide/astro/icons/arrow-right";
+import { decodeSlug, getSeoMeta } from "emdash";
+import { Image, PortableText } from "emdash/ui";
+
+import Breadcrumbs from "@/components/breadcrumbs.astro";
+import ButtonLink from "@/components/button-link.astro";
+import ProjectGallery from "@/components/islands/project-gallery";
+import Base from "@/layouts/base.astro";
+import { getProject, getProjects, projectFacts } from "@/lib/content";
+import { islandImage } from "@/lib/images";
+import { site } from "../../../site.config";
+
+const slug = decodeSlug(Astro.params.slug);
+if (!slug) {
+  return Astro.rewrite("/404");
+}
+const [{ cacheHint, entry: project }, all] = await Promise.all([getProject(slug), getProjects()]);
+if (!project) {
+  return Astro.rewrite("/404");
+}
+if (Astro.cache?.enabled) {
+  Astro.cache.set(cacheHint);
+  Astro.cache.set(all.cacheHint);
+}
+// The next project in portfolio order (wrapping), so every project page leads somewhere.
+const position = all.entries.findIndex((entry) => entry.id === project.id);
+const next = all.entries.length > 1 ? all.entries[(position + 1) % all.entries.length] : undefined;
+
+const { origin } = Astro.url;
+const gallery = (project.data.gallery ?? []).flatMap((item) => (item.image ? [item.image] : []));
+const galleryImages = await Promise.all(gallery.map((image) => islandImage(image, origin, [480, 768, 1080, 1440, 1920])));
+const facts = projectFacts(project.data);
+const seo = getSeoMeta(project, {
+  defaultDescription: project.data.summary ?? `${project.data.title}, built by ${site.name} in Orange County.`,
+  path: `/projects/${slug}`,
+  siteUrl: origin,
+});
+const cover = project.data.featured_image;
+---
+
+<Base
+  title={seo.title}
+  description={seo.description}
+  image={seo.ogImage}
+  canonical={seo.canonical}
+  robots={seo.robots}
+  content={{ collection: "projects", id: project.data.id, slug: project.id }}
+>
+  <article>
+    <header class="container-page pt-14 pb-12 sm:pt-20 sm:pb-16">
+      <Breadcrumbs class="mb-10" crumbs={[{ label: "Portfolio", path: "/portfolio" }, { label: project.data.title, path: `/projects/${slug}` }]} />
+      <div class="grid gap-10 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)] lg:items-end lg:gap-20">
+        <div>
+          {project.data.progress === "in_progress" && <p class="eyebrow mb-6">Under construction</p>}
+          <h1 class="text-5xl leading-[1.02] sm:text-6xl lg:text-[5.25rem]" {...project.edit.title}>{project.data.title}</h1>
+          {project.data.summary && <p class="mt-7 max-w-2xl text-lg leading-relaxed text-muted-foreground sm:text-xl" {...project.edit.summary}>{project.data.summary}</p>}
+        </div>
+        {facts.length > 0 && (
+          <dl class="grid grid-cols-2 gap-x-8 border-t border-border sm:grid-cols-3 lg:grid-cols-1">
+            {facts.map((fact) => (
+              <div class="border-b border-border py-4">
+                <dt class="label-caps text-[0.64rem] text-muted-foreground">{fact.label}</dt>
+                <dd class="mt-1.5 font-display text-xl text-slate">{fact.value}</dd>
+              </div>
+            ))}
+          </dl>
+        )}
+      </div>
+    </header>
+
+    {cover && (
+      <div class="container-page" {...project.edit.featured_image}>
+        <div class="relative aspect-[4/3] overflow-hidden bg-muted sm:aspect-[16/9]" data-reveal="mask">
+          <Image image={cover} alt={cover.alt ?? project.data.title} priority sizes="(min-width: 1440px) 1360px, 100vw" class="reveal-zoom size-full! object-cover" />
+        </div>
+      </div>
+    )}
+
+    {project.data.details && (
+      <section class="container-page py-20 sm:py-28">
+        <div class="prose-site mx-auto" {...project.edit.details}><PortableText value={project.data.details} /></div>
+      </section>
+    )}
+
+    {galleryImages.length > 0 && (
+      <section class="container-page py-16 sm:py-24" aria-label="Photos">
+        <ProjectGallery client:visible title={project.data.title} images={galleryImages} />
+      </section>
+    )}
+
+    <section class="container-page flex flex-col items-start justify-between gap-8 border-t border-border py-16 sm:flex-row sm:items-center sm:py-20">
+      <div>
+        <p class="eyebrow mb-4">Your project</p>
+        <p class="font-display text-3xl text-slate sm:text-4xl">Planning something similar?</p>
+      </div>
+      <ButtonLink href="/contact" variant="default" size="hero">Start a conversation</ButtonLink>
+    </section>
+
+    <nav class="border-t border-border" aria-label="More projects">
+      <div class="container-page flex items-center justify-between gap-6 py-10">
+        <a href="/portfolio" class="group label-caps inline-flex items-center gap-3 text-muted-foreground hover:text-slate">
+          <ArrowLeft class="size-4 transition-transform duration-500 group-hover:-translate-x-1" aria-hidden="true" />All projects
+        </a>
+        {next && (
+          <a href={`/projects/${next.id}`} class="group text-right">
+            <span class="label-caps block text-[0.64rem] text-muted-foreground">Next project</span>
+            <span class="mt-1 inline-flex items-center gap-3 font-display text-2xl text-slate sm:text-3xl">
+              {next.data.title}<ArrowRight class="size-5 transition-transform duration-500 group-hover:translate-x-1" aria-hidden="true" />
+            </span>
+          </a>
+        )}
+      </div>
+    </nav>
+  </article>
+</Base>

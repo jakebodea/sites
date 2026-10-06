@@ -1,0 +1,30 @@
+---
+import type { BlockComponentProps } from "emdash/ui";
+
+import type { PageContentProcessBlock } from "../../../emdash-env";
+
+type Props = BlockComponentProps<PageContentProcessBlock>;
+
+const { value } = Astro.props;
+---
+
+<section class="py-24 sm:py-32">
+  <div class="container-page grid gap-14 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.4fr)] lg:gap-24">
+    <div class="lg:sticky lg:top-36 lg:self-start">
+      {value.eyebrow && <p class="eyebrow mb-6" data-reveal>{value.eyebrow}</p>}
+      <h2 class="text-4xl sm:text-5xl" data-reveal style="--reveal-delay: 80ms">{value.headline}</h2>
+      {value.intro && <p class="mt-6 max-w-md text-lg leading-relaxed text-muted-foreground" data-reveal style="--reveal-delay: 160ms">{value.intro}</p>}
+    </div>
+    <ol class="border-t border-border">
+      {value.items.map((item, index) => (
+        <li class="grid gap-3 border-b border-border py-9 sm:grid-cols-[6rem_1fr] sm:gap-8 sm:py-11" data-reveal style={`--reveal-delay: ${index * 90}ms`}>
+          <span class="font-display text-5xl leading-none text-mist italic sm:text-6xl">{String(index + 1).padStart(2, "0")}</span>
+          <div>
+            <h3 class="text-2xl sm:text-3xl">{item.title}</h3>
+            <p class="mt-3 max-w-xl leading-relaxed text-muted-foreground">{item.body}</p>
+          </div>
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>

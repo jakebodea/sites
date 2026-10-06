@@ -1,0 +1,74 @@
+---
+import ArrowUpRight from "@lucide/astro/icons/arrow-up-right";
+
+import Logo from "@/components/brand/logo.astro";
+import type { NavItem } from "@/lib/content";
+import { isExternal } from "@/lib/content";
+import { site } from "../../site.config";
+
+interface Props {
+  title: string;
+  tagline: string;
+  items: readonly NavItem[];
+  /** Shown as a quiet link under the contact details (the financing partner). */
+  announcement: NavItem | undefined;
+}
+
+const { announcement, items, tagline, title } = Astro.props;
+const year = new Date().getFullYear();
+const { address, email, license } = site.business;
+---
+
+<footer class="relative overflow-hidden bg-midnight text-white/70">
+  <Logo variant="mark" tone="white" class="pointer-events-none absolute -right-24 -bottom-28 h-[30rem] w-auto opacity-[0.035]" />
+  <div class="container-page relative grid gap-14 py-20 sm:py-24 lg:grid-cols-[1.3fr_1fr_1fr_1fr]">
+    <div class="space-y-6">
+      <a href="/" aria-label={`${title}, home`} class="inline-block">
+        <Logo variant="stacked" tone="white" play="scroll" class="h-28 w-auto sm:h-32" />
+      </a>
+      <p class="max-w-xs text-sm leading-relaxed">{tagline}</p>
+    </div>
+    <nav aria-label="Footer">
+      <h2 class="label-caps mb-6 font-sans text-champagne">Explore</h2>
+      <ul class="space-y-3 text-sm">
+        {items.map((item) => (
+          <li><a href={item.url} class="transition-colors hover:text-white">{item.label}</a></li>
+        ))}
+      </ul>
+    </nav>
+    <div>
+      <h2 class="label-caps mb-6 font-sans text-champagne">Contact</h2>
+      <ul class="space-y-3 text-sm">
+        <li><a href={`tel:${site.business.telephone}`} class="font-display text-2xl text-white lining-nums transition-colors hover:text-mist">{site.phone}</a></li>
+        {email && <li><a href={`mailto:${email}`} class="break-all transition-colors hover:text-white">{email}</a></li>}
+        <li>
+          <address class="not-italic leading-relaxed">{address.street}<br />{address.city}, {address.region} {address.postalCode}</address>
+        </li>
+      </ul>
+    </div>
+    <div>
+      <h2 class="label-caps mb-6 font-sans text-champagne">Credentials</h2>
+      <ul class="space-y-3 text-sm leading-relaxed">
+        <li>{license}</li>
+        <li>Woman-owned business</li>
+        <li>Licensed, bonded, and insured trade partners</li>
+      </ul>
+      {announcement && (
+        <a
+          href={announcement.url}
+          target={isExternal(announcement.url) ? "_blank" : undefined}
+          rel={isExternal(announcement.url) ? "noopener" : undefined}
+          class="mt-6 inline-flex items-center gap-1.5 text-sm text-mist underline decoration-white/20 underline-offset-4 transition-colors hover:text-white"
+        >
+          Need financing?<ArrowUpRight class="size-3.5" aria-hidden="true" />
+        </a>
+      )}
+    </div>
+  </div>
+  <div class="relative border-t border-white/10">
+    <div class="container-page flex flex-col gap-2 py-7 pb-[max(1.75rem,env(safe-area-inset-bottom))] text-xs tracking-wide sm:flex-row sm:justify-between">
+      <p>&copy; {year} {title} All rights reserved.</p>
+      <p>Custom homes and remodels · Orange County, California</p>
+    </div>
+  </div>
+</footer>
