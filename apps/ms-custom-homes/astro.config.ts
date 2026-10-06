@@ -7,6 +7,7 @@ import { distilledCloudflare } from "@alchemy.run/frontend-frameworks/astro/clou
 import react from "@astrojs/react";
 import { d1, r2 } from "@emdash-cms/cloudflare";
 import { emdashOnAlchemyAliases } from "@jakebodea/cloudflare-kit/emdash/alchemy-workarounds";
+import { analyticsPlugin } from "@jakebodea/cloudflare-kit/emdash/analytics";
 import { emailPlugin } from "@jakebodea/cloudflare-kit/emdash/email-plugin";
 import { seedMedia } from "@jakebodea/cloudflare-kit/emdash/seed-media";
 import {
@@ -79,8 +80,9 @@ export default defineConfig({
       database: d1({ binding: "DB", session: "auto" }),
       // CMS mail (invites, magic links) only once a verified sender exists; until then
       // EmDash reports "Email is not configured" and invite links are copied by hand.
-      plugins:
-        inputs.emailFrom === undefined
+      plugins: [
+        analyticsPlugin,
+        ...(inputs.emailFrom === undefined
           ? []
           : [
               emailPlugin({
@@ -89,7 +91,8 @@ export default defineConfig({
                   name: inputs.emailFromName ?? site.name,
                 },
               }),
-            ],
+            ]),
+      ],
       storage: r2({ binding: "MEDIA" }),
     }),
   ],
@@ -117,7 +120,6 @@ export default defineConfig({
           "effect",
           "effect/http",
           "effect/observability",
-          "@jakebodea/cloudflare-kit > posthog-node",
         ],
         // A late re-optimization reloads only some modules in workerd's runner, leaving two
         // React copies ("Invalid hook call") or stale chunks. Pre-bundle the list above (plus what

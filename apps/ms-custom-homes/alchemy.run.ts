@@ -5,7 +5,9 @@ import {
   devPort,
   productionDeployRefusal,
   resolveStage,
-  siteAnalytics,
+  webAnalytics,
+  leadMail,
+  emdashSecrets,
   siteObservability,
   siteSecrets,
   writeBuildInputs,
@@ -83,18 +85,10 @@ export default Alchemy.Stack(
           mode: "managed",
           name: stage.workerName,
         });
-    const analytics = yield* siteAnalytics;
-    const leadInbox = {
-      LEAD_NOTIFY_FROM: emailFrom ?? "",
-      LEAD_NOTIFY_TO: Option.getOrElse(
-        yield* Config.String("LEAD_NOTIFY_TO").pipe(Config.option),
-        () => ""
-      ),
-    };
-
     const bindings = {
-      ...analytics,
-      ...leadInbox,
+      ...(yield* webAnalytics(stage)),
+      ...(yield* leadMail(stage, emailFrom)),
+      ...(yield* emdashSecrets),
       BACKUPS: backups,
       DB: database,
       // EmDash's /_image endpoint resizes media with this binding.

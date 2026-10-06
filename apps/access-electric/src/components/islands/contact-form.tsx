@@ -1,7 +1,3 @@
-import {
-  analyticsIdentity,
-  captureAnalytics,
-} from "@jakebodea/cloudflare-kit/analytics/client";
 import { actions, isInputError } from "astro:actions";
 import { CheckCircle2Icon, LoaderCircleIcon } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
@@ -41,7 +37,6 @@ const ContactForm = ({ turnstileSiteKey }: ContactFormProps) => {
   const [status, setStatus] = useState<Status>({ state: "idle" });
   const [token, setToken] = useState("");
   const widget = useRef<HTMLDivElement>(null);
-  const started = useRef(false);
 
   useEffect(() => {
     const element = widget.current;
@@ -83,19 +78,11 @@ const ContactForm = ({ turnstileSiteKey }: ContactFormProps) => {
     };
   }, [turnstileSiteKey]);
 
-  const onFirstInput = () => {
-    if (!started.current) {
-      started.current = true;
-      captureAnalytics("contact form started");
-    }
-  };
-
   const onSubmit = async (event: SubmitEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     setStatus({ state: "sending" });
     const { error } = await actions.contact({
-      analytics: analyticsIdentity(),
       company: optional(field(data, "company")),
       email: field(data, "email"),
       message: field(data, "message"),
@@ -104,11 +91,9 @@ const ContactForm = ({ turnstileSiteKey }: ContactFormProps) => {
       turnstileToken: token,
     });
     if (error === undefined) {
-      captureAnalytics("contact form submitted");
       setStatus({ state: "sent" });
       return;
     }
-    captureAnalytics("contact form failed", { form_error: error.code });
     setStatus({
       message: isInputError(error)
         ? "Please check your details and try again."
@@ -135,7 +120,6 @@ const ContactForm = ({ turnstileSiteKey }: ContactFormProps) => {
       onSubmit={(event) => {
         void onSubmit(event);
       }}
-      onInput={onFirstInput}
       className="border-border bg-card rounded-xl border p-6 shadow-xs sm:p-8"
       noValidate={false}
     >

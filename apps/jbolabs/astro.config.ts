@@ -1,6 +1,6 @@
 // Built and run only through Alchemy (`alchemy dev` locally, `alchemy deploy` for stages).
 // No `adapter`: Alchemy injects its own Cloudflare adapter; `workerEntryAlias` swaps in
-// src/worker.ts (crons, preview noindex, PostHog proxy). No CMS: copy lives in src/content.
+// src/worker.ts (crons, preview noindex). No CMS: copy lives in src/content.
 import { fileURLToPath } from "node:url";
 
 import { distilledCloudflare } from "@alchemy.run/frontend-frameworks/astro/cloudflare";
@@ -87,12 +87,7 @@ export default defineConfig({
     ssr: {
       optimizeDeps: {
         // Server-side Effect code: one pre-bundled chunk each instead of hundreds of modules.
-        include: [
-          "effect",
-          "effect/http",
-          "effect/observability",
-          "@jakebodea/cloudflare-kit > posthog-node",
-        ],
+        include: ["effect", "effect/http", "effect/observability"],
         // A late re-optimization reloads only some modules in workerd's runner, leaving two
         // React copies ("Invalid hook call"). Pre-bundle the list above (plus what the Astro and
         // React integrations add) and never discover more at runtime.

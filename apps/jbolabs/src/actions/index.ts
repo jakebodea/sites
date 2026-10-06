@@ -1,8 +1,4 @@
-import {
-  reportLeadFailure,
-  runRequest,
-  submitContact,
-} from "@jakebodea/cloudflare-kit/server";
+import { runRequest, submitContact } from "@jakebodea/cloudflare-kit/server";
 import { ActionError, defineAction } from "astro:actions";
 import { Cause, Effect, Exit, Schema } from "effect";
 
@@ -22,21 +18,11 @@ export const server = {
       const program = Schema.decodeUnknownEffect(IntakeForm)(input).pipe(
         Effect.flatMap((form) =>
           submitContact(toContactForm(form), {
-            distinctId:
-              header(request, "x-posthog-distinct-id") ??
-              form.analytics?.distinctId,
             remoteIp: header(request, "cf-connecting-ip"),
-            sessionId:
-              header(request, "x-posthog-session-id") ??
-              form.analytics?.sessionId,
+            requestId: header(request, "cf-ray") ?? crypto.randomUUID(),
             sourcePath: new URL(request.headers.get("referer") ?? context.url)
               .pathname,
           })
-        ),
-        Effect.tapError((error) =>
-          error._tag === "SchemaError" || error._tag === "TurnstileRejected"
-            ? Effect.void
-            : reportLeadFailure(error)
         ),
         Effect.withSpan("action.contact")
       );
