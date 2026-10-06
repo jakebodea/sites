@@ -76,7 +76,7 @@ No Infisical, no 1Password.
 ## Environments and stages
 
 - `dev-<worktree>`: per-worktree `alchemy dev` stage (parallel agents never collide).
-- `pr-<n>`: per-PR preview, destroyed on close.
+- `pr-<n>`: per-PR preview for affected sites only, requested by adding the `preview` label. Subsequent pushes update it while the label remains; removing the label or closing the PR destroys it. Shared code changes affect every site; docs-only changes deploy none.
 - `prod`: custom domain attached only here (left unset until the zone is on the account, so prod serves from workers.dev); deploys only from CI on `main`.
 - State: `Cloudflare.state()`.
 
@@ -85,8 +85,8 @@ No Infisical, no 1Password.
 - **GitHub Actions** with thin YAML; logic in tested TypeScript under `scripts/ci/`.
 - **Turborepo** with `--affected` and a **remote cache hosted on Cloudflare** (Worker + R2, Alchemy stack `stacks/turbo-cache.ts`) shared by CI and every agent worktree.
 - **Alchemy** deploys; memoized builds mean unchanged sites are no-ops. Don't double-build.
-- **`stacks/github.ts`** (typed Alchemy GitHub provider): environments, `main` ruleset, scoped expiring Cloudflare tokens per environment (rotate by bumping a generation), variables, `GitHub.Comment` for preview URLs. Workflows themselves stay YAML.
-- Workflows: `ci.yml` (check → preview + smoke + SEO audit + Lighthouse budgets → prod + post-deploy smoke and SEO audit), `preview-cleanup.yml` (refuses `prod`), `janitor.yml` (orphaned previews), `upgrade-smoke.yml` (weekly latest Alchemy/EmDash smoke). Actions pinned to SHAs, least-privilege permissions, `actionlint`, `dependency-review`, fork PRs never get credentials. **Renovate** for upgrades.
+- **`stacks/github.ts`** (typed Alchemy GitHub provider): environments, the `preview` label, `main` ruleset, scoped expiring Cloudflare tokens per environment (rotate by bumping a generation), variables, `GitHub.Comment` for preview URLs. Redeploy this stack to provision the label. Workflows themselves stay YAML.
+- Workflows: `ci.yml` (check → preview + smoke + SEO audit + Lighthouse budgets → prod + post-deploy smoke and SEO audit), `preview-cleanup.yml` (refuses `prod`), `janitor.yml` (closed or unlabeled PR previews), `upgrade-smoke.yml` (weekly latest Alchemy/EmDash smoke). Actions pinned to SHAs, least-privilege permissions, `actionlint`, `dependency-review`, fork PRs never get credentials. **Renovate** for upgrades.
 - **Backups**: D1 Time Travel + scheduled EmDash export to a retained R2 bucket.
 
 ## Tooling

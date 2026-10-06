@@ -2,14 +2,15 @@ name: Preview cleanup
 
 on:
   pull_request:
-    types: [closed]
+    types: [closed, unlabeled]
 
 permissions:
   contents: read
+  pull-requests: read
 
 jobs:
   destroy:
-    if: github.event.pull_request.head.repo.full_name == github.repository
+    if: github.event.pull_request.head.repo.full_name == github.repository && (github.event.action == 'closed' || github.event.label.name == 'preview') && vars.DEPLOYS_ENABLED == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 20
     environment: preview
@@ -26,5 +27,13 @@ jobs:
           ref: main
           persist-credentials: false
       - uses: ./.github/actions/setup
+      # A label can be re-added or the PR reopened while cleanup waits for the stage lock.
+      - name: Check current preview request
+        id: policy
+        run: bun scripts/ci/preview-policy.ts >> "$GITHUB_OUTPUT"
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ github.event.pull_request.number }}
       - name: Destroy preview stage (deploy.ts refuses prod)
+        if: steps.policy.outputs.destroy == 'true'
         run: bun scripts/ci/deploy.ts --destroy --stage pr-${{ github.event.pull_request.number }} --sites all

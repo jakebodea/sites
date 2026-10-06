@@ -2,6 +2,7 @@ name: CI
 
 on:
   pull_request:
+    types: [opened, synchronize, reopened, labeled]
   push:
     branches: [main]
   # Re-runs the prod deploy for chosen sites (a failed deploy is not retried by a re-run
@@ -24,6 +25,7 @@ env:
 
 jobs:
   check:
+    if: github.event.action != 'labeled' || github.event.label.name == 'preview'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     concurrency:
@@ -76,7 +78,7 @@ jobs:
     needs: check
     # Fork PRs never get deploy credentials.
     # Deploy jobs skip until `stacks/github.ts` has created the environments and tokens.
-    if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository && needs.check.outputs.sites != '[]' && vars.DEPLOYS_ENABLED == 'true'
+    if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository && contains(github.event.pull_request.labels.*.name, 'preview') && (github.event.action != 'labeled' || github.event.label.name == 'preview') && needs.check.outputs.sites != '[]' && vars.DEPLOYS_ENABLED == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 30
     environment: preview
@@ -95,13 +97,24 @@ jobs:
         with:
           persist-credentials: false
       - uses: ./.github/actions/setup
+      # Recheck after acquiring the stage lock: queued events can outlive their label or head.
+      - name: Check current preview request
+        id: policy
+        run: bun scripts/ci/preview-policy.ts >> "$GITHUB_OUTPUT"
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ github.event.pull_request.number }}
+          EXPECTED_HEAD: ${{ github.event.pull_request.head.sha }}
       - name: Deploy affected sites
+        if: steps.policy.outputs.deploy == 'true'
         run: bun scripts/ci/deploy.ts --stage "$STAGE" --sites '${{ needs.check.outputs.sites }}'
       - name: Comment preview URLs
+        if: steps.policy.outputs.deploy == 'true'
         run: bun scripts/ci/comment.ts --pr ${{ github.event.pull_request.number }} --stage "$STAGE"
         env:
           GH_TOKEN: ${{ github.token }}
       - name: Smoke test and Lighthouse budgets
+        if: steps.policy.outputs.deploy == 'true'
         run: bun scripts/ci/verify-previews.ts
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         if: always()
