@@ -41,7 +41,12 @@ export interface SeedResult {
 }
 
 export const seedStage = async (origin: string): Promise<SeedResult> => {
-  const statusResponse = await request(`${origin}/_emdash/api/setup/status`);
+  // The status read is the first request a fresh stage sees, so it is the one
+  // that runs the migrations: it needs the long deadline too, or aborting it
+  // wedges the stage exactly like aborting the setup POST.
+  const statusResponse = await request(`${origin}/_emdash/api/setup/status`, {
+    signal: AbortSignal.timeout(SETUP_TIMEOUT_MS),
+  });
   const status = Schema.decodeUnknownSync(SetupStatus)(
     await statusResponse.json()
   );
