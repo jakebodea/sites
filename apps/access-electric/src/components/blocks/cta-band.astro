@@ -1,0 +1,28 @@
+---
+import { sanitizeHref } from "emdash";
+import { Image } from "emdash/ui";
+import type { BlockComponentProps } from "emdash/ui";
+
+import ButtonLink from "@/components/button-link.astro";
+import type { PageContentCtaBandBlock } from "../../../emdash-env";
+
+type Props = BlockComponentProps<PageContentCtaBandBlock>;
+
+const { value } = Astro.props;
+---
+
+<section class="relative isolate overflow-hidden bg-navy-deep">
+  {value.image && (
+    <Image image={value.image} alt="" sizes="100vw" class="absolute inset-0 -z-10 size-full! object-cover object-[50%_70%]" />
+  )}
+  <div class="absolute inset-0 -z-10 bg-navy-deep/70" aria-hidden="true"></div>
+  <div class="container-page flex flex-col items-start gap-6 py-20 sm:py-28 md:flex-row md:items-end md:justify-between">
+    <div class="max-w-2xl">
+      <h2 class="text-4xl text-white sm:text-6xl">{value.headline}</h2>
+      {value.body && <p class="mt-4 text-lg text-white/85">{value.body}</p>}
+    </div>
+    {value.cta_label && value.cta_url && (
+      <ButtonLink href={sanitizeHref(value.cta_url)} variant="accent" size="hero" class="shrink-0">{value.cta_label}</ButtonLink>
+    )}
+  </div>
+</section>

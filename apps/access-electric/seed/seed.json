@@ -1,0 +1,2580 @@
+{
+  "$schema": "https://emdashcms.com/seed.schema.json",
+  "version": "1",
+  "meta": {
+    "name": "Access Electric",
+    "description": "Commercial electrical contractor site: pages built from sections, a project portfolio, and a lead inbox.",
+    "author": "Jake Bodea"
+  },
+  "settings": {
+    "title": "Access Electric, Inc.",
+    "tagline": "Quality commercial electrical construction across Southern California since 2001.",
+    "timezone": "America/Los_Angeles"
+  },
+  "blockTypes": [
+    {
+      "slug": "hero",
+      "label": "Hero",
+      "description": "Full-width headline over a photo slideshow (one photo = static).",
+      "category": "Sections",
+      "currentVersion": 1,
+      "versions": [
+        {
+          "version": 1,
+          "fields": [
+            {
+              "slug": "headline",
+              "label": "Headline",
+              "type": "string",
+              "required": true
+            },
+            {
+              "slug": "subheadline",
+              "label": "Subheadline",
+              "type": "text"
+            },
+            {
+              "slug": "slides",
+              "label": "Photos",
+              "type": "repeater",
+              "required": true,
+              "validation": {
+                "minItems": 1,
+                "maxItems": 6,
+                "subFields": [
+                  {
+                    "slug": "image",
+                    "label": "Photo",
+                    "type": "image"
+                  }
+                ]
+              }
+            },
+            {
+              "slug": "primary_cta_label",
+              "label": "Primary button label",
+              "type": "string"
+            },
+            {
+              "slug": "primary_cta_url",
+              "label": "Primary button link",
+              "type": "string",
+              "validation": {
+                "pattern": "^(?:$|(?:https?://|mailto:|tel:|/(?!/)|#).+)$"
+              }
+            },
+            {
+              "slug": "secondary_cta_label",
+              "label": "Secondary button label",
+              "type": "string"
+            },
+            {
+              "slug": "secondary_cta_url",
+              "label": "Secondary button link",
+              "type": "string",
+              "validation": {
+                "pattern": "^(?:$|(?:https?://|mailto:|tel:|/(?!/)|#).+)$"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "services",
+      "label": "Services",
+      "description": "A short list of services with icons.",
+      "category": "Sections",
+      "currentVersion": 1,
+      "versions": [
+        {
+          "version": 1,
+          "fields": [
+            {
+              "slug": "headline",
+              "label": "Headline",
+              "type": "string",
+              "required": true
+            },
+            {
+              "slug": "intro",
+              "label": "Intro",
+              "type": "text"
+            },
+            {
+              "slug": "items",
+              "label": "Services",
+              "type": "repeater",
+              "required": true,
+              "validation": {
+                "minItems": 1,
+                "maxItems": 6,
+                "subFields": [
+                  {
+                    "slug": "icon",
+                    "label": "Icon",
+                    "type": "select",
+                    "required": true,
+                    "options": [
+                      "design",
+                      "budget",
+                      "power",
+                      "lighting",
+                      "safety",
+                      "building"
+                    ]
+                  },
+                  {
+                    "slug": "title",
+                    "label": "Title",
+                    "type": "string",
+                    "required": true
+                  },
+                  {
+                    "slug": "body",
+                    "label": "Description",
+                    "type": "text",
+                    "required": true
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "story",
+      "label": "Image and text",
+      "description": "A photo beside a heading, text, and an optional button.",
+      "category": "Sections",
+      "currentVersion": 1,
+      "versions": [
+        {
+          "version": 1,
+          "fields": [
+            {
+              "slug": "eyebrow",
+              "label": "Eyebrow",
+              "type": "string"
+            },
+            {
+              "slug": "headline",
+              "label": "Headline",
+              "type": "string",
+              "required": true
+            },
+            {
+              "slug": "body",
+              "label": "Text",
+              "type": "portableText",
+              "required": true
+            },
+            {
+              "slug": "image",
+              "label": "Photo",
+              "type": "image"
+            },
+            {
+              "slug": "image_position",
+              "label": "Photo side",
+              "type": "select",
+              "validation": {
+                "options": ["left", "right"]
+              },
+              "defaultValue": "left"
+            },
+            {
+              "slug": "cta_label",
+              "label": "Button label",
+              "type": "string"
+            },
+            {
+              "slug": "cta_url",
+              "label": "Button link",
+              "type": "string",
+              "validation": {
+                "pattern": "^(?:$|(?:https?://|mailto:|tel:|/(?!/)|#).+)$"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "facts",
+      "label": "Facts",
+      "description": "A row of short facts, such as years in business.",
+      "category": "Sections",
+      "currentVersion": 1,
+      "versions": [
+        {
+          "version": 1,
+          "fields": [
+            {
+              "slug": "items",
+              "label": "Facts",
+              "type": "repeater",
+              "required": true,
+              "validation": {
+                "minItems": 1,
+                "maxItems": 4,
+                "subFields": [
+                  {
+                    "slug": "value",
+                    "label": "Value",
+                    "type": "string",
+                    "required": true
+                  },
+                  {
+                    "slug": "label",
+                    "label": "Label",
+                    "type": "string",
+                    "required": true
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "current_projects",
+      "label": "Current projects",
+      "description": "Projects marked In progress, shown automatically.",
+      "category": "Sections",
+      "currentVersion": 1,
+      "versions": [
+        {
+          "version": 1,
+          "fields": [
+            {
+              "slug": "headline",
+              "label": "Headline",
+              "type": "string",
+              "required": true
+            },
+            {
+              "slug": "intro",
+              "label": "Intro",
+              "type": "text"
+            },
+            {
+              "slug": "link_label",
+              "label": "Link label",
+              "type": "string"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "cta_band",
+      "label": "Call to action",
+      "description": "A bold line over a photo with a button.",
+      "category": "Sections",
+      "currentVersion": 1,
+      "versions": [
+        {
+          "version": 1,
+          "fields": [
+            {
+              "slug": "headline",
+              "label": "Headline",
+              "type": "string",
+              "required": true
+            },
+            {
+              "slug": "body",
+              "label": "Text",
+              "type": "text"
+            },
+            {
+              "slug": "image",
+              "label": "Background photo",
+              "type": "image"
+            },
+            {
+              "slug": "cta_label",
+              "label": "Button label",
+              "type": "string"
+            },
+            {
+              "slug": "cta_url",
+              "label": "Button link",
+              "type": "string",
+              "validation": {
+                "pattern": "^(?:$|(?:https?://|mailto:|tel:|/(?!/)|#).+)$"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "rich_text",
+      "label": "Text",
+      "description": "Headings and paragraphs.",
+      "category": "Sections",
+      "currentVersion": 1,
+      "versions": [
+        {
+          "version": 1,
+          "fields": [
+            {
+              "slug": "headline",
+              "label": "Headline",
+              "type": "string"
+            },
+            {
+              "slug": "body",
+              "label": "Text",
+              "type": "portableText",
+              "required": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "badges",
+      "label": "Certifications",
+      "description": "Logos of certifications and awards.",
+      "category": "Sections",
+      "currentVersion": 1,
+      "versions": [
+        {
+          "version": 1,
+          "fields": [
+            {
+              "slug": "headline",
+              "label": "Headline",
+              "type": "string"
+            },
+            {
+              "slug": "items",
+              "label": "Badges",
+              "type": "repeater",
+              "required": true,
+              "validation": {
+                "minItems": 1,
+                "maxItems": 8,
+                "subFields": [
+                  {
+                    "slug": "image",
+                    "label": "Logo",
+                    "type": "image"
+                  },
+                  {
+                    "slug": "label",
+                    "label": "Name",
+                    "type": "string",
+                    "required": true
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "service_area",
+      "label": "Service area",
+      "description": "The regions served, one per line.",
+      "category": "Sections",
+      "currentVersion": 1,
+      "versions": [
+        {
+          "version": 1,
+          "fields": [
+            {
+              "slug": "headline",
+              "label": "Headline",
+              "type": "string",
+              "required": true
+            },
+            {
+              "slug": "body",
+              "label": "Text",
+              "type": "text"
+            },
+            {
+              "slug": "areas",
+              "label": "Areas (one per line)",
+              "type": "text",
+              "required": true
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "collections": [
+    {
+      "slug": "home",
+      "label": "Home page",
+      "labelSingular": "Home page",
+      "icon": "house",
+      "sortOrder": 0,
+      "supports": ["drafts", "revisions", "preview", "scheduling", "seo"],
+      "urlPattern": "/",
+      "fields": [
+        {
+          "slug": "title",
+          "label": "Title",
+          "type": "string",
+          "required": true,
+          "searchable": true
+        },
+        {
+          "slug": "intro",
+          "label": "Intro",
+          "type": "text"
+        },
+        {
+          "slug": "content",
+          "label": "Sections",
+          "type": "blocks",
+          "validation": {
+            "allowedTypes": [
+              "hero",
+              "services",
+              "story",
+              "facts",
+              "current_projects",
+              "cta_band",
+              "rich_text",
+              "badges",
+              "service_area"
+            ],
+            "maxItems": 20
+          }
+        }
+      ]
+    },
+    {
+      "slug": "pages",
+      "label": "Pages",
+      "labelSingular": "Page",
+      "icon": "file-text",
+      "sortOrder": 1,
+      "supports": ["drafts", "revisions", "preview", "scheduling", "seo"],
+      "urlPattern": "/{slug}",
+      "fields": [
+        {
+          "slug": "title",
+          "label": "Title",
+          "type": "string",
+          "required": true,
+          "searchable": true
+        },
+        {
+          "slug": "intro",
+          "label": "Intro",
+          "type": "text"
+        },
+        {
+          "slug": "content",
+          "label": "Sections",
+          "type": "blocks",
+          "validation": {
+            "allowedTypes": [
+              "hero",
+              "services",
+              "story",
+              "facts",
+              "current_projects",
+              "cta_band",
+              "rich_text",
+              "badges",
+              "service_area"
+            ],
+            "maxItems": 20
+          }
+        }
+      ]
+    },
+    {
+      "slug": "projects",
+      "label": "Projects",
+      "labelSingular": "Project",
+      "icon": "buildings",
+      "sortOrder": 2,
+      "supports": [
+        "drafts",
+        "revisions",
+        "preview",
+        "scheduling",
+        "search",
+        "seo"
+      ],
+      "urlPattern": "/projects/{slug}",
+      "admin": {
+        "listColumns": ["progress", "location"]
+      },
+      "fields": [
+        {
+          "slug": "title",
+          "label": "Name",
+          "type": "string",
+          "required": true,
+          "searchable": true
+        },
+        {
+          "slug": "progress",
+          "label": "Status",
+          "type": "select",
+          "required": true,
+          "indexed": true,
+          "validation": {
+            "options": ["completed", "in_progress"]
+          },
+          "defaultValue": "completed"
+        },
+        {
+          "slug": "featured_image",
+          "label": "Main photo",
+          "type": "image"
+        },
+        {
+          "slug": "gallery",
+          "label": "More photos",
+          "type": "repeater",
+          "validation": {
+            "maxItems": 24,
+            "subFields": [
+              {
+                "slug": "image",
+                "label": "Photo",
+                "type": "image"
+              }
+            ]
+          }
+        },
+        {
+          "slug": "location",
+          "label": "Location",
+          "type": "string"
+        },
+        {
+          "slug": "general_contractor",
+          "label": "General contractor",
+          "type": "string"
+        },
+        {
+          "slug": "architect",
+          "label": "Architect",
+          "type": "string"
+        },
+        {
+          "slug": "size",
+          "label": "Size",
+          "type": "string"
+        },
+        {
+          "slug": "scope",
+          "label": "Scope of work",
+          "type": "text",
+          "searchable": true
+        },
+        {
+          "slug": "categories",
+          "label": "Categories",
+          "type": "reference",
+          "validation": {
+            "relation": "category_projects"
+          }
+        }
+      ]
+    },
+    {
+      "slug": "categories",
+      "label": "Portfolio categories",
+      "labelSingular": "Portfolio category",
+      "icon": "folders",
+      "sortOrder": 3,
+      "supports": ["drafts", "revisions", "seo"],
+      "urlPattern": "/portfolio/{slug}",
+      "admin": {
+        "listColumns": ["sort_order"]
+      },
+      "fields": [
+        {
+          "slug": "title",
+          "label": "Name",
+          "type": "string",
+          "required": true
+        },
+        {
+          "slug": "description",
+          "label": "Description",
+          "type": "text"
+        },
+        {
+          "slug": "cover_image",
+          "label": "Cover photo (defaults to the first project's photo)",
+          "type": "image"
+        },
+        {
+          "slug": "sort_order",
+          "label": "Order on the portfolio page",
+          "type": "integer",
+          "indexed": true,
+          "defaultValue": 100
+        },
+        {
+          "slug": "projects",
+          "label": "Projects (in display order)",
+          "type": "reference",
+          "validation": {
+            "relation": "category_projects"
+          }
+        }
+      ]
+    },
+    {
+      "slug": "leads",
+      "label": "Leads",
+      "labelSingular": "Lead",
+      "icon": "envelope-simple",
+      "sortOrder": 4,
+      "description": "Contact form submissions. Visitors never see these.",
+      "routable": false,
+      "supports": [],
+      "admin": {
+        "listColumns": ["email", "company"],
+        "quickCreate": false
+      },
+      "fields": [
+        {
+          "slug": "title",
+          "label": "Name",
+          "type": "string",
+          "required": true
+        },
+        {
+          "slug": "email",
+          "label": "Email",
+          "type": "string",
+          "required": true
+        },
+        {
+          "slug": "phone",
+          "label": "Phone",
+          "type": "string"
+        },
+        {
+          "slug": "company",
+          "label": "Company",
+          "type": "string"
+        },
+        {
+          "slug": "message",
+          "label": "Message",
+          "type": "text",
+          "required": true
+        },
+        {
+          "slug": "source_path",
+          "label": "Submitted from",
+          "type": "string"
+        }
+      ]
+    }
+  ],
+  "relations": [
+    {
+      "slug": "category_projects",
+      "parentCollection": "categories",
+      "childCollection": "projects",
+      "parentLabel": "Categories",
+      "parentLabelSingular": "Category",
+      "childLabel": "Projects",
+      "childLabelSingular": "Project"
+    }
+  ],
+  "menus": [
+    {
+      "name": "primary",
+      "label": "Main navigation",
+      "items": [
+        {
+          "type": "custom",
+          "label": "About",
+          "url": "/about"
+        },
+        {
+          "type": "custom",
+          "label": "Portfolio",
+          "url": "/portfolio"
+        },
+        {
+          "type": "custom",
+          "label": "Contact",
+          "url": "/contact"
+        }
+      ]
+    },
+    {
+      "name": "footer",
+      "label": "Footer links",
+      "items": [
+        {
+          "type": "custom",
+          "label": "About",
+          "url": "/about"
+        },
+        {
+          "type": "custom",
+          "label": "Portfolio",
+          "url": "/portfolio"
+        },
+        {
+          "type": "custom",
+          "label": "Contact",
+          "url": "/contact"
+        },
+        {
+          "type": "custom",
+          "label": "Privacy",
+          "url": "/privacy"
+        }
+      ]
+    }
+  ],
+  "redirects": [
+    {
+      "source": "/home",
+      "destination": "/",
+      "type": 308,
+      "enabled": true,
+      "groupName": "Site structure"
+    }
+  ],
+  "content": {
+    "home": [
+      {
+        "id": "page-home",
+        "slug": "home",
+        "status": "published",
+        "data": {
+          "title": "Home",
+          "content": [
+            {
+              "_type": "hero",
+              "_version": 1,
+              "_key": "hero",
+              "headline": "Quality electrical construction, on schedule.",
+              "subheadline": "Commercial electrical contractor serving Southern California since 2001. A Certified Women's Business Enterprise.",
+              "slides": [
+                {
+                  "image": {
+                    "$media": {
+                      "url": "/_seed/media/mg-4026.jpg",
+                      "alt": "Gloria Dei Lutheran Church",
+                      "filename": "mg-4026.jpg"
+                    }
+                  }
+                },
+                {
+                  "image": {
+                    "$media": {
+                      "url": "/_seed/media/bachmanncollabbuildingrnaj-113-scaled.jpg",
+                      "alt": "Flintridge Preparatory School",
+                      "filename": "bachmanncollabbuildingrnaj-113-scaled.jpg"
+                    }
+                  }
+                },
+                {
+                  "image": {
+                    "$media": {
+                      "url": "/_seed/media/pinestripes-canoga-park-12.jpg",
+                      "alt": "Pinstripes - Topanga",
+                      "filename": "pinestripes-canoga-park-12.jpg"
+                    }
+                  }
+                },
+                {
+                  "image": {
+                    "$media": {
+                      "url": "/_seed/media/bcb-jan-2021-mkobe-066-scaled.jpg",
+                      "alt": "Access Electric project",
+                      "filename": "bcb-jan-2021-mkobe-066-scaled.jpg"
+                    }
+                  }
+                }
+              ],
+              "primary_cta_label": "View our portfolio",
+              "primary_cta_url": "/portfolio",
+              "secondary_cta_label": "Request a bid",
+              "secondary_cta_url": "/contact"
+            },
+            {
+              "_type": "services",
+              "_version": 1,
+              "_key": "services",
+              "headline": "What We Do",
+              "intro": "From preliminary design through final inspection, one team owns the electrical scope.",
+              "items": [
+                {
+                  "icon": "design",
+                  "title": "Design & Build",
+                  "body": "Partner with Electrical Engineers to design complete electrical systems: Lighting Design, Photometric Calculations, Power Systems Design, and Title 24 Calculations."
+                },
+                {
+                  "icon": "budget",
+                  "title": "Budgeting",
+                  "body": "Prepare detailed project budgets and cost estimates for electrical system installations using preliminary design drawings and on-site evaluations."
+                },
+                {
+                  "icon": "power",
+                  "title": "Electrical Systems",
+                  "body": "New Construction, Tenant Improvements, and Renovations for commercial, industrial, and mixed-use facilities."
+                }
+              ]
+            },
+            {
+              "_type": "story",
+              "_version": 1,
+              "_key": "who-we-are",
+              "eyebrow": "Since 2001",
+              "headline": "Who We Are",
+              "body": [
+                {
+                  "_type": "block",
+                  "style": "normal",
+                  "_key": "p0",
+                  "children": [
+                    {
+                      "_type": "span",
+                      "_key": "s0",
+                      "text": "Access Electric, Inc. provides quality electrical construction on schedule, offering competitive pricing and integrity in all that we do from planning to completion. Quality, safety, and efficiency is our focus to ensure your project's success."
+                    }
+                  ]
+                },
+                {
+                  "_type": "block",
+                  "style": "normal",
+                  "_key": "p1",
+                  "children": [
+                    {
+                      "_type": "span",
+                      "_key": "s1",
+                      "text": "A Certified Women's Business Enterprise, operating since 2001, Access Electric, Inc. has successfully completed ground-up construction and tenant improvements of Schools, Fitness Centers, Places of Worship, Retail, Offices, Medical Facilities, and Warehouses."
+                    }
+                  ]
+                }
+              ],
+              "image": {
+                "$media": {
+                  "url": "/_seed/media/access-office-scaled.jpg",
+                  "alt": "The Access Electric office",
+                  "filename": "access-office-scaled.jpg"
+                }
+              },
+              "image_position": "left",
+              "cta_label": "More about us",
+              "cta_url": "/about"
+            },
+            {
+              "_type": "current_projects",
+              "_version": 1,
+              "_key": "current",
+              "headline": "Current projects",
+              "intro": "Work under construction right now.",
+              "link_label": "See all current projects"
+            },
+            {
+              "_type": "cta_band",
+              "_version": 1,
+              "_key": "cta",
+              "headline": "Build with us.",
+              "body": "Tell us about your project and we will get back to you within one business day.",
+              "image": {
+                "$media": {
+                  "url": "/_seed/media/good-shepherd1-1.jpg",
+                  "alt": "Good Shepherd Center",
+                  "filename": "good-shepherd1-1.jpg"
+                }
+              },
+              "cta_label": "Start a conversation",
+              "cta_url": "/contact"
+            }
+          ]
+        }
+      }
+    ],
+    "projects": [
+      {
+        "id": "project-sierra-canyon-school-for-the-arts",
+        "slug": "sierra-canyon-school-for-the-arts",
+        "status": "published",
+        "data": {
+          "title": "Sierra Canyon School for the Arts",
+          "progress": "in_progress",
+          "featured_image": {
+            "$media": {
+              "url": "/_seed/media/sierra-canyon-school-for-the-arts.png",
+              "alt": "Sierra Canyon School for the Arts",
+              "filename": "sierra-canyon-school-for-the-arts.png"
+            }
+          }
+        }
+      },
+      {
+        "id": "project-gkn-aerospace-garden-grove",
+        "slug": "gkn-aerospace-garden-grove",
+        "status": "published",
+        "data": {
+          "title": "GKN Aerospace - Garden Grove",
+          "progress": "in_progress",
+          "featured_image": {
+            "$media": {
+              "url": "/_seed/media/gkn-scaled.jpg",
+              "alt": "GKN Aerospace - Garden Grove",
+              "filename": "gkn-scaled.jpg"
+            }
+          }
+        }
+      },
+      {
+        "id": "project-chapman-innovation-hub",
+        "slug": "chapman-innovation-hub",
+        "status": "published",
+        "data": {
+          "title": "Chapman Innovation Hub",
+          "progress": "in_progress",
+          "featured_image": {
+            "$media": {
+              "url": "/_seed/media/chapman-innovation-hub.png",
+              "alt": "Chapman Innovation Hub",
+              "filename": "chapman-innovation-hub.png"
+            }
+          }
+        }
+      },
+      {
+        "id": "project-st-thomas-more-church",
+        "slug": "st-thomas-more-church",
+        "status": "published",
+        "data": {
+          "title": "St. Thomas More Church",
+          "progress": "in_progress",
+          "featured_image": {
+            "$media": {
+              "url": "/_seed/media/screenshot-2026-08-28-103049.png",
+              "alt": "St. Thomas More Church",
+              "filename": "screenshot-2026-08-28-103049.png"
+            }
+          }
+        }
+      },
+      {
+        "id": "project-breed-street-shul",
+        "slug": "breed-street-shul",
+        "status": "published",
+        "data": {
+          "title": "Breed Street Shul",
+          "progress": "in_progress",
+          "featured_image": {
+            "$media": {
+              "url": "/_seed/media/breed-street.png",
+              "alt": "Breed Street Shul",
+              "filename": "breed-street.png"
+            }
+          }
+        }
+      },
+      {
+        "id": "project-lighthouse-community-church-torrance",
+        "slug": "lighthouse-community-church-torrance",
+        "status": "published",
+        "data": {
+          "title": "Lighthouse Community Church - Torrance",
+          "progress": "in_progress",
+          "featured_image": {
+            "$media": {
+              "url": "/_seed/media/screenshot-2026-08-28-103524.png",
+              "alt": "Lighthouse Community Church - Torrance",
+              "filename": "screenshot-2026-08-28-103524.png"
+            }
+          }
+        }
+      },
+      {
+        "id": "project-holocaust-museum-of-la",
+        "slug": "holocaust-museum-of-la",
+        "status": "published",
+        "data": {
+          "title": "Holocaust Museum of LA",
+          "progress": "in_progress",
+          "featured_image": {
+            "$media": {
+              "url": "/_seed/media/hmla-scaled.jpg",
+              "alt": "Holocaust Museum of LA",
+              "filename": "hmla-scaled.jpg"
+            }
+          }
+        }
+      },
+      {
+        "id": "project-sycamore-creek-community-charter-school",
+        "slug": "sycamore-creek-community-charter-school",
+        "status": "published",
+        "data": {
+          "title": "Sycamore Creek Community Charter School",
+          "progress": "in_progress",
+          "featured_image": {
+            "$media": {
+              "url": "/_seed/media/sycamore-creek.png",
+              "alt": "Sycamore Creek Community Charter School",
+              "filename": "sycamore-creek.png"
+            }
+          }
+        }
+      },
+      {
+        "id": "project-chapman-killefer-institute-for-quantum-studies",
+        "slug": "chapman-killefer-institute-for-quantum-studies",
+        "status": "published",
+        "data": {
+          "title": "Chapman Killefer - Institute for Quantum Studies",
+          "progress": "completed",
+          "featured_image": {
+            "$media": {
+              "url": "/_seed/media/chapman-killefer.jpg",
+              "alt": "Chapman Killefer - Institute for Quantum Studies",
+              "filename": "chapman-killefer.jpg"
+            }
+          },
+          "location": "541 N Lemon Street Orange, CA 92866",
+          "general_contractor": "Del Amo Construction, Inc.",
+          "architect": "Ehrlich Yanai Rhee Chaney Architects",
+          "scope": "Complete electrical system for single story Killefer Historic Building Renovation and two-story ground up Lab Building, both for university laboratory use. New 1200A SCE Service switchboard with new conduits and vaults for new SCE transformer; New 230KW outdoor emergency generator; Full new site and buildings, lighting and lighting control."
+        }
+      },
+      {
+        "id": "project-caltech-linde-hall",
+        "slug": "caltech-linde-hall",
+        "status": "published",
+        "data": {
+          "title": "Caltech - Linde Hall",
+          "progress": "completed",
+          "featured_image": {
+            "$media": {
+              "url": "/_seed/media/linde-hall.jpg",
+              "alt": "Caltech - Linde Hall",
+              "filename": "linde-hall.jpg"
+            }
+          },
+          "location": "1200 East California Blvd Pasadena, CA 91125",
+          "general_contractor": "Del Amo Construction, Inc.",
+          "architect": "Space Lab Plus",
+          "size": "2,211 sq ft.",
+          "scope": "Complete electrical system for CIT Linde Labs"
+        }
+      },
+      {
+        "id": "project-caltech-moore-walk",
+        "slug": "caltech-moore-walk",
+        "status": "published",
+        "data": {
+          "title": "Caltech - Moore Walk",
+          "progress": "completed",
+          "featured_image": {
+            "$media": {
+              "url": "/_seed/media/screenshot-2025-12-08-150257.png",
+              "alt": "Caltech - Moore Walk",
+              "filename": "screenshot-2025-12-08-150257.png"
+            }
+          },
+          "location": "308 S Michigan Ave Pasadena, CA",
+          "general_contractor": "Del Amo Construction, Inc.",
+          "architect": "Spurlock Landscape Architects",
+          "scope": "Design and build complete electrical system for the CIT Moore walkway, adhering to landscape architect's drawings."
+        }
+      },
+      {
+        "id": "project-caltech-w-m-keck-engineering-lab",
+        "slug": "caltech-w-m-keck-engineering-lab",
+        "status": "published",
+        "data": {
+          "title": "Caltech - W.M. Keck Engineering Lab",
+          "progress": "completed",
+          "featured_image": {
+            "$media": {
+              "url": "/_seed/media/caltech-lab-scaled.jpg",
+              "alt": "Caltech - W.M. Keck Engineering Lab",
+              "filename": "caltech-lab-scaled.jpg"
+            }
+          },
+          "location": "1200 E California Blvd Pasadena, CA 91125",
+          "general_contractor": "Del Amo Construction, Inc.",
+          "architect": "ZGF Architects, Space Lab Plus",
+          "scope": "Complete electrical for new medical and mathematics/physics lab spaces for professors on university campus, including new power distribution, lighting, and equipment hookups."
+        }
+      },
+      {
+        "id": "project-artcenter-college-of-design-wind-tunnel",
+        "slug": "artcenter-college-of-design-wind-tunnel",
+        "status": "published",
+        "data": {
+          "title": "ArtCenter College of Design - Wind Tunnel",
+          "progress": "completed",
+          "featured_image": {
+            "$media": {
+              "url": "/_seed/media/wind-tunnel.jpg",
+              "alt": "ArtCenter College of Design - Wind Tunnel",
+              "filename": "wind-tunnel.jpg"
+            }
+          },
+          "location": "950 South Raymound Ave, Pasadena, CA 91105",
+          "general_contractor": "Del Amo Construction, Inc.",
+          "architect": "Darin Johnstone Architects",
+          "scope": "Complete electrical system for re-working of an old Wind Tunnel space. Built a new two-story automotive design space within the existing wind tunnel."
+        }
+      },
+      {
+        "id": "project-artcenter-college-of-design-shops",
+        "slug": "artcenter-college-of-design-shops",
+        "status": "published",
+        "data": {
+          "title": "ArtCenter College of Design - Shops",
+          "progress": "completed",
+          "featured_image": {
+            "$media": {
+              "url": "/_seed/media/artcenter-shops.jpg",
+              "alt": "ArtCenter College of Design - Shops",
+              "filename": "artcenter-shops.jpg"
+            }
+          },
+          "location": "908 S. Raymond Ave Pasadena, CA 91105",
+          "general_contractor": "Del Amo Construction, Inc.",
+          "architect": "Land Office",
+          "size": "Multiple buildings - up to 67,000 sq ft.",
+          "scope": "Complete electrical system for new ground up shop building and classrooms."
+        }
+      },
+      {
+        "id": "project-artcenter-college-of-design-hyundai-and-kia-innovation-lab",
+        "slug": "artcenter-college-of-design-hyundai-and-kia-innovation-lab",
+        "status": "published",
+        "data": {
+          "title": "ArtCenter College of Design - Hyundai & Kia Innovation Lab",
+          "progress": "completed",
+          "featured_image": {
+            "$media": {
+              "url": "/_seed/media/screenshot-2025-12-08-145135.png",
+              "alt": "ArtCenter College of Design - Hyundai & Kia Innovation Lab",
+              "filename": "screenshot-2025-12-08-145135.png"
+            }
+          }
+        }
+      },
+      {
+        "id": "project-university-of-california-riverside-batchelor-hall",
+        "slug": "university-of-california-riverside-batchelor-hall",
+        "status": "published",
+        "data": {
+          "title": "University of California, Riverside - Batchelor Hall",
+          "progress": "completed",
+          "featured_image": {
+            "$media": {
+              "url": "/_seed/media/screenshot-2025-12-05-102301.png",
+              "alt": "University of California, Riverside - Batchelor Hall",
+              "filename": "screenshot-2025-12-05-102301.png"
+            }
+          },
+          "location": "900 University Ave Riverside, CA 92507",
+          "general_contractor": "W.E. O’Neil Construction",
+          "architect": "HDR Architecture, Inc.",
+          "size": "114,848 sq ft.",
+          "scope": "Upgrade existing infrastructure, provide new efficient and code compliant electrical system for 4-story research laboratory building."
+        }
+      },
+      {
+        "id": "project-occidental-college-athletic-complex",
+        "slug": "occidental-college-athletic-complex",
+        "status": "published",
+        "data": {
+          "title": "Occidental College Athletic Complex",
+          "progress": "completed",
+          "featured_image": {
+            "$media": {
+              "url": "/_seed/media/occidental-scaled.jpg",
+              "alt": "Occidental College Athletic Complex",
+              "filename": "occidental-scaled.jpg"
+            }
+          },
+          "location": "1600 Campus Rd Los Angeles, CA 90041",
+          "general_contractor": "Del Amo Construction, Inc.",
+          "architect": "Moule & Polyzoides Architects and Urbanist",
+          "scope": "Complete electrical system for Demandel pool complex & McKinnon Center."
+        }
+      },
+      {
+        "id": "project-vanguard-university-event-center-and-gym",
+        "slug": "vanguard-university-event-center-and-gym",
+        "status": "published",
+        "data": {
+          "title": "Vanguard University Event Center & Gym",
+          "progress": "completed",
+          "featured_image": {
+            "$media": {
+              "url": "/_seed/media/vanguard.jpg",
+              "alt": "Vanguard University Event Center & Gym",
+              "filename": "vanguard.jpg"
+            }
+          },
+          "location": "55 Fair drive Costa Mesa, CA 92626",
+          "general_contractor": "Mille and Severson, Inc.",
+          "architect": "Gensler",
+          "scope": "Complete electrical system for 3-story ground up multi-sport gymnasium with 3 levels of laboratory classrooms on both sides of the gymnasium building. 1000A/3P 277/480V Distribution Board & 1000A/3P 120/208V Distribution Board; 12.5 KVA Emergency Lighting Inverter; Full new site and building lighting & lighting control."
+        }
+      },
+      {
+        "id": "project-pepperdine-university-fitness-center",
+        "slug": "pepperdine-university-fitness-center",
+        "status": "published",
+        "data": {
+          "title": "Pepperdine University - Fitness Center",
+          "progress": "completed",
+          "featured_image": {
+            "$media": {
+              "url": "/_seed/media/pepperdine.png",
+              "alt": "Pepperdine University - Fitness Center",
+              "filename": "pepperdine.png"
+            }
+          }
+        }
+      },
+      {
+        "id": "project-studio-plaza-burbank",
+        "slug": "studio-plaza-burbank",
+        "status": "published",
+        "data": {
+          "title": "Studio Plaza - Burbank",
+          "progress": "completed",
+          "featured_image": {
+            "$media": {
+              "url": "/_seed/media/studio-plaza.png",
+              "alt": "Studio Plaza - Burbank",
+              "filename": "studio-plaza.png"
+            }
+          },
+          "location": "3400 W Riverside Dr Burbank, CA 91505",
+          "general_contractor": "Matt Construction Corporation",
+          "architect": "Gensler",
+          "size": "51,243 sq ft.",
+          "scope": "Complete electrical system for renovated existing exterior plaza, landscape and lighting on ground floor and level 2 terrace at existing type 1a high rise building. Interior lobby and restroom improvements."
+        }
+      },
+      {
+        "id": "project-masimo-lab-and-emc-chamber-irvine",
+        "slug": "masimo-lab-and-emc-chamber-irvine",
+        "status": "published",
+        "data": {
+          "title": "Masimo Lab & EMC Chamber - Irvine",
+          "progress": "completed",
+          "featured_image": {
+            "$media": {
+              "url": "/_seed/media/masimo.jpg",
+              "alt": "Masimo Lab & EMC Chamber - Irvine",
+              "filename": "masimo.jpg"
+            }
+          },
+          "location": "52 Discovery Irvine, CA 92618",
+          "general_contractor": "Snyder Langston",
+          "architect": "HPA, Inc.",
+          "size": "6,680 sq ft.",
+          "scope": "Complete electrical system for new laboratory and electromagnetic compatibility chamber."
+        }
+      },
+      {
+        "id": "project-west-end",
+        "slug": "west-end",
+        "status": "published",
+        "data": {
+          "title": "West End",
+          "progress": "completed",
+          "featured_image": {
+            "$media": {
+              "url": "/_seed/media/15-scaled.jpg",
+              "alt": "West End",
+              "filename": "15-scaled.jpg"
+            }
+          },
+          "location": "10730 West Pico Blvd Los Angeles, CA 90064",
+          "general_contractor": "Del Amo Construction, Inc.",
+          "architect": "HLW International LLP",
+          "size": "204,032 sq ft.",
+          "scope": "Complete electrical system for core and shell of 3 story office building. Includes two new 4000A 480/277V, main services, distribution equipment, panels, HVAC equipment, Title 24 compliance forms, temporary and permanent lighting and lighting controls."
+        }
+      },
+      {
+        "id": "project-nantstudios-el-segundo",
+        "slug": "nantstudios-el-segundo",
+        "status": "published",
+        "data": {
+          "title": "NantStudios - El Segundo",
+          "progress": "completed",
+          "featured_image": {
+            "$media": {
+              "url": "/_seed/media/screenshot-2025-12-08-100603.png",
+              "alt": "NantStudios - El Segundo",
+              "filename": "screenshot-2025-12-08-100603.png"
+            }
+          }
+        }
+      },
+      {
+        "id": "project-nantworks-culver-city",
+        "slug": "nantworks-culver-city",
+        "status": "published",
+        "data": {
+          "title": "NantWorks - Culver City",
+          "progress": "completed",
+          "featured_image": {
+            "$media": {
+              "url": "/_seed/media/nantworks.jpg",
+              "alt": "NantWorks - Culver City",
+              "filename": "nantworks.jpg"
+            }
+          },
+          "location": "9919 Jefferson Blvd Culver City, CA 90232",
+          "general_contractor": "Del Amo Construction, Inc.",
+          "architect": "Gruen Associates",
+          "size": "19,452 sq ft.",
+          "scope": "Complete electrical system for 3-floor office with roof system."
+        }
+      },
+      {
+        "id": "project-9720-wilshire",
+        "slug": "9720-wilshire",
+        "status": "published",
+        "data": {
+          "title": "9720 Wilshire",
+          "progress": "completed",
+          "featured_image": {
+            "$media": {
+              "url": "/_seed/media/screenshot-2025-12-08-155745.png",
+              "alt": "9720 Wilshire",
+              "filename": "screenshot-2025-12-08-155745.png"
+            }
+          }
+        }
+      },
+      {
+        "id": "project-relativity-space-hq",
+        "slug": "relativity-space-hq",
+        "status": "published",
+        "data": {
+          "title": "Relativity Space - HQ",
+          "progress": "completed",
+          "featured_image": {
+            "$media": {
+              "url": "/_seed/media/relativity.jpg",
+              "alt": "Relativity Space - HQ",
+              "filename": "relativity.jpg"
+            }
+          },
+          "location": "2400 E Wardlow Road Long Beach, CA 90807",
+          "general_contractor": "W.E. O'Neil Construction",
+          "architect": "Access Electric Inc.",
+          "scope": "Complete electrical Design and build for the new chiller plant to service the factory. New 4000A service to accommodate the new chillers, and re-work of the air handling units in the south factory. Installation of FA backbone across the whole factory. Various smaller hi bay lighting and modular building improvements. Various landscape lighting improvements"
+        }
+      },
+      {
+        "id": "project-intersect-irvine",
+        "slug": "intersect-irvine",
+        "status": "published",
+        "data": {
+          "title": "Intersect - Irvine",
+          "progress": "completed",
+          "featured_image": {
+            "$media": {
+              "url": "/_seed/media/intersect.jpg",
+              "alt": "Intersect - Irvine",
+              "filename": "intersect.jpg"
+            }
+          },
+          "location": "17875 & 17877 Von Karman 17872 Gillette Irvine, CA 92614",
+          "general_contractor": "Snyder Langston",
+          "architect": "IA Interior Architects",
+          "scope": "Complete electrical for 3-building remodel. Included renovations at the Entry Portal Areas, Restrooms, Lobbies, and Levels 1 and 2 of the Basement in Buildings A and B. Also included in the renovation were a Conference Center, Fitness Center, Training Room, Locker Rooms, Spin/TRX Rooms, and Kitchen Area."
+        }
+      },
+      {
+        "id": "project-nantworks-garage",
+        "slug": "nantworks-garage",
+        "status": "published",
+        "data": {
+          "title": "NantWorks - Garage",
+          "progress": "completed",
+          "featured_image": {
+            "$media": {
+              "url": "/_seed/media/screenshot-2025-12-08-155016.png",
+              "alt": "NantWorks - Garage",
+              "filename": "screenshot-2025-12-08-155016.png"
+            }
+          },
+          "location": "9919 Jefferson Blvd Culver City, CA 90232",
+          "general_contractor": "Del Amo Construction, Inc.",
+          "architect": "Gruen Associates",
+          "size": "124,031 sq ft.",
+          "scope": "Complete electrical system for 4-level open parking structure with one level below grade enclosed."
+        }
+      },
+      {
+        "id": "project-scholle-center-building-irvine",
+        "slug": "scholle-center-building-irvine",
+        "status": "published",
+        "data": {
+          "title": "Scholle Center Building - Irvine",
+          "progress": "completed",
+          "featured_image": {
+            "$media": {
+              "url": "/_seed/media/scholle-center-building.jpg",
+              "alt": "Scholle Center Building - Irvine",
+              "filename": "scholle-center-building.jpg"
+            }
+          },
+          "location": "19520 Jamboree Rd. Irvine, CA 92612",
+          "general_contractor": "Del Amo Construction, Inc.",
+          "architect": "LRS Architects, Inc.",
+          "size": "130,000 sq ft.",
+          "scope": "Design build electrical system with back up generator for core and shell of new five story office building with a subterranean garage. Site work including Parking Lot Lighting, Landscape Lighting, and Dry Utilities. Design Build Fire Alarm System."
+        }
+      },
+      {
+        "id": "project-rivian-carson-office",
+        "slug": "rivian-carson-office",
+        "status": "published",
+        "data": {
+          "title": "Rivian - Carson Office",
+          "progress": "completed",
+          "featured_image": {
+            "$media": {
+              "url": "/_seed/media/rivian.png",
+              "alt": "Rivian - Carson Office",
+              "filename": "rivian.png"
+            }
+          },
+          "location": "1059 E Bedmar St Carson, CA 90746",
+          "general_contractor": "Driver SPG",
+          "architect": "IA Interior Architects",
+          "scope": "Design-build complete electrical system for single story with mezzanine existing building renovation for laboratory use purposes. New Distribution and Panelboard; 4.8 KVA Emergency Lighting Inverter; Complete new lighting and lighting control system; DC Fast Chargers"
+        }
+      },
+      {
+        "id": "project-st-andrew-s-presbyterian-church",
+        "slug": "st-andrew-s-presbyterian-church",
+        "status": "published",
+        "data": {
+          "title": "St. Andrew's Presbyterian Church",
+          "progress": "completed",
+          "featured_image": {
+            "$media": {
+              "url": "/_seed/media/st-andrews-courtyard.png",
+              "alt": "St. Andrew's Presbyterian Church",
+              "filename": "st-andrews-courtyard.png"
+            }
+          },
+          "location": "600 St. Andrews Rd Newport Beach, CA 92663",
+          "general_contractor": "Snyder Langston",
+          "architect": "McLarand Vasquez Emsiek & Partners, Inc.",
+          "scope": "Safe-off of existing building demolished electrical system. Build electrical system for new multi-level buildings to house Church Youth Center and Fellowship Hall with full kitchen and Day Care facilities. Upgrade lighting in existing Day Care. Provide power for theatre lighting; install and program dimmable lighting panels; install conduit and boxes for low voltage systems, including, AV, Security, Fire Alarm."
+        }
+      },
+      {
+        "id": "project-mount-of-olives-church",
+        "slug": "mount-of-olives-church",
+        "status": "published",
+        "data": {
+          "title": "Mount of Olives Church",
+          "progress": "completed",
+          "featured_image": {
+            "$media": {
+              "url": "/_seed/media/mountofolive-10-scaled.jpg",
+              "alt": "Mount of Olives Church",
+              "filename": "mountofolive-10-scaled.jpg"
+            }
+          },
+          "location": "24772 Chrisanta Drive Mission Viejo, CA 92691",
+          "architect": "Rengel & Co., Architects, Inc.",
+          "scope": "Provide new 2500 Amp electrical service for entire Church Campus. Rebuild new electrical system for sanctuary. Install lighting, including dimming system and theatre lighting. Install conduit and boxes for AV, Sound, CCTV, and Fire Life Safety Systems."
+        }
+      },
+      {
+        "id": "project-mesa-church-irvine",
+        "slug": "mesa-church-irvine",
+        "status": "published",
+        "data": {
+          "title": "Mesa Church - Irvine",
+          "progress": "completed",
+          "featured_image": {
+            "$media": {
+              "url": "/_seed/media/mesa-church-scaled.jpg",
+              "alt": "Mesa Church - Irvine",
+              "filename": "mesa-church-scaled.jpg"
+            }
+          },
+          "location": "17660 Cowan Irvine, CA 92612",
+          "general_contractor": "Visioneering Studios Construction, Inc.",
+          "architect": "Visioneering Studios Construction, Inc.",
+          "scope": "Complete electrical system for entrance lobby and sanctuary."
+        }
+      },
+      {
+        "id": "project-gloria-dei-lutheran-church",
+        "slug": "gloria-dei-lutheran-church",
+        "status": "published",
+        "data": {
+          "title": "Gloria Dei Lutheran Church",
+          "progress": "completed",
+          "featured_image": {
+            "$media": {
+              "url": "/_seed/media/mg-4026.jpg",
+              "alt": "Gloria Dei Lutheran Church",
+              "filename": "mg-4026.jpg"
+            }
+          },
+          "location": "33501 Stonehill Drive Dana Point, CA 92629",
+          "general_contractor": "Driver SPG",
+          "architect": "Domus Studio Architect",
+          "size": "6,000 sq ft.",
+          "scope": "Complete electrical system for new sanctuary with high end finishes. Utility upgrades. Work completed on occupied campus."
+        }
+      },
+      {
+        "id": "project-presbyterian-church-of-the-master-mission-viejo",
+        "slug": "presbyterian-church-of-the-master-mission-viejo",
+        "status": "published",
+        "data": {
+          "title": "Presbyterian Church of the Master - Mission Viejo",
+          "progress": "completed",
+          "featured_image": {
+            "$media": {
+              "url": "/_seed/media/church-of-the-master.jpg",
+              "alt": "Presbyterian Church of the Master - Mission Viejo",
+              "filename": "church-of-the-master.jpg"
+            }
+          },
+          "location": "26051 Marguerite Parkway Mission Viejo, CA 92692",
+          "general_contractor": "Snyder Langston",
+          "architect": "Dominy + Associates Architects",
+          "scope": "Build electrical system for new church sanctuary including dimmable lighting, dimmer panels, theatre lighting, low voltage control lighting, landscape lighting, and Fire Life Safety System."
+        }
+      },
+      {
+        "id": "project-st-thomas-catholic-church",
+        "slug": "st-thomas-catholic-church",
+        "status": "published",
+        "data": {
+          "title": "St. Thomas Catholic Church",
+          "progress": "completed",
+          "featured_image": {
+            "$media": {
+              "url": "/_seed/media/300111074635-stthomaskoreancatholicchurch1.png",
+              "alt": "St. Thomas Catholic Church",
+              "filename": "300111074635-stthomaskoreancatholicchurch1.png"
+            }
+          },
+          "location": "414 North Crescent Way Anaheim, Ca 92801",
+          "general_contractor": "Snyder Langston",
+          "architect": "HMC Architects",
+          "size": "15,000 sq ft.",
+          "scope": "Build complete electrical system for new sanctuary, including theatre lighting, custom chandeliers, dimming and lighting control systems, fire alarm system. Site work completed including dry utilities, egress lighting, landscape lighting, fountain, and 200’ cross lighting."
+        }
+      },
+      {
+        "id": "project-eastside-church-anaheim",
+        "slug": "eastside-church-anaheim",
+        "status": "published",
+        "data": {
+          "title": "Eastside Church - Anaheim",
+          "progress": "completed",
+          "featured_image": {
+            "$media": {
+              "url": "/_seed/media/eastside-1.jpg",
+              "alt": "Eastside Church - Anaheim",
+              "filename": "eastside-1.jpg"
+            }
+          },
+          "location": "3370 Mira Loma Ave Anaheim, CA 92806",
+          "architect": "J7 Architecture Inc.",
+          "scope": "Design-build renovation of youth center with new electrical service and new lighting, including Elation Theatre Lighting and Controls."
+        }
+      },
+      {
+        "id": "project-flintridge-preparatory-school",
+        "slug": "flintridge-preparatory-school",
+        "status": "published",
+        "data": {
+          "title": "Flintridge Preparatory School",
+          "progress": "completed",
+          "featured_image": {
+            "$media": {
+              "url": "/_seed/media/bachmanncollabbuildingrnaj-113-scaled.jpg",
+              "alt": "Flintridge Preparatory School",
+              "filename": "bachmanncollabbuildingrnaj-113-scaled.jpg"
+            }
+          },
+          "location": "4543 Crown Ave La Canada Flintridge, CA 91011",
+          "general_contractor": "Driver SPG",
+          "architect": "Harley Ellis Devereaux",
+          "scope": "Complete electrical system for new ground up building and classrooms."
+        }
+      },
+      {
+        "id": "project-webb-schools-nelson-performing-arts-center",
+        "slug": "webb-schools-nelson-performing-arts-center",
+        "status": "published",
+        "data": {
+          "title": "Webb Schools - Nelson Performing Arts Center",
+          "progress": "completed",
+          "featured_image": {
+            "$media": {
+              "url": "/_seed/media/img-0952.jpg",
+              "alt": "Webb Schools - Nelson Performing Arts Center",
+              "filename": "img-0952.jpg"
+            }
+          },
+          "location": "1175 W. Baseline Rd Claremont, CA 91711",
+          "general_contractor": "Del Amo Construction, Inc.",
+          "architect": "Page & Turnbull",
+          "size": "6,392 sq ft.",
+          "scope": "Complete renovation of performing arts center with power upgrades, new Lighting and Dimming Control System, ETC Theatre Lighting System and Controls."
+        }
+      },
+      {
+        "id": "project-st-margaret-s-performing-arts-center",
+        "slug": "st-margaret-s-performing-arts-center",
+        "status": "published",
+        "data": {
+          "title": "St. Margaret's Performing Arts Center",
+          "progress": "completed",
+          "featured_image": {
+            "$media": {
+              "url": "/_seed/media/st-margarets-scaled.jpg",
+              "alt": "St. Margaret's Performing Arts Center",
+              "filename": "st-margarets-scaled.jpg"
+            }
+          },
+          "location": "31511 La Novia Avenue San Juan Capistrano, CA 92675",
+          "general_contractor": "Del Amo Construction, Inc.",
+          "architect": "Bastien & Associates, Inc.",
+          "size": "44,333 sq ft.",
+          "scope": "Complete electrical for new performing arts center including Lighting and Dimming Control System, ETC Theatre Lighting System and Controls, Site lighting and power. Campus occupied for duration of construction project."
+        }
+      },
+      {
+        "id": "project-milken-high-school",
+        "slug": "milken-high-school",
+        "status": "published",
+        "data": {
+          "title": "Milken High School",
+          "progress": "completed",
+          "featured_image": {
+            "$media": {
+              "url": "/_seed/media/milken5.jpg",
+              "alt": "Milken High School",
+              "filename": "milken5.jpg"
+            }
+          },
+          "location": "15900 W. Mulholland Dr Los Angeles, CA 90049",
+          "general_contractor": "Del Amo Construction, Inc.",
+          "architect": "Lehrer Architects",
+          "scope": "Complete electrical system for tenant improvements of two upper level classrooms."
+        }
+      },
+      {
+        "id": "project-sage-hill-high-school",
+        "slug": "sage-hill-high-school",
+        "status": "published",
+        "data": {
+          "title": "Sage Hill High School",
+          "progress": "completed",
+          "featured_image": {
+            "$media": {
+              "url": "/_seed/media/sage.jpg",
+              "alt": "Sage Hill High School",
+              "filename": "sage.jpg"
+            }
+          },
+          "location": "20402 Newport Coast Drive Newport Coast, CA 92657",
+          "general_contractor": "C.W. Driver",
+          "architect": "Steinberg Architects",
+          "size": "12,955 sq ft.",
+          "scope": "New complete electrical system for Science Center consisting of labs and classrooms, Electrical and Data Rooms, Site work, and parking lot improvements. Fire Life Safety System and Data Communications System."
+        }
+      },
+      {
+        "id": "project-scholarship-preparatory",
+        "slug": "scholarship-preparatory",
+        "status": "published",
+        "data": {
+          "title": "Scholarship Preparatory",
+          "progress": "completed",
+          "featured_image": {
+            "$media": {
+              "url": "/_seed/media/scholarship-prep-scaled.jpg",
+              "alt": "Scholarship Preparatory",
+              "filename": "scholarship-prep-scaled.jpg"
+            }
+          }
+        }
+      },
+      {
+        "id": "project-kipp-elementary-charter-school",
+        "slug": "kipp-elementary-charter-school",
+        "status": "published",
+        "data": {
+          "title": "KIPP Elementary Charter School",
+          "progress": "completed",
+          "featured_image": {
+            "$media": {
+              "url": "/_seed/media/kipp-scaled.jpg",
+              "alt": "KIPP Elementary Charter School",
+              "filename": "kipp-scaled.jpg"
+            }
+          },
+          "location": "4410 S. Budlong Ave Los Angeles, CA 90037",
+          "general_contractor": "Del Amo Construction, Inc.",
+          "architect": "Franco Architects, Inc.",
+          "size": "30,000 sq ft.",
+          "scope": "Complete electrical system for building with change of use from Church/Sunday School to Elementary School (Grades TK-4). Existing church structure repurposed with a second floor added to the building. Adjacent 2-story with full basement classroom building was demolished. Constructed new classroom building with underground parking adjacent to existing church structure. Basement contains 24 parking spaces. The 2 structures contain 24 classrooms, student and staff restrooms, administrative offices, 1 multipurpose room and required site work."
+        }
+      },
+      {
+        "id": "project-villa-esperanza-services-pasadena",
+        "slug": "villa-esperanza-services-pasadena",
+        "status": "published",
+        "data": {
+          "title": "Villa Esperanza Services - Pasadena",
+          "progress": "completed",
+          "featured_image": {
+            "$media": {
+              "url": "/_seed/media/villa-esp.jpg",
+              "alt": "Villa Esperanza Services - Pasadena",
+              "filename": "villa-esp.jpg"
+            }
+          }
+        }
+      },
+      {
+        "id": "project-crean-lutheran-high-school-band-building",
+        "slug": "crean-lutheran-high-school-band-building",
+        "status": "published",
+        "data": {
+          "title": "Crean Lutheran High School - Band Building",
+          "progress": "completed",
+          "featured_image": {
+            "$media": {
+              "url": "/_seed/media/screenshot-2025-12-08-144112.png",
+              "alt": "Crean Lutheran High School - Band Building",
+              "filename": "screenshot-2025-12-08-144112.png"
+            }
+          }
+        }
+      },
+      {
+        "id": "project-junipero-serra-high-school",
+        "slug": "junipero-serra-high-school",
+        "status": "published",
+        "data": {
+          "title": "Junipero Serra High School",
+          "progress": "completed",
+          "featured_image": {
+            "$media": {
+              "url": "/_seed/media/jserra-2-scaled.jpg",
+              "alt": "Junipero Serra High School",
+              "filename": "jserra-2-scaled.jpg"
+            }
+          },
+          "location": "26351 Junipero Serra Rd San Juan Capistrano, CA",
+          "general_contractor": "Bluefin Construction, Inc.",
+          "architect": "Jacobs Engineering",
+          "scope": "Tenant improvement lighting for classrooms."
+        }
+      },
+      {
+        "id": "project-dacor-showroom",
+        "slug": "dacor-showroom",
+        "status": "published",
+        "data": {
+          "title": "Dacor Showroom",
+          "progress": "completed",
+          "featured_image": {
+            "$media": {
+              "url": "/_seed/media/dacor-scaled.jpg",
+              "alt": "Dacor Showroom",
+              "filename": "dacor-scaled.jpg"
+            }
+          }
+        }
+      },
+      {
+        "id": "project-pinstripes-topanga",
+        "slug": "pinstripes-topanga",
+        "status": "published",
+        "data": {
+          "title": "Pinstripes - Topanga",
+          "progress": "completed",
+          "featured_image": {
+            "$media": {
+              "url": "/_seed/media/pinestripes-canoga-park-12.jpg",
+              "alt": "Pinstripes - Topanga",
+              "filename": "pinestripes-canoga-park-12.jpg"
+            }
+          }
+        }
+      },
+      {
+        "id": "project-discovery-science-center",
+        "slug": "discovery-science-center",
+        "status": "published",
+        "data": {
+          "title": "Discovery Science Center",
+          "progress": "completed",
+          "featured_image": {
+            "$media": {
+              "url": "/_seed/media/discovery-science.jpg",
+              "alt": "Discovery Science Center",
+              "filename": "discovery-science.jpg"
+            }
+          },
+          "location": "2500 North Main Street Santa Ana, CA 92705",
+          "general_contractor": "Driver SPG.",
+          "architect": "John Sergio Fisher & Associates",
+          "size": "43,340 sq ft.",
+          "scope": "Design completion of 30% bridge documents for Expansion Building and BESS System. 3-story Expansion to Existing Building. Build complete electrical system including Edison Battery Back-up System (BESS)."
+        }
+      },
+      {
+        "id": "project-covina-bowl",
+        "slug": "covina-bowl",
+        "status": "published",
+        "data": {
+          "title": "Covina Bowl",
+          "progress": "completed",
+          "featured_image": {
+            "$media": {
+              "url": "/_seed/media/covina.jpg",
+              "alt": "Covina Bowl",
+              "filename": "covina.jpg"
+            }
+          }
+        }
+      },
+      {
+        "id": "project-dave-and-buster-s-hollywood",
+        "slug": "dave-and-buster-s-hollywood",
+        "status": "published",
+        "data": {
+          "title": "Dave & Buster's - Hollywood",
+          "progress": "completed",
+          "featured_image": {
+            "$media": {
+              "url": "/_seed/media/davebusters.jpg",
+              "alt": "Dave & Buster's - Hollywood",
+              "filename": "davebusters.jpg"
+            }
+          },
+          "location": "6801 Hollywood Blvd. Suite 363 Hollywood, CA 90028",
+          "general_contractor": "ITX Construction/Consultant’s",
+          "architect": "Aria Group Architects, Inc.",
+          "size": "45,029 sq ft.",
+          "scope": "Tenant improvement restaurant and entertainment complex on 3rd floor of the mixed use Hollywood & Highland Center"
+        }
+      },
+      {
+        "id": "project-studio-movie-grill",
+        "slug": "studio-movie-grill",
+        "status": "published",
+        "data": {
+          "title": "Studio Movie Grill",
+          "progress": "completed",
+          "featured_image": {
+            "$media": {
+              "url": "/_seed/media/screenshot-2025-12-08-094823.png",
+              "alt": "Studio Movie Grill",
+              "filename": "screenshot-2025-12-08-094823.png"
+            }
+          },
+          "location": "1555 Simi Town Center Way Simi Valley, CA 93065",
+          "general_contractor": "AnCor Inc.",
+          "architect": "NCA Partners",
+          "scope": "Complete electrical system for new building."
+        }
+      },
+      {
+        "id": "project-wolf-sub-zero-cove-costa-mesa-showroom",
+        "slug": "wolf-sub-zero-cove-costa-mesa-showroom",
+        "status": "published",
+        "data": {
+          "title": "Wolf Sub-Zero Cove Costa Mesa Showroom",
+          "progress": "completed",
+          "featured_image": {
+            "$media": {
+              "url": "/_seed/media/wolf.jpg",
+              "alt": "Wolf Sub-Zero Cove Costa Mesa Showroom",
+              "filename": "wolf.jpg"
+            }
+          }
+        }
+      },
+      {
+        "id": "project-irvine-spectrum-center",
+        "slug": "irvine-spectrum-center",
+        "status": "published",
+        "data": {
+          "title": "Irvine Spectrum Center",
+          "progress": "completed",
+          "featured_image": {
+            "$media": {
+              "url": "/_seed/media/screenshot-2025-12-11-155219.png",
+              "alt": "Irvine Spectrum Center",
+              "filename": "screenshot-2025-12-11-155219.png"
+            }
+          },
+          "location": "57 Fortune Dr Irvine, CA 92618",
+          "general_contractor": "Roel Construction Company, Inc.",
+          "architect": "Architects Orange",
+          "scope": "Build electrical system for two new buildings, including site work to upgrade power to accommodate addition of new buildings, relocating and reconnecting of all existing site power and lighting, and Fire Life Safety System."
+        }
+      },
+      {
+        "id": "project-junipero-serra-high-school-sports-complex",
+        "slug": "junipero-serra-high-school-sports-complex",
+        "status": "published",
+        "data": {
+          "title": "Junipero Serra High School Sports Complex",
+          "progress": "completed",
+          "featured_image": {
+            "$media": {
+              "url": "/_seed/media/jserra-2-scaled.jpg",
+              "alt": "Junipero Serra High School Sports Complex",
+              "filename": "jserra-2-scaled.jpg"
+            }
+          },
+          "location": "26351 Junipero Serra Rd San Juan Capistrano, CA",
+          "general_contractor": "Bluefin Construction, Inc.",
+          "architect": "Jacobs Engineering",
+          "scope": "Design build 60,000 square foot gymnasium and 29 acre sports facilities including baseball fields, softball fields, soccer field, football field, track field, tennis courts, volleyball courts, outdoor basketball courts, and Olympic size swimming pool. Landscape lighting and parking lot lighting. Pedestrian bridges interconnecting South Campus with North Campus."
+        }
+      },
+      {
+        "id": "project-24-hour-fitness",
+        "slug": "24-hour-fitness",
+        "status": "published",
+        "data": {
+          "title": "24 Hour Fitness",
+          "progress": "completed",
+          "featured_image": {
+            "$media": {
+              "url": "/_seed/media/24-hour-fitness-bollards.jpg",
+              "alt": "24 Hour Fitness",
+              "filename": "24-hour-fitness-bollards.jpg"
+            }
+          }
+        }
+      },
+      {
+        "id": "project-iconix-hollywood-park",
+        "slug": "iconix-hollywood-park",
+        "status": "published",
+        "data": {
+          "title": "Iconix - Hollywood Park",
+          "progress": "completed",
+          "featured_image": {
+            "$media": {
+              "url": "/_seed/media/iconix-scaled.jpg",
+              "alt": "Iconix - Hollywood Park",
+              "filename": "iconix-scaled.jpg"
+            }
+          }
+        }
+      },
+      {
+        "id": "project-la-fitness",
+        "slug": "la-fitness",
+        "status": "published",
+        "data": {
+          "title": "LA Fitness",
+          "progress": "completed",
+          "featured_image": {
+            "$media": {
+              "url": "/_seed/media/la-fitness.jpg",
+              "alt": "LA Fitness",
+              "filename": "la-fitness.jpg"
+            }
+          }
+        }
+      },
+      {
+        "id": "project-descanso-gardens-farmhouse",
+        "slug": "descanso-gardens-farmhouse",
+        "status": "published",
+        "data": {
+          "title": "Descanso Gardens - Farmhouse",
+          "progress": "completed",
+          "featured_image": {
+            "$media": {
+              "url": "/_seed/media/screenshot-2025-12-05-113114.png",
+              "alt": "Descanso Gardens - Farmhouse",
+              "filename": "screenshot-2025-12-05-113114.png"
+            }
+          }
+        }
+      },
+      {
+        "id": "project-rmv-gavilan-ridge",
+        "slug": "rmv-gavilan-ridge",
+        "status": "published",
+        "data": {
+          "title": "RMV Gavilan Ridge",
+          "progress": "completed",
+          "featured_image": {
+            "$media": {
+              "url": "/_seed/media/260602-gavilanridge-preopening0113-scaled.jpg",
+              "alt": "RMV Gavilan Ridge",
+              "filename": "260602-gavilanridge-preopening0113-scaled.jpg"
+            }
+          },
+          "gallery": [
+            {
+              "image": {
+                "$media": {
+                  "url": "/_seed/media/260602-gavilanridge-preopening0121-scaled.jpg",
+                  "alt": "RMV Gavilan Ridge",
+                  "filename": "260602-gavilanridge-preopening0121-scaled.jpg"
+                }
+              }
+            },
+            {
+              "image": {
+                "$media": {
+                  "url": "/_seed/media/theclub-gavilanridgepreopening-371-scaled.jpg",
+                  "alt": "RMV Gavilan Ridge",
+                  "filename": "theclub-gavilanridgepreopening-371-scaled.jpg"
+                }
+              }
+            }
+          ],
+          "location": "729 S. Main Street Los Angeles, CA 90014",
+          "general_contractor": "Snyder Langston Residential, LLC",
+          "architect": "Killefer Flammang Architects",
+          "size": "30,304 sq ft.",
+          "scope": "Complete electrical for upgraded MEP systems, bathrooms, and common areas in existing 4-story, Type III building. 97 Public housing units and one Manager Apartment."
+        }
+      },
+      {
+        "id": "project-skid-row-simone",
+        "slug": "skid-row-simone",
+        "status": "published",
+        "data": {
+          "title": "Skid Row - Simone",
+          "progress": "completed",
+          "featured_image": {
+            "$media": {
+              "url": "/_seed/media/20180611-093914.jpg",
+              "alt": "Skid Row - Simone",
+              "filename": "20180611-093914.jpg"
+            }
+          },
+          "location": "520 S. San Julian St. Los Angeles, CA 90013",
+          "general_contractor": "Snyder Langston Residential, LLC",
+          "architect": "Koning Eizenberg Architecture",
+          "scope": "Substantial renovation of 227 units. The scope of work included upgrading all areas per Title 24 requirements including all new lighting system with low voltage controls, new power for HVAC for all units, and new inverters for back-up power. The Simone included new upgraded main service including new meter sections, with transformers, distribution centers, and subpanels. Additional work included new electrical for modernized existing elevator in two buildings and new elevator in one, new electrical rooms, new transformers and other electrical equipment, upgrades to existing common kitchen areas and bathrooms, and new photovoltaic systems."
+        }
+      },
+      {
+        "id": "project-skid-row-rossmore-housing",
+        "slug": "skid-row-rossmore-housing",
+        "status": "published",
+        "data": {
+          "title": "Skid Row - Rossmore Housing",
+          "progress": "completed",
+          "featured_image": {
+            "$media": {
+              "url": "/_seed/media/rossmore-905.jpg",
+              "alt": "Skid Row - Rossmore Housing",
+              "filename": "rossmore-905.jpg"
+            }
+          },
+          "location": "905 East 6th St. Los Angeles, CA 90013",
+          "general_contractor": "Snyder Langston Residential, LLC",
+          "architect": "Brooks + Scarpa Architects, Inc.",
+          "scope": "The substantial renovation of 58 units of permanent supportive housing single room occupancy units was completed on a very tight schedule. Located in Downtown Los Angeles in a highly congested urban site, the work was completed while the building was occupied, requiring the building systems to be kept alive for resident use during construction. The scope of work included upgrading all areas per Title 24 requirements including all new lighting system with low voltage controls, new power for HVAC for all units, and new inverters for back-up power."
+        }
+      },
+      {
+        "id": "project-good-shepherd-center",
+        "slug": "good-shepherd-center",
+        "status": "published",
+        "data": {
+          "title": "Good Shepherd Center",
+          "progress": "completed",
+          "featured_image": {
+            "$media": {
+              "url": "/_seed/media/good-shepherd1.jpg",
+              "alt": "Good Shepherd Center",
+              "filename": "good-shepherd1.jpg"
+            }
+          },
+          "location": "1671 Beverly Blvd. Los Angeles, CA 90026",
+          "general_contractor": "Snyder Langston",
+          "architect": "Onyx Architects Inc.",
+          "size": "37,548 sq ft.",
+          "scope": "Built electrical system for new construction of transitional housing and educational facility including dimmer system, commercial/residential multiple meter power, site lighting, underground parking structure lighting and controls, methane system, fire life safety system, voice and data systems, security system, CCTV system, TV system, and access control system."
+        }
+      },
+      {
+        "id": "project-boardwalk-cafe-irvine",
+        "slug": "boardwalk-cafe-irvine",
+        "status": "published",
+        "data": {
+          "title": "Boardwalk Cafe - Irvine",
+          "progress": "completed",
+          "featured_image": {
+            "$media": {
+              "url": "/_seed/media/boardwalk-cafe.png",
+              "alt": "Boardwalk Cafe - Irvine",
+              "filename": "boardwalk-cafe.png"
+            }
+          }
+        }
+      },
+      {
+        "id": "project-cerritos-plaza",
+        "slug": "cerritos-plaza",
+        "status": "published",
+        "data": {
+          "title": "Cerritos Plaza",
+          "progress": "completed",
+          "featured_image": {
+            "$media": {
+              "url": "/_seed/media/cerritos-plaza-scaled.jpg",
+              "alt": "Cerritos Plaza",
+              "filename": "cerritos-plaza-scaled.jpg"
+            }
+          },
+          "location": "11111-11263 183rd St. Cerritos, CA 90703",
+          "general_contractor": "Snyder Langston",
+          "architect": "Architects Orange",
+          "scope": "Complete electrical system for multiple core and shell buildings in multi-acre retail development. Upgraded main utility underground conduit systems and LED parking lot lighting. Provided new landscape lighting and power."
+        }
+      },
+      {
+        "id": "project-simi-valley-town-center",
+        "slug": "simi-valley-town-center",
+        "status": "published",
+        "data": {
+          "title": "Simi Valley Town Center",
+          "progress": "completed",
+          "featured_image": {
+            "$media": {
+              "url": "/_seed/media/screenshot-2025-12-08-102142.png",
+              "alt": "Simi Valley Town Center",
+              "filename": "screenshot-2025-12-08-102142.png"
+            }
+          },
+          "location": "Simi Town Center Way Simi Valley, CA 93065",
+          "general_contractor": "The Whiting-Turner Contracting Company",
+          "architect": "Architects Orange",
+          "scope": "Electrical for wayfinding and pylon signs in operating shopping mall."
+        }
+      }
+    ],
+    "categories": [
+      {
+        "id": "category-higher-education",
+        "slug": "higher-education",
+        "status": "published",
+        "data": {
+          "title": "Higher Education",
+          "sort_order": 10,
+          "projects": [
+            "$ref:project-chapman-killefer-institute-for-quantum-studies",
+            "$ref:project-chapman-innovation-hub",
+            "$ref:project-caltech-linde-hall",
+            "$ref:project-caltech-moore-walk",
+            "$ref:project-caltech-w-m-keck-engineering-lab",
+            "$ref:project-artcenter-college-of-design-wind-tunnel",
+            "$ref:project-artcenter-college-of-design-shops",
+            "$ref:project-artcenter-college-of-design-hyundai-and-kia-innovation-lab",
+            "$ref:project-university-of-california-riverside-batchelor-hall",
+            "$ref:project-occidental-college-athletic-complex",
+            "$ref:project-vanguard-university-event-center-and-gym",
+            "$ref:project-pepperdine-university-fitness-center"
+          ]
+        }
+      },
+      {
+        "id": "category-commercial-buildings",
+        "slug": "commercial-buildings",
+        "status": "published",
+        "data": {
+          "title": "Commercial Buildings",
+          "sort_order": 20,
+          "projects": [
+            "$ref:project-studio-plaza-burbank",
+            "$ref:project-gkn-aerospace-garden-grove",
+            "$ref:project-masimo-lab-and-emc-chamber-irvine",
+            "$ref:project-west-end",
+            "$ref:project-nantstudios-el-segundo",
+            "$ref:project-nantworks-culver-city",
+            "$ref:project-9720-wilshire",
+            "$ref:project-relativity-space-hq",
+            "$ref:project-intersect-irvine",
+            "$ref:project-nantworks-garage",
+            "$ref:project-scholle-center-building-irvine",
+            "$ref:project-rivian-carson-office"
+          ]
+        }
+      },
+      {
+        "id": "category-places-of-worship",
+        "slug": "places-of-worship",
+        "status": "published",
+        "data": {
+          "title": "Places of Worship",
+          "sort_order": 30,
+          "projects": [
+            "$ref:project-st-andrew-s-presbyterian-church",
+            "$ref:project-st-thomas-more-church",
+            "$ref:project-breed-street-shul",
+            "$ref:project-lighthouse-community-church-torrance",
+            "$ref:project-mount-of-olives-church",
+            "$ref:project-mesa-church-irvine",
+            "$ref:project-gloria-dei-lutheran-church",
+            "$ref:project-presbyterian-church-of-the-master-mission-viejo",
+            "$ref:project-st-thomas-catholic-church",
+            "$ref:project-eastside-church-anaheim"
+          ]
+        }
+      },
+      {
+        "id": "category-k-12-schools",
+        "slug": "k-12-schools",
+        "status": "published",
+        "data": {
+          "title": "K-12 Schools",
+          "sort_order": 40,
+          "projects": [
+            "$ref:project-flintridge-preparatory-school",
+            "$ref:project-sierra-canyon-school-for-the-arts",
+            "$ref:project-sycamore-creek-community-charter-school",
+            "$ref:project-webb-schools-nelson-performing-arts-center",
+            "$ref:project-st-margaret-s-performing-arts-center",
+            "$ref:project-milken-high-school",
+            "$ref:project-sage-hill-high-school",
+            "$ref:project-scholarship-preparatory",
+            "$ref:project-kipp-elementary-charter-school",
+            "$ref:project-villa-esperanza-services-pasadena",
+            "$ref:project-crean-lutheran-high-school-band-building",
+            "$ref:project-junipero-serra-high-school"
+          ]
+        }
+      },
+      {
+        "id": "category-retail-entertainment",
+        "slug": "retail-entertainment",
+        "status": "published",
+        "data": {
+          "title": "Retail/Entertainment",
+          "sort_order": 50,
+          "projects": [
+            "$ref:project-dacor-showroom",
+            "$ref:project-pinstripes-topanga",
+            "$ref:project-discovery-science-center",
+            "$ref:project-covina-bowl",
+            "$ref:project-dave-and-buster-s-hollywood",
+            "$ref:project-studio-movie-grill",
+            "$ref:project-wolf-sub-zero-cove-costa-mesa-showroom",
+            "$ref:project-irvine-spectrum-center"
+          ]
+        }
+      },
+      {
+        "id": "category-sports-facilities",
+        "slug": "sports-facilities",
+        "status": "published",
+        "data": {
+          "title": "Sports Facilities",
+          "sort_order": 60,
+          "projects": [
+            "$ref:project-occidental-college-athletic-complex",
+            "$ref:project-vanguard-university-event-center-and-gym",
+            "$ref:project-pepperdine-university-fitness-center",
+            "$ref:project-junipero-serra-high-school-sports-complex",
+            "$ref:project-24-hour-fitness",
+            "$ref:project-iconix-hollywood-park",
+            "$ref:project-la-fitness"
+          ]
+        }
+      },
+      {
+        "id": "category-design-build",
+        "slug": "design-build",
+        "status": "published",
+        "data": {
+          "title": "Design & Build",
+          "sort_order": 70,
+          "projects": [
+            "$ref:project-caltech-moore-walk",
+            "$ref:project-relativity-space-hq",
+            "$ref:project-scholle-center-building-irvine",
+            "$ref:project-rivian-carson-office",
+            "$ref:project-eastside-church-anaheim",
+            "$ref:project-discovery-science-center",
+            "$ref:project-junipero-serra-high-school-sports-complex"
+          ]
+        }
+      },
+      {
+        "id": "category-miscellaneous",
+        "slug": "miscellaneous",
+        "status": "published",
+        "data": {
+          "title": "Miscellaneous",
+          "sort_order": 80,
+          "projects": [
+            "$ref:project-descanso-gardens-farmhouse",
+            "$ref:project-holocaust-museum-of-la",
+            "$ref:project-rmv-gavilan-ridge",
+            "$ref:project-skid-row-simone",
+            "$ref:project-skid-row-rossmore-housing",
+            "$ref:project-good-shepherd-center",
+            "$ref:project-boardwalk-cafe-irvine",
+            "$ref:project-cerritos-plaza",
+            "$ref:project-simi-valley-town-center"
+          ]
+        }
+      }
+    ],
+    "pages": [
+      {
+        "id": "page-about",
+        "slug": "about",
+        "status": "published",
+        "data": {
+          "title": "About Us",
+          "content": [
+            {
+              "_type": "rich_text",
+              "_version": 1,
+              "_key": "story",
+              "body": [
+                {
+                  "_type": "block",
+                  "style": "normal",
+                  "_key": "p0",
+                  "children": [
+                    {
+                      "_type": "span",
+                      "_key": "s0",
+                      "text": "Founded in 2001, Access Electric, Inc. has established itself as a quality commercial electrical contractor serving Southern California. Key to our success is our approach to business: we view each project as an opportunity to build relationships. Teaming up with our Customer, and cooperating with other trades, we are committed to providing an excellent professionally built product on schedule and within budget. Testimony to our ability to provide customer satisfaction is the repeat business we do."
+                    }
+                  ]
+                },
+                {
+                  "_type": "block",
+                  "style": "normal",
+                  "_key": "p1",
+                  "children": [
+                    {
+                      "_type": "span",
+                      "_key": "s1",
+                      "text": "Another component of our relationship building is our Employees. We are committed to equipping them to perform well, presenting them with training opportunities, and compensating them well for their hard work. All our electrical journeymen are State Certified Journeyman Electricians, and our apprentices are enrolled in State Accredited Electrician Trainee courses."
+                    }
+                  ]
+                },
+                {
+                  "_type": "block",
+                  "style": "normal",
+                  "_key": "p2",
+                  "children": [
+                    {
+                      "_type": "span",
+                      "_key": "s2",
+                      "text": "Behind our well qualified field crews is our team of professional estimators, project managers, project superintendants, and office support staff. Working together to effectively complete the projects our customers entrust to us, we continue to deliver on our commitments."
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "_type": "facts",
+              "_version": 1,
+              "_key": "facts",
+              "items": [
+                {
+                  "value": "2001",
+                  "label": "Founded"
+                },
+                {
+                  "value": "WBE",
+                  "label": "Certified Women's Business Enterprise"
+                },
+                {
+                  "value": "6",
+                  "label": "Southern California counties served"
+                },
+                {
+                  "value": "100%",
+                  "label": "State-certified journeyman electricians"
+                }
+              ]
+            },
+            {
+              "_type": "badges",
+              "_version": 1,
+              "_key": "badges",
+              "headline": "Certifications and recognition",
+              "items": [
+                {
+                  "image": {
+                    "$media": {
+                      "url": "/_seed/media/wbe-seal-rgb.jpg",
+                      "alt": "Certified Women's Business Enterprise",
+                      "filename": "wbe-seal-rgb.jpg"
+                    }
+                  },
+                  "label": "Certified Women's Business Enterprise"
+                },
+                {
+                  "image": {
+                    "$media": {
+                      "url": "/_seed/media/2024-abc-top-performer-logo-scaled.png",
+                      "alt": "2024 ABC Top Performer",
+                      "filename": "2024-abc-top-performer-logo-scaled.png"
+                    }
+                  },
+                  "label": "2024 ABC Top Performer"
+                },
+                {
+                  "image": {
+                    "$media": {
+                      "url": "/_seed/media/top-performer-logo-2022-1-scaled.png",
+                      "alt": "2022 ABC Top Performer",
+                      "filename": "top-performer-logo-2022-1-scaled.png"
+                    }
+                  },
+                  "label": "2022 ABC Top Performer"
+                }
+              ]
+            },
+            {
+              "_type": "service_area",
+              "_version": 1,
+              "_key": "area",
+              "headline": "Where we work",
+              "body": "Currently proudly serving Southern California in Ventura, Los Angeles, Riverside, San Bernardino, Orange, and San Diego Counties.",
+              "areas": "Ventura County\nLos Angeles County\nRiverside County\nSan Bernardino County\nOrange County\nSan Diego County"
+            }
+          ],
+          "intro": "A commercial electrical contractor built on relationships, with our customers, the other trades, and our own crews."
+        }
+      },
+      {
+        "id": "page-portfolio",
+        "slug": "portfolio",
+        "status": "published",
+        "data": {
+          "title": "Portfolio",
+          "content": [],
+          "intro": "Two decades of schools, churches, campuses, offices, and venues across Southern California."
+        }
+      },
+      {
+        "id": "page-contact",
+        "slug": "contact",
+        "status": "published",
+        "data": {
+          "title": "Contact us",
+          "content": [
+            {
+              "_type": "service_area",
+              "_version": 1,
+              "_key": "area",
+              "headline": "Serving Southern California",
+              "body": "We build in six counties, from Ventura to San Diego.",
+              "areas": "Ventura County\nLos Angeles County\nRiverside County\nSan Bernardino County\nOrange County\nSan Diego County"
+            }
+          ],
+          "intro": "Planning a project? Send us the details and our estimating team will follow up."
+        }
+      },
+      {
+        "id": "page-privacy",
+        "slug": "privacy",
+        "status": "published",
+        "data": {
+          "title": "Privacy",
+          "content": [
+            {
+              "_type": "rich_text",
+              "_version": 1,
+              "_key": "privacy",
+              "body": [
+                {
+                  "_type": "block",
+                  "style": "normal",
+                  "_key": "p0",
+                  "children": [
+                    {
+                      "_type": "span",
+                      "_key": "s0",
+                      "text": "This site uses anonymous, cookieless analytics to understand which pages are useful. It does not set cookies, store identifiers in your browser, or build a profile of you. Page addresses are recorded without query strings, except campaign tags such as utm_source."
+                    }
+                  ]
+                },
+                {
+                  "_type": "block",
+                  "style": "normal",
+                  "_key": "p1",
+                  "children": [
+                    {
+                      "_type": "span",
+                      "_key": "s1",
+                      "text": "When you send the contact form, we store your name, email, phone, company, and message so we can reply. We do not sell or share this information, and it is used only to respond to your enquiry."
+                    }
+                  ]
+                },
+                {
+                  "_type": "block",
+                  "style": "normal",
+                  "_key": "p2",
+                  "children": [
+                    {
+                      "_type": "span",
+                      "_key": "s2",
+                      "text": "The contact form is protected by Cloudflare Turnstile, which checks that a person, not a bot, is submitting it."
+                    }
+                  ]
+                },
+                {
+                  "_type": "block",
+                  "style": "normal",
+                  "_key": "p3",
+                  "children": [
+                    {
+                      "_type": "span",
+                      "_key": "s3",
+                      "text": "To ask about or delete information you have sent us, use the contact form and mention this page."
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "intro": "How this site handles analytics and the information you send us."
+        }
+      }
+    ]
+  }
+}

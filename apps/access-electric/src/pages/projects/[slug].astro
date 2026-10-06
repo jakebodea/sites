@@ -1,0 +1,107 @@
+---
+import ArrowRight from "@lucide/astro/icons/arrow-right";
+import { decodeSlug, getSeoMeta } from "emdash";
+
+import Breadcrumbs from "@/components/breadcrumbs.astro";
+import ButtonLink from "@/components/button-link.astro";
+import ProjectGallery from "@/components/islands/project-gallery";
+import ProjectGrid from "@/components/project-grid.astro";
+import Base from "@/layouts/base.astro";
+import { getCategory, getProject, projectFacts } from "@/lib/content";
+import { islandImage } from "@/lib/images";
+
+const slug = decodeSlug(Astro.params.slug);
+if (!slug) {
+  return Astro.rewrite("/404");
+}
+const { cacheHint, entry: project } = await getProject(slug);
+if (!project) {
+  return Astro.rewrite("/404");
+}
+const categories = project.references?.categories.entries ?? [];
+const [primary] = categories;
+const primaryDetail = primary ? await getCategory(primary.id) : undefined;
+if (Astro.cache?.enabled) {
+  Astro.cache.set(cacheHint);
+  if (primaryDetail) {
+    Astro.cache.set(primaryDetail.cacheHint);
+  }
+}
+const related = (primaryDetail?.entry?.references?.projects.entries ?? [])
+  .filter((candidate) => candidate.id !== project.id)
+  .slice(0, 3);
+
+const {origin} = Astro.url;
+const photos = [project.data.featured_image, ...(project.data.gallery ?? []).map((item) => item.image)].flatMap((image) =>
+  image ? [image] : []
+);
+const galleryImages = await Promise.all(photos.map((image) => islandImage(image, origin, [480, 768, 1080, 1440, 1920])));
+const facts = projectFacts(project.data);
+const crumbs = [
+  { label: "Portfolio", path: "/portfolio" },
+  ...(primary ? [{ label: primary.data.title, path: `/portfolio/${primary.id}` }] : []),
+  { label: project.data.title, path: `/projects/${slug}` },
+];
+const inProgress = project.data.progress === "in_progress";
+const seo = getSeoMeta(project, {
+  defaultDescription: project.data.scope ?? `${project.data.title}: electrical construction by Access Electric.`,
+  path: `/projects/${slug}`,
+  siteUrl: origin,
+});
+---
+
+<Base
+  title={seo.title}
+  description={seo.description}
+  image={seo.ogImage ?? galleryImages[0]?.src}
+  canonical={seo.canonical}
+  robots={seo.robots}
+  content={{ collection: "projects", id: project.data.id, slug: project.id }}
+>
+  <article class="container-page py-8 sm:py-12">
+    <Breadcrumbs class="mb-6" crumbs={crumbs} />
+    <div class="grid gap-8 lg:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)] lg:gap-12">
+      <div {...project.edit.featured_image}>
+        {galleryImages.length > 0 && <ProjectGallery client:idle title={project.data.title} images={galleryImages} />}
+      </div>
+      <div>
+        <div class="flex flex-wrap gap-2">
+          {inProgress && <span class="rounded-full bg-olive px-3 py-1 text-xs font-semibold text-navy-deep">Under construction</span>}
+          {categories.map((category) => (
+            <a href={`/portfolio/${category.id}`} class="rounded-full bg-secondary px-3 py-1 text-xs font-medium text-secondary-foreground hover:bg-muted">{category.data.title}</a>
+          ))}
+        </div>
+        <h1 class="mt-4 text-3xl leading-tight sm:text-4xl" {...project.edit.title}>{project.data.title}</h1>
+        <div class="mt-4 h-1 w-14 bg-olive"></div>
+        {facts.length > 0 && (
+          <dl class="mt-7 divide-y divide-border rounded-xl border border-border bg-card">
+            {facts.map((fact) => (
+              <div class="grid gap-1 px-5 py-3.5 sm:grid-cols-[150px_1fr] sm:gap-4">
+                <dt class="text-xs font-semibold tracking-wide text-muted-foreground uppercase sm:pt-0.5">{fact.label}</dt>
+                <dd class="text-sm">{fact.value}</dd>
+              </div>
+            ))}
+          </dl>
+        )}
+        {project.data.scope && (
+          <div class="mt-7">
+            <h2 class="font-sans text-xs font-semibold tracking-wide text-muted-foreground uppercase">Scope of work</h2>
+            <p class="mt-2 text-lg leading-relaxed text-foreground/85" {...project.edit.scope}>{project.data.scope}</p>
+          </div>
+        )}
+        <ButtonLink href="/contact" size="cta" class="mt-8">Discuss a similar project</ButtonLink>
+      </div>
+    </div>
+    {primary && related.length > 0 && (
+      <section class="mt-16 border-t border-border pt-12 sm:mt-24">
+        <div class="mb-8 flex flex-wrap items-end justify-between gap-4">
+          <h2 class="text-2xl sm:text-3xl">More {primary.data.title}</h2>
+          <a href={`/portfolio/${primary.id}`} class="inline-flex items-center gap-2 text-sm font-semibold text-navy hover:underline">
+            View all <ArrowRight class="size-4" aria-hidden="true" />
+          </a>
+        </div>
+        <ProjectGrid projects={related} />
+      </section>
+    )}
+  </article>
+</Base>

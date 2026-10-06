@@ -1,0 +1,32 @@
+---
+import { sanitizeHref } from "emdash";
+import { Image, PortableText } from "emdash/ui";
+import type { BlockComponentProps } from "emdash/ui";
+
+import ButtonLink from "@/components/button-link.astro";
+import type { PageContentStoryBlock } from "../../../emdash-env";
+
+type Props = BlockComponentProps<PageContentStoryBlock>;
+
+const { value } = Astro.props;
+const imageRight = value.image_position === "right";
+---
+
+<section class="bg-secondary/60">
+  <div class="container-page grid items-center gap-10 py-20 sm:py-28 md:grid-cols-2 md:gap-16">
+    {value.image && (
+      <div class:list={["relative", { "md:order-2": imageRight }]}>
+        <div class="absolute -bottom-4 -left-4 hidden h-2/3 w-2/3 rounded-xl bg-olive/30 sm:block" aria-hidden="true"></div>
+        <Image image={value.image} sizes="(min-width: 768px) 50vw, 100vw" class="relative aspect-[4/3] w-full rounded-xl object-cover shadow-sm" />
+      </div>
+    )}
+    <div>
+      {value.eyebrow && <p class="eyebrow mb-4">{value.eyebrow}</p>}
+      <h2 class="text-3xl sm:text-4xl">{value.headline}</h2>
+      <div class="prose-site mt-6"><PortableText value={value.body} /></div>
+      {value.cta_label && value.cta_url && (
+        <ButtonLink href={sanitizeHref(value.cta_url)} variant="outline" size="cta" class="mt-8">{value.cta_label}</ButtonLink>
+      )}
+    </div>
+  </div>
+</section>

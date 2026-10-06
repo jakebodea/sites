@@ -1,0 +1,59 @@
+---
+import { sanitizeHref } from "emdash";
+import { Image } from "emdash/ui";
+import type { BlockComponentProps } from "emdash/ui";
+
+import ButtonLink from "@/components/button-link.astro";
+import type { PageContentHeroBlock } from "../../../emdash-env";
+
+type Props = BlockComponentProps<PageContentHeroBlock>;
+
+const { value } = Astro.props;
+const slides = value.slides.flatMap((slide) => (slide.image ? [slide.image] : []));
+const primary =
+  value.primary_cta_label && value.primary_cta_url
+    ? { href: sanitizeHref(value.primary_cta_url), label: value.primary_cta_label }
+    : undefined;
+const secondary =
+  value.secondary_cta_label && value.secondary_cta_url
+    ? { href: sanitizeHref(value.secondary_cta_url), label: value.secondary_cta_label }
+    : undefined;
+
+// CSS-only crossfade: each slide holds for 6s and fades over 1s. Keyframes depend on the count.
+const holdSeconds = 6;
+const cycle = slides.length * holdSeconds;
+const fade = (1 / cycle) * 100;
+const visible = (holdSeconds / cycle) * 100;
+const keyframes =
+  slides.length > 1
+    ? `@keyframes hero-fade-${slides.length}{0%{opacity:0}${fade.toFixed(2)}%,${visible.toFixed(2)}%{opacity:1}${(visible + fade).toFixed(2)}%,100%{opacity:0}}`
+    : "";
+---
+
+<section class="relative isolate overflow-hidden bg-navy-deep text-white">
+  {keyframes && <style set:html={keyframes} />}
+  <div class="hero-slides absolute inset-0 -z-10" data-count={slides.length} aria-hidden="true">
+    {slides.map((image, index) => (
+      <div
+        class="hero-slide absolute inset-0"
+        style={slides.length > 1 ? `animation: hero-fade-${slides.length} ${cycle}s linear infinite; animation-delay: ${index * holdSeconds - 1}s;` : undefined}
+      >
+        <Image image={image} alt="" priority={index === 0} sizes="100vw" class="size-full! object-cover" />
+      </div>
+    ))}
+  </div>
+  <div class="absolute inset-0 -z-10 bg-linear-to-t from-navy-deep via-navy-deep/75 to-navy-deep/25 md:bg-linear-to-r md:from-navy-deep/95 md:via-navy-deep/70 md:to-navy-deep/10" aria-hidden="true"></div>
+  <div class="container-page flex min-h-[78svh] flex-col justify-end pt-28 pb-14 sm:min-h-[620px] md:justify-center md:py-28">
+    <div class="max-w-2xl">
+      <div class="mb-6 h-1 w-16 bg-olive"></div>
+      <h1 class="text-[2.6rem] leading-[1.05] text-white sm:text-6xl lg:text-7xl">{value.headline}</h1>
+      {value.subheadline && <p class="mt-6 max-w-xl text-lg leading-relaxed text-white/85 sm:text-xl">{value.subheadline}</p>}
+      {(primary || secondary) && (
+        <div class="mt-9 flex flex-col gap-3 sm:flex-row">
+          {primary && <ButtonLink href={primary.href} variant="accent" size="hero">{primary.label}</ButtonLink>}
+          {secondary && <ButtonLink href={secondary.href} variant="outline-inverse" size="hero">{secondary.label}</ButtonLink>}
+        </div>
+      )}
+    </div>
+  </div>
+</section>

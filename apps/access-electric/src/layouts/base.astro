@@ -1,0 +1,94 @@
+---
+/**
+ * Page shell: EmDash head/body hooks (SEO tags, plugin contributions, visual
+ * editing), fonts, header/footer from CMS menus, structured data, and
+ * analytics when enabled. Pages pass SEO from `getSeoMeta()`.
+ */
+import "@/styles/global.css";
+
+import { Font } from "astro:assets";
+import { env } from "cloudflare:workers";
+import { EmDashBodyEnd, EmDashBodyStart, EmDashHead } from "emdash/ui";
+import { createPublicPageContext } from "emdash/page";
+import { documentTitle, metaDescription } from "@jakebodea/cloudflare-kit/seo";
+
+import AnalyticsScript from "@/components/analytics-script.astro";
+import SiteFooter from "@/components/site-footer.astro";
+import SiteHeader from "@/components/site-header.astro";
+import StructuredData from "@/components/structured-data.astro";
+import { getSiteChrome } from "@/lib/content";
+import { site } from "../../site.config";
+
+interface Props {
+  /** Page title without the site name. Omit on the home page. */
+  title?: string | undefined;
+  description?: string | null | undefined;
+  image?: string | null | undefined;
+  canonical?: string | null | undefined;
+  robots?: string | null | undefined;
+  content?: { collection: string; id: string; slug?: string | null } | undefined;
+}
+
+const { canonical, content, description, image, robots, title } = Astro.props;
+const chrome = await getSiteChrome(site.name);
+if (Astro.cache?.enabled) {
+  for (const hint of chrome.cacheHints) {
+    Astro.cache.set(hint);
+  }
+}
+
+const origin = Astro.site?.origin ?? Astro.url.origin;
+const fullTitle = title === undefined ? `${chrome.title} | Commercial Electrical Contractor` : documentTitle(title, site.shortName);
+// Editors write descriptions of any length; this keeps the snippet within what search engines show.
+const pageDescription = metaDescription(description ?? chrome.tagline ?? site.description, site.descriptionContext);
+const ogImage = image ?? `${origin}/og-default.png`;
+
+const page = createPublicPageContext({
+  Astro,
+  canonical: canonical ?? `${origin}${Astro.url.pathname === "/" ? "/" : Astro.url.pathname.replace(/\/$/u, "")}`,
+  content,
+  description: pageDescription,
+  image: ogImage,
+  kind: content === undefined ? "custom" : "content",
+  pageTitle: title ?? chrome.title,
+  pageType: "website",
+  seo: { ogImage, robots },
+  siteName: chrome.title,
+  title: fullTitle,
+});
+
+const analytics = {
+  enabled: env.STAGE === "prod",
+  projectKey: env.POSTHOG_PROJECT_KEY,
+  proxyPath: env.POSTHOG_PROXY_PATH,
+  siteHost: site.domain,
+  uiHost: env.POSTHOG_HOST.replace(".i.posthog.com", ".posthog.com"),
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#1f3f4f" />
+    <title>{fullTitle}</title>
+    <link rel="icon" href="/favicon.png" type="image/png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <Font cssVariable="--font-display" preload />
+    <Font cssVariable="--font-body" preload />
+    <EmDashHead page={page} />
+    <StructuredData origin={origin} />
+  </head>
+  <body class="flex min-h-svh flex-col">
+    <EmDashBodyStart page={page} />
+    <a href="#main" class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:rounded-md focus:bg-background focus:px-4 focus:py-2 focus:shadow">Skip to content</a>
+    <SiteHeader title={chrome.title} items={chrome.primary} />
+    <main id="main" class="flex-1">
+      <slot />
+    </main>
+    <SiteFooter title={chrome.title} tagline={chrome.tagline} items={chrome.footer} />
+    {analytics.enabled && analytics.projectKey !== "" && <AnalyticsScript config={analytics} />}
+    <EmDashBodyEnd page={page} />
+  </body>
+</html>

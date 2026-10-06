@@ -1,0 +1,16 @@
+---
+import ProjectCard from "./project-card.astro";
+import type { Project } from "@/lib/content";
+
+interface Props {
+  projects: readonly { id: string; data: Project }[];
+}
+
+const { projects } = Astro.props;
+---
+
+<ul class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+  {projects.map((project) => (
+    <li class="flex"><ProjectCard slug={project.id} project={project.data} /></li>
+  ))}
+</ul>

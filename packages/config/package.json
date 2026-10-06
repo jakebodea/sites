@@ -1,0 +1,25 @@
+{
+  "name": "@jakebodea/config",
+  "private": true,
+  "description": "Shared TypeScript, oxlint, and oxfmt presets plus project-local lint rules.",
+  "type": "module",
+  "exports": {
+    "./tsconfig.base.json": "./tsconfig.base.json",
+    "./oxlint": "./oxlint.preset.ts",
+    "./oxfmt": "./oxfmt.preset.ts",
+    "./oxlint-plugin-local": "./oxlint-plugin-local.ts"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@oxlint/plugins": "1.87.0"
+  },
+  "devDependencies": {
+    "@types/bun": "catalog:",
+    "oxlint": "1.87.0",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  }
+}

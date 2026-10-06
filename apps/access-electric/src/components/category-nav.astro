@@ -1,0 +1,26 @@
+---
+import { CURRENT_PROJECTS } from "@/lib/content";
+import type { CategorySummary } from "@/lib/content";
+
+interface Props {
+  categories: readonly CategorySummary[];
+  current: string;
+}
+
+const { categories, current } = Astro.props;
+const links = [{ slug: CURRENT_PROJECTS.slug, title: CURRENT_PROJECTS.title }, ...categories];
+---
+
+<nav aria-label="Portfolio categories" class="sticky top-16 z-30 border-b border-border bg-background/95 backdrop-blur sm:top-20">
+  <ul class="container-page flex gap-2 overflow-x-auto py-3 [scrollbar-width:none]">
+    {links.map((link) => (
+      <li class="shrink-0">
+        <a
+          href={`/portfolio/${link.slug}`}
+          aria-current={link.slug === current ? "page" : undefined}
+          class="inline-flex h-10 items-center rounded-full border border-border bg-background px-4 text-sm whitespace-nowrap hover:bg-muted aria-[current=page]:border-navy aria-[current=page]:bg-navy aria-[current=page]:text-white"
+        >{link.title}</a>
+      </li>
+    ))}
+  </ul>
+</nav>

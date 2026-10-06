@@ -1,0 +1,33 @@
+---
+import ArrowRight from "@lucide/astro/icons/arrow-right";
+import type { BlockComponentProps } from "emdash/ui";
+
+import ProjectCard from "@/components/project-card.astro";
+import SectionHeading from "@/components/section-heading.astro";
+import { CURRENT_PROJECTS, getCurrentProjects } from "@/lib/content";
+import type { PageContentCurrentProjectsBlock } from "../../../emdash-env";
+
+type Props = BlockComponentProps<PageContentCurrentProjectsBlock>;
+
+const { value } = Astro.props;
+const { cacheHint, entries } = await getCurrentProjects();
+if (Astro.cache?.enabled) {
+  Astro.cache.set(cacheHint);
+}
+---
+
+{entries.length > 0 && (
+  <section class="py-20 sm:py-28">
+    <div class="container-page flex flex-wrap items-end justify-between gap-4">
+      <SectionHeading title={value.headline} intro={value.intro} eyebrow="Under construction" />
+      <a href={`/portfolio/${CURRENT_PROJECTS.slug}`} class="inline-flex items-center gap-2 text-sm font-semibold text-navy hover:underline hover:underline-offset-4">
+        {value.link_label ?? "See all"} <ArrowRight class="size-4" aria-hidden="true" />
+      </a>
+    </div>
+    <ul class="container-page mt-10 flex snap-x snap-mandatory scroll-px-5 gap-5 overflow-x-auto pb-4 sm:scroll-px-8 [scrollbar-width:thin]" aria-label={value.headline}>
+      {entries.map((project) => (
+        <li class="flex w-[82%] shrink-0 snap-start sm:w-[46%] lg:w-[31.5%]"><ProjectCard slug={project.id} project={project.data} /></li>
+      ))}
+    </ul>
+  </section>
+)}

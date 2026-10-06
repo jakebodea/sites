@@ -1,0 +1,67 @@
+---
+import { decodeSlug, getSeoMeta } from "emdash";
+
+import Breadcrumbs from "@/components/breadcrumbs.astro";
+import CategoryNav from "@/components/category-nav.astro";
+import PageHeader from "@/components/page-header.astro";
+import ProjectGrid from "@/components/project-grid.astro";
+import Base from "@/layouts/base.astro";
+import { CURRENT_PROJECTS, getCategory, getCategorySummaries, getCurrentProjects } from "@/lib/content";
+
+const slug = decodeSlug(Astro.params.slug);
+if (!slug) {
+  return Astro.rewrite("/404");
+}
+const isCurrent = slug === CURRENT_PROJECTS.slug;
+const [category, current, summaries] = await Promise.all([
+  isCurrent ? undefined : getCategory(slug),
+  isCurrent ? getCurrentProjects() : undefined,
+  getCategorySummaries(),
+]);
+const entry = category?.entry;
+if (!isCurrent && !entry) {
+  return Astro.rewrite("/404");
+}
+if (Astro.cache?.enabled) {
+  for (const hint of [category?.cacheHint, current?.cacheHint, ...summaries.cacheHints]) {
+    if (hint) {
+      Astro.cache.set(hint);
+    }
+  }
+}
+const projects = entry ? (entry.references?.projects.entries ?? []) : (current?.entries ?? []);
+const title = entry?.data.title ?? CURRENT_PROJECTS.title;
+const description = entry?.data.description ?? (isCurrent ? CURRENT_PROJECTS.description : undefined);
+// Categories without their own description would all share the site tagline; say what is in this one.
+const metaFallback = description ?? `${title}: ${projects.length} commercial electrical projects built by Access Electric across Southern California.`;
+const seo = entry ? getSeoMeta(entry, { defaultDescription: metaFallback, path: `/portfolio/${slug}`, siteUrl: Astro.url.origin }) : undefined;
+// "Current projects" is a filtered view of project pages that are indexed on their own.
+const robots = isCurrent ? "noindex, follow" : seo?.robots;
+---
+
+<Base
+  title={seo?.title ?? title}
+  description={seo?.description ?? metaFallback}
+  image={seo?.ogImage}
+  robots={robots}
+  content={entry ? { collection: "categories", id: entry.data.id, slug: entry.id } : undefined}
+>
+  <PageHeader title={title} intro={description ?? `${projects.length} ${projects.length === 1 ? "project" : "projects"}`}>
+    <Breadcrumbs
+      slot="before"
+      class="mb-5"
+      crumbs={[
+        { label: "Portfolio", path: "/portfolio" },
+        { label: title, path: `/portfolio/${slug}` },
+      ]}
+    />
+  </PageHeader>
+  <CategoryNav categories={summaries.categories} current={slug} />
+  <section class="container-page py-10 sm:py-14">
+    {projects.length > 0 ? (
+      <ProjectGrid projects={projects} />
+    ) : (
+      <p class="py-16 text-center text-muted-foreground">No projects here yet. Check back soon.</p>
+    )}
+  </section>
+</Base>

@@ -1,0 +1,22 @@
+---
+import { Image } from "emdash/ui";
+import type { BlockComponentProps } from "emdash/ui";
+
+import type { PageContentBadgesBlock } from "../../../emdash-env";
+
+type Props = BlockComponentProps<PageContentBadgesBlock>;
+
+const { value } = Astro.props;
+---
+
+<section class="container-page py-16 sm:py-20">
+  {value.headline && <h2 class="text-center font-sans text-sm font-semibold tracking-[0.18em] text-muted-foreground uppercase">{value.headline}</h2>}
+  <ul class="mt-10 flex flex-wrap items-center justify-center gap-x-14 gap-y-10">
+    {value.items.map((item) => (
+      <li class="flex flex-col items-center gap-3">
+        {item.image && <Image image={item.image} alt={item.label} sizes="160px" class="h-24 w-auto object-contain sm:h-28" />}
+        <span class="max-w-40 text-center text-xs text-muted-foreground">{item.label}</span>
+      </li>
+    ))}
+  </ul>
+</section>

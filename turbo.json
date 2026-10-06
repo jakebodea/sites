@@ -1,0 +1,62 @@
+{
+  "$schema": "https://turborepo.com/schema.json",
+  "ui": "stream",
+  "globalDependencies": ["tsconfig.json", "packages/config/tsconfig.base.json"],
+  "tasks": {
+    "typecheck": {
+      "dependsOn": ["^typecheck", "sync"],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "!**/*.md",
+        "!.turbo/**",
+        "!node_modules/**",
+        "!.astro/**",
+        "!.alchemy/**",
+        "!.artifacts/**",
+        "!dist/**"
+      ],
+      "outputs": []
+    },
+    "test": {
+      "dependsOn": ["^typecheck", "sync"],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "!**/*.md",
+        "!.turbo/**",
+        "!node_modules/**",
+        "!.astro/**",
+        "!.alchemy/**",
+        "!.artifacts/**",
+        "!dist/**"
+      ],
+      "outputs": []
+    },
+    "build": {
+      "dependsOn": ["^typecheck", "sync"],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "!**/*.md",
+        "!.turbo/**",
+        "!node_modules/**",
+        "!.astro/**",
+        "!.alchemy/**",
+        "!.artifacts/**",
+        "!dist/**"
+      ],
+      "outputs": ["dist/**", "public/_seed/**"],
+      "env": ["ASTRO_STANDALONE_BUILD"]
+    },
+    "//#typecheck:root": {
+      "inputs": ["tsconfig.json", "proof.config.ts", "scripts/**", "stacks/**"],
+      "outputs": []
+    },
+    "//#test:root": {
+      "inputs": ["vitest.config.ts", "scripts/**"],
+      "outputs": []
+    },
+    "sync": {
+      "cache": false,
+      "outputs": []
+    }
+  }
+}

@@ -1,0 +1,41 @@
+---
+import type { NavItem } from "@/lib/content";
+import { site } from "../../site.config";
+
+interface Props {
+  title: string;
+  tagline: string;
+  items: readonly NavItem[];
+}
+
+const { items, tagline, title } = Astro.props;
+const year = new Date().getFullYear();
+---
+
+<footer class="bg-navy-deep text-white/75">
+  <div class="container-page grid gap-10 py-14 md:grid-cols-[1.4fr_1fr_1fr]">
+    <div class="space-y-4">
+      <img src="/brand/logo.webp" alt={title} width="339" height="100" loading="lazy" class="h-10 w-auto brightness-0 invert" />
+      <p class="max-w-sm text-sm leading-relaxed">{tagline}</p>
+    </div>
+    <nav aria-label="Footer">
+      <h2 class="mb-4 font-sans text-xs font-semibold tracking-[0.18em] text-white uppercase">Explore</h2>
+      <ul class="space-y-2 text-sm">
+        {items.map((item) => (
+          <li><a href={item.url} class="hover:text-white">{item.label}</a></li>
+        ))}
+      </ul>
+    </nav>
+    <div>
+      <h2 class="mb-4 font-sans text-xs font-semibold tracking-[0.18em] text-white uppercase">Service area</h2>
+      <p class="text-sm leading-relaxed">{site.business.areaServed.map((area) => area.replace(" County, CA", "")).join(" · ")}</p>
+      <p class="mt-4 inline-flex items-center gap-2 text-sm text-olive">Certified Women's Business Enterprise</p>
+    </div>
+  </div>
+  <div class="border-t border-white/10">
+    <div class="container-page flex flex-col gap-2 py-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] text-xs sm:flex-row sm:justify-between">
+      <p>&copy; {year} {title} All rights reserved.</p>
+      <p>Commercial electrical contractor since {site.business.foundingYear}.</p>
+    </div>
+  </div>
+</footer>

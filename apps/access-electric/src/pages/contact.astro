@@ -1,0 +1,42 @@
+---
+import { env } from "cloudflare:workers";
+import { getSeoMeta } from "emdash";
+
+import PageBlocks from "@/components/blocks/page-blocks.astro";
+import ContactForm from "@/components/islands/contact-form";
+import PageHeader from "@/components/page-header.astro";
+import Base from "@/layouts/base.astro";
+import { getPage } from "@/lib/content";
+
+const { cacheHint, entry: page } = await getPage("contact");
+if (Astro.cache?.enabled) {
+  Astro.cache.set(cacheHint);
+}
+const title = page?.data.title ?? "Contact us";
+const seo = page ? getSeoMeta(page, { defaultDescription: page.data.intro, path: "/contact", siteUrl: Astro.url.origin }) : undefined;
+---
+
+<Base
+  title={seo?.title ?? title}
+  description={seo?.description}
+  image={seo?.ogImage}
+  robots={seo?.robots}
+  content={page ? { collection: "pages", id: page.data.id, slug: page.id } : undefined}
+>
+  <PageHeader title={title} intro={page?.data.intro} eyebrow="Request a bid" />
+  <section class="container-page grid gap-10 py-14 sm:py-20 lg:grid-cols-[1.5fr_1fr]">
+    <ContactForm client:visible turnstileSiteKey={env.TURNSTILE_SITE_KEY} />
+    <aside class="space-y-6 text-muted-foreground">
+      <div class="rounded-xl bg-navy p-7 text-white/85">
+        <h2 class="text-xl text-white">What happens next</h2>
+        <ol class="mt-4 list-decimal space-y-3 pl-5 text-sm leading-relaxed">
+          <li>Our estimating team reviews your scope and drawings.</li>
+          <li>We follow up within one business day to ask questions or schedule a site walk.</li>
+          <li>You receive a detailed, competitive proposal.</li>
+        </ol>
+      </div>
+      <p class="text-sm">Your details are used only to reply to you. See our <a href="/privacy" class="font-medium text-navy underline underline-offset-4">privacy notes</a>.</p>
+    </aside>
+  </section>
+  {page && <div {...page.edit.content}><PageBlocks value={page.data.content} /></div>}
+</Base>

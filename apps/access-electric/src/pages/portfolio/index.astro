@@ -1,0 +1,37 @@
+---
+import { getSeoMeta } from "emdash";
+
+import CategoryTile from "@/components/category-tile.astro";
+import PageHeader from "@/components/page-header.astro";
+import Base from "@/layouts/base.astro";
+import { CURRENT_PROJECTS, getCategorySummaries, getCurrentProjects, getPage } from "@/lib/content";
+
+const [{ entry: page, cacheHint }, { categories, cacheHints }, current] = await Promise.all([
+  getPage("portfolio"),
+  getCategorySummaries(),
+  getCurrentProjects(),
+]);
+if (Astro.cache?.enabled) {
+  for (const hint of [cacheHint, current.cacheHint, ...cacheHints]) {
+    Astro.cache.set(hint);
+  }
+}
+const title = page?.data.title ?? "Portfolio";
+const seo = page ? getSeoMeta(page, { defaultDescription: page.data.intro, path: "/portfolio", siteUrl: Astro.url.origin }) : undefined;
+---
+
+<Base title={seo?.title ?? title} description={seo?.description} image={seo?.ogImage} robots={seo?.robots}>
+  <PageHeader title={title} intro={page?.data.intro} eyebrow="Our work" />
+  <section class="container-page py-12 sm:py-16">
+    <ul class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      {current.entries.length > 0 && (
+        <li>
+          <CategoryTile href={`/portfolio/${CURRENT_PROJECTS.slug}`} title={CURRENT_PROJECTS.title} count={current.entries.length} cover={current.entries[0]?.data.featured_image} highlight />
+        </li>
+      )}
+      {categories.map((category) => (
+        <li><CategoryTile href={`/portfolio/${category.slug}`} title={category.title} count={category.count} cover={category.cover} /></li>
+      ))}
+    </ul>
+  </section>
+</Base>

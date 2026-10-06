@@ -1,0 +1,48 @@
+{
+  "name": "@jakebodea/cloudflare-kit",
+  "private": true,
+  "description": "Shared code for every marketing site: Effect server services, analytics, and Alchemy helpers.",
+  "type": "module",
+  "exports": {
+    "./server": "./src/server/index.ts",
+    "./analytics/client": "./src/analytics/client.ts",
+    "./analytics/privacy": "./src/analytics/privacy.ts",
+    "./infra": "./src/infra/index.ts",
+    "./emdash/email-plugin": "./src/emdash/email-plugin.ts",
+    "./emdash/seed-media": "./src/emdash/seed-media.ts",
+    "./emdash/alchemy-workarounds": "./src/emdash/alchemy-workarounds.ts",
+    "./emdash/env-types": "./src/emdash/env-types.ts",
+    "./infra/stage": "./src/infra/stage.ts",
+    "./seo": "./src/seo.ts"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "effect": "catalog:",
+    "posthog-js": "catalog:",
+    "posthog-node": "catalog:"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "catalog:",
+    "@effect/vitest": "catalog:",
+    "@jakebodea/config": "workspace:*",
+    "@types/bun": "catalog:",
+    "alchemy": "catalog:",
+    "astro": "catalog:",
+    "emdash": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  },
+  "peerDependencies": {
+    "alchemy": "catalog:",
+    "astro": "catalog:",
+    "emdash": "catalog:"
+  },
+  "peerDependenciesMeta": {
+    "alchemy": {
+      "optional": true
+    }
+  }
+}

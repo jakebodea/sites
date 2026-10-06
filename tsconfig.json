@@ -1,0 +1,9 @@
+{
+  "extends": "./packages/config/tsconfig.base.json",
+  "compilerOptions": {
+    "lib": ["ES2023", "DOM"],
+    "types": ["bun"]
+  },
+  "include": ["proof.config.ts", "scripts", "stacks"],
+  "exclude": ["stacks/turbo-cache/worker.ts"]
+}

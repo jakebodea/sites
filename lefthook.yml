@@ -1,0 +1,19 @@
+# Git hooks (installed by `bun install` through the `prepare` script).
+pre-commit:
+  jobs:
+    - name: ultracite fix
+      run: bun run fix --max-warnings 0 --no-error-on-unmatched-pattern {staged_files}
+      glob: "*.{js,jsx,mjs,cjs,ts,tsx,mts,cts,astro,json,jsonc,css,md,yml,yaml}"
+      stage_fixed: true
+
+pre-push:
+  jobs:
+    - name: typecheck
+      run: bun run typecheck
+
+# New worktrees and clones (previous HEAD is the null SHA), from any tool, not just T3, get the
+# main checkout's .env symlinks and dependencies. Ordinary branch switches skip this.
+post-checkout:
+  jobs:
+    - name: setup worktree
+      run: test "{1}" = "0000000000000000000000000000000000000000" && bun scripts/setup-worktree.ts || true

@@ -1,0 +1,26 @@
+{
+  "name": "@jakebodea/proof",
+  "private": true,
+  "description": "Revision-bound proof receipts: gates, evidence, and a verdict an agent cannot fake.",
+  "bin": {
+    "proof": "./src/cli.ts"
+  },
+  "type": "module",
+  "exports": {
+    ".": "./src/core.ts",
+    "./config": "./src/config.ts"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "effect": "catalog:"
+  },
+  "devDependencies": {
+    "@jakebodea/config": "workspace:*",
+    "@types/bun": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  }
+}

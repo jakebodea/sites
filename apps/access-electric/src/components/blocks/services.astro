@@ -1,0 +1,43 @@
+---
+import Building from "@lucide/astro/icons/building";
+import Calculator from "@lucide/astro/icons/calculator";
+import Lightbulb from "@lucide/astro/icons/lightbulb";
+import PencilRuler from "@lucide/astro/icons/pencil-ruler";
+import ShieldCheck from "@lucide/astro/icons/shield-check";
+import Zap from "@lucide/astro/icons/zap";
+import type { BlockComponentProps } from "emdash/ui";
+
+import SectionHeading from "@/components/section-heading.astro";
+import type { PageContentServicesBlock } from "../../../emdash-env";
+
+type Props = BlockComponentProps<PageContentServicesBlock>;
+
+const { value } = Astro.props;
+const icons = {
+  budget: Calculator,
+  building: Building,
+  design: PencilRuler,
+  lighting: Lightbulb,
+  power: Zap,
+  safety: ShieldCheck,
+} as const;
+---
+
+<section class="container-page py-20 sm:py-28">
+  <SectionHeading title={value.headline} intro={value.intro} eyebrow="services" />
+  <ol class="mt-12 grid gap-px overflow-hidden rounded-xl border border-border bg-border md:grid-cols-3">
+    {value.items.map((item, index) => {
+      const Icon = icons[item.icon];
+      return (
+        <li class="flex flex-col gap-4 bg-card p-7 sm:p-8">
+          <div class="flex items-center justify-between">
+            <span class="flex size-12 items-center justify-center rounded-lg bg-navy text-olive"><Icon class="size-6" aria-hidden="true" /></span>
+            <span class="font-display text-sm font-bold text-muted-foreground/70">{String(index + 1).padStart(2, "0")}</span>
+          </div>
+          <h3 class="text-xl">{item.title}</h3>
+          <p class="leading-relaxed text-muted-foreground">{item.body}</p>
+        </li>
+      );
+    })}
+  </ol>
+</section>

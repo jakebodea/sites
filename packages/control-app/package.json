@@ -1,0 +1,28 @@
+{
+  "name": "@jakebodea/control-app",
+  "private": true,
+  "description": "Agent control CLI for a marketing site: run it locally under alchemy dev, sign in, screenshot, record, and smoke-test it.",
+  "bin": {
+    "control-app": "./src/cli.ts"
+  },
+  "type": "module",
+  "exports": {
+    "./site": "./src/site.ts",
+    "./sitemap": "./src/sitemap.ts"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@jakebodea/cloudflare-kit": "workspace:*",
+    "effect": "catalog:",
+    "playwright-core": "1.63.0"
+  },
+  "devDependencies": {
+    "@jakebodea/config": "workspace:*",
+    "@types/bun": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  }
+}
