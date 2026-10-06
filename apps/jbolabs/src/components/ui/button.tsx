@@ -18,6 +18,8 @@ const buttonVariants = cva(
         destructive:
           "bg-destructive/10 text-destructive hover:bg-destructive/20 focus-visible:border-destructive/40 focus-visible:ring-destructive/20 dark:bg-destructive/20 dark:hover:bg-destructive/30 dark:focus-visible:ring-destructive/40",
         link: "text-primary underline-offset-4 hover:underline",
+        // Site addition: a light button for dark bands (the closing call to action).
+        inverse: "bg-background text-foreground hover:bg-background/90",
       },
       size: {
         default:
@@ -34,6 +36,9 @@ const buttonVariants = cva(
         "icon-sm":
           "size-7 rounded-[min(var(--radius-md),12px)] in-data-[slot=button-group]:rounded-lg",
         "icon-lg": "size-9",
+        // Site addition: a round icon button that matches the pill CTAs (theme toggle).
+        "icon-round":
+          "size-10 rounded-full [&_svg:not([class*='size-'])]:size-[1.15rem]",
       },
     },
     defaultVariants: {

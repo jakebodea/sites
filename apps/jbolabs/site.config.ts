@@ -23,7 +23,7 @@ export const site = {
   business,
 
   description:
-    "JBO Labs is the independent web studio of Jake Bodea: websites, web apps, and technical consulting for small teams.",
+    "JBO Labs is the independent web studio of Jake Bodea: websites, web apps, and technical consulting for small businesses.",
   /** Appended to meta descriptions too short for a search snippet (see `metaDescription`). */
   descriptionContext:
     "Websites, web apps, and technical consulting by Jake Bodea at JBO Labs.",
@@ -38,7 +38,7 @@ export const site = {
   name: "JBO Labs",
   shortName: "JBO Labs",
   /** Footer line under the wordmark. */
-  tagline: "Websites, web apps, and technical consulting for small teams.",
+  tagline: "Websites, web apps, and technical consulting for small businesses.",
   /** Home page `<title>`: "JBO Labs | <this>". */
   titleSuffix: "Websites, web apps, and consulting",
   /** The Cloudflare account's workers.dev subdomain (non-prod stages live there). */
