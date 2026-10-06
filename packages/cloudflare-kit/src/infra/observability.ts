@@ -1,8 +1,4 @@
-/**
- * Native Workers Logs and traces, on for every stage. Client sites have no
- * separate log platform: failed leads alert through PostHog (`lead submit
- * failed`), and everything else is debugged from Workers Logs.
- */
+/** Workers Logs and traces on every stage; contact failures also email the configured alert route. */
 import type { StageSettings } from "./stage.ts";
 
 /** Logs on everywhere; traces sampled on prod. */

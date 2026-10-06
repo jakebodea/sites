@@ -12,7 +12,7 @@ Full rationale for every choice: [docs/stack.md](docs/stack.md). Domain terms: [
 | `apps/jbolabs/` | The exception: Jake's own studio site has no CMS. Copy lives in `src/content/*.ts` and leads go to a D1 table |
 | `apps/<site>/src/components/islands/` | The only client JS: shadcn React islands (nav, gallery, contact form) |
 | `apps/<site>/src/components/ui/` | Vendored shadcn primitives. Add variants here; never restyle them at call sites |
-| `packages/cloudflare-kit` | Shared code: Effect server services (`./server`), browser analytics (`./analytics/*`), Alchemy helpers (`./infra`), EmDash glue (`./emdash/*`) |
+| `packages/cloudflare-kit` | Shared code: Effect server services (`./server`), Web Analytics bindings/beacon, Alchemy helpers (`./infra`), EmDash glue (`./emdash/*`) |
 | `packages/control-app` | `bun run app -- …`: run, sign in, screenshot, record, smoke-test a site |
 | `packages/proof` | `bun run proof -- …`: revision-bound proof receipts |
 | `packages/config` | tsconfig + strict oxlint/oxfmt presets + local lint rules |
@@ -62,8 +62,8 @@ The Alchemy profile comes from `ALCHEMY_PROFILE` (e.g. `ALCHEMY_PROFILE=admin`).
 - Hosting: every client site lives in Jake's Cloudflare account; hand off later with Alchemy adopt.
 - CMS login: EmDash invites + passkeys. Finish EmDash setup right after the first prod deploy (whoever completes setup first becomes admin), then invite the client as **Editor**.
 - Email: Cloudflare Email Service (`EMAIL_FROM` once a domain is verified); logged, not sent, until then.
-- Analytics: PostHog, cookieless (`persistence: "memory"`), allowlisted events, no consent banner.
-- Monitoring: Cloudflare Workers Logs/traces everywhere. No Axiom on client sites: a PostHog alert on the `lead submit failed` event is the one alert (see docs/stack.md).
+- Analytics: Cloudflare Web Analytics on prod, cookieless, no consent banner. EmDash sites show stats through the Analytics plugin; its settings reconcile from bindings every minute. Dev and preview use demo data. See [ADR 0001](docs/adr/0001-client-site-analytics-and-alerting.md). PostHog is for products only.
+- Monitoring: Cloudflare Workers Logs/traces everywhere. Contact failures log recoverable lead details and email `ALERT_EMAIL` once `EMAIL_FROM` is verified. Inbox delivery failures log only because the lead is already saved.
 - Backups: D1 Time Travel + daily dump of D1 and media into the retained `Backups` bucket (prod).
 - Secrets: no Infisical/1Password. Main-checkout `.env`, GitHub environment secrets, `Alchemy.Random`.
 - Stages: `dev-<worktree>` (local), `pr-<n>` (previews, destroyed on close), `prod` (custom domain; `<site>-prod.jakebodea.workers.dev` while `site.config.ts` has no `domain`, since attaching an unowned domain fails the deploy).
