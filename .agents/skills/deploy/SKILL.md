@@ -7,7 +7,7 @@ description: Deploy, preview, tear down, or rotate credentials for sites in this
 
 Always get the user's go-ahead before deploying or destroying anything.
 
-**Alchemy is the only way infrastructure changes.** Resources, their settings, and their data change only through a stack (`apps/<site>/alchemy.run.ts`, `stacks/`) and `alchemy deploy`/`destroy`. Never use the dashboard, Cloudflare MCP write tools (D1 queries that write, bucket/KV/worker create or delete), `wrangler`, or raw API calls to create, edit, or delete anything, including rows in a stage's D1. Reading (listing resources, `SELECT` queries, logs) is fine. If something needs to change, change the stack and redeploy.
+**Alchemy is the only way infrastructure changes.** Resources, their settings, and their data change only through a stack (`apps/<site>/alchemy.run.ts`, `stacks/`) and `alchemy deploy`/`destroy`. Never use the dashboard, Cloudflare MCP write tools (D1 queries that write, bucket/KV/worker create or delete), `wrangler`, or raw API calls to create, edit, or delete anything, including rows in a stage's D1. Reading (listing resources, `SELECT` queries, logs) is fine, and so is going through the site's own app and APIs (the CMS admin, `bun run app -- seed`/`reset`). If something needs to change, change the stack and redeploy.
 
 | Stage | How | When |
 | --- | --- | --- |
