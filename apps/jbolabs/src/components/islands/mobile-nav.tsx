@@ -110,7 +110,7 @@ const MobileNav = ({ currentPath, items }: MobileNavProps) => {
           >
             <nav
               aria-label="Main"
-              className="container-page flex flex-1 flex-col justify-center gap-1 pt-24 pb-6"
+              className="container-page flex flex-1 flex-col gap-1 pt-24 pb-6"
             >
               {items.map((item, index) => (
                 <a
