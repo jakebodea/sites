@@ -157,35 +157,19 @@
 }
 
 /*
- * Mobile menu (islands/mobile-nav.tsx). Opening: the blurred overlay drops from
- * the header like a curtain (clip-path), and the links follow just behind it,
- * staggered by `data-i` (the CTA is index 4 at most). Closing is quicker and
- * has no stagger: the user already decided, so the system gets out of the way.
- * Curves are --ease-out-expo (enter/exit) and a strong ease-in-out (the
- * toggle morphs on screen); literal here because `@theme inline` drops vars.
+ * Mobile menu (islands/mobile-nav.tsx). Opening: the blurred overlay fades in
+ * and the links drop in from above, staggered by `data-i` (the CTA is index 4
+ * at most). Closing is quicker and has no stagger: the user already decided,
+ * so the system gets out of the way. Curves are literal because
+ * `@theme inline` drops vars.
  */
 @utility menu-overlay {
-  clip-path: inset(0 0 100% 0);
   opacity: 0;
-  transition:
-    clip-path 220ms cubic-bezier(0.23, 1, 0.32, 1),
-    opacity 200ms ease-out 40ms;
+  transition: opacity 120ms ease-out;
 
   &[data-open="true"] {
-    clip-path: inset(0);
     opacity: 1;
-    transition:
-      clip-path 380ms cubic-bezier(0.23, 1, 0.32, 1),
-      opacity 160ms ease-out;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    clip-path: none;
-    transition: opacity 150ms ease;
-
-    &[data-open="true"] {
-      transition: opacity 150ms ease;
-    }
+    transition: opacity 160ms ease-out;
   }
 }
 
@@ -193,30 +177,30 @@
   opacity: 0;
   translate: 0 -12px;
   transition:
-    opacity 120ms ease-out,
-    translate 120ms ease-out;
+    opacity 100ms ease-out,
+    translate 100ms ease-out;
 
   [data-open="true"] & {
     opacity: 1;
     translate: 0 0;
     transition:
-      opacity 220ms ease-out,
-      translate 400ms cubic-bezier(0.23, 1, 0.32, 1);
+      opacity 160ms ease-out,
+      translate 260ms cubic-bezier(0.23, 1, 0.32, 1);
 
     &[data-i="0"] {
-      transition-delay: 60ms;
+      transition-delay: 20ms;
     }
     &[data-i="1"] {
-      transition-delay: 100ms;
+      transition-delay: 45ms;
     }
     &[data-i="2"] {
-      transition-delay: 140ms;
+      transition-delay: 70ms;
     }
     &[data-i="3"] {
-      transition-delay: 180ms;
+      transition-delay: 95ms;
     }
     &[data-i="4"] {
-      transition-delay: 220ms;
+      transition-delay: 120ms;
     }
   }
 
