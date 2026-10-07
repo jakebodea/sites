@@ -160,7 +160,8 @@
  * Mobile menu (islands/mobile-nav.tsx). Opening: the blurred overlay fades in
  * and the links drop in from above, staggered by `data-i` (the CTA is index 4
  * at most). Closing is quicker and has no stagger: the user already decided,
- * so the system gets out of the way. Curves are literal because
+ * so the system gets out of the way. The links overshoot slightly
+ * (0.34, 1.45, 0.64, 1) so landing feels like a tap, not a slide. Curves are literal because
  * `@theme inline` drops vars.
  */
 @utility menu-overlay {
@@ -169,13 +170,13 @@
 
   &[data-open="true"] {
     opacity: 1;
-    transition: opacity 160ms ease-out;
+    transition: opacity 120ms ease-out;
   }
 }
 
 @utility cascade {
   opacity: 0;
-  translate: 0 -12px;
+  translate: 0 -24px;
   transition:
     opacity 100ms ease-out,
     translate 100ms ease-out;
@@ -184,20 +185,20 @@
     opacity: 1;
     translate: 0 0;
     transition:
-      opacity 160ms ease-out,
-      translate 260ms cubic-bezier(0.23, 1, 0.32, 1);
+      opacity 120ms ease-out,
+      translate 320ms cubic-bezier(0.34, 1.45, 0.64, 1);
 
     &[data-i="0"] {
-      transition-delay: 20ms;
+      transition-delay: 0ms;
     }
     &[data-i="1"] {
-      transition-delay: 45ms;
+      transition-delay: 30ms;
     }
     &[data-i="2"] {
-      transition-delay: 70ms;
+      transition-delay: 60ms;
     }
     &[data-i="3"] {
-      transition-delay: 95ms;
+      transition-delay: 90ms;
     }
     &[data-i="4"] {
       transition-delay: 120ms;
@@ -232,15 +233,15 @@
   translate: 0 calc(var(--burger-dir) * 4px);
   rotate: 0deg;
   transition:
-    rotate 220ms cubic-bezier(0.77, 0, 0.175, 1),
-    translate 200ms cubic-bezier(0.77, 0, 0.175, 1) 140ms;
+    rotate 180ms cubic-bezier(0.77, 0, 0.175, 1),
+    translate 150ms cubic-bezier(0.77, 0, 0.175, 1) 100ms;
 
   [aria-expanded="true"] & {
     translate: 0 0;
     rotate: calc(var(--burger-dir) * -45deg);
     transition:
-      translate 200ms cubic-bezier(0.77, 0, 0.175, 1),
-      rotate 220ms cubic-bezier(0.77, 0, 0.175, 1) 140ms;
+      translate 150ms cubic-bezier(0.77, 0, 0.175, 1),
+      rotate 180ms cubic-bezier(0.77, 0, 0.175, 1) 100ms;
   }
 
   @media (prefers-reduced-motion: reduce) {
