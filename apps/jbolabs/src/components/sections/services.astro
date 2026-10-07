@@ -9,7 +9,7 @@ interface Props {
 const { value } = Astro.props;
 ---
 
-<section class="container-page py-20 sm:py-28">
+<section id="work" class="container-page py-20 sm:py-28">
   <div class="grid gap-6 md:grid-cols-[1fr_1fr] md:items-end md:gap-16">
     <h2 class="display text-4xl leading-[1.08] sm:text-5xl"><Headline text={value.headline} /></h2>
     {value.intro && <p class="max-w-md text-lg leading-relaxed text-muted-foreground md:justify-self-end">{value.intro}</p>}

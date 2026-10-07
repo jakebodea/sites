@@ -111,6 +111,11 @@
   html {
     -webkit-text-size-adjust: 100%;
     scroll-padding-top: 6rem;
+
+    @media (prefers-reduced-motion: no-preference) {
+      scroll-behavior: smooth;
+    }
+
     scrollbar-color: var(--input) transparent;
     accent-color: var(--signal);
     caret-color: var(--signal);

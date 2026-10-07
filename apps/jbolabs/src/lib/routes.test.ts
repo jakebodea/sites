@@ -21,7 +21,7 @@ describe("routes", () => {
 
   it("links navigation only to real pages", () => {
     const broken = [...primaryNav, ...footerNav].filter(
-      (link) => !routes.has(link.href)
+      (link) => !routes.has(new URL(link.href, "http://site.test").pathname)
     );
     expect(broken).toStrictEqual([]);
   });
