@@ -82,17 +82,11 @@ const MobileNav = ({ currentPath, items }: MobileNavProps) => {
       >
         <span
           aria-hidden="true"
-          className={cn(
-            "bg-foreground ease-out-expo absolute h-0.5 w-6 rounded-full transition-transform duration-300 motion-reduce:transition-none",
-            open ? "rotate-45" : "-translate-y-[4px]"
-          )}
+          className="bg-foreground burger-line burger-top absolute h-0.5 w-6 rounded-full"
         />
         <span
           aria-hidden="true"
-          className={cn(
-            "bg-foreground ease-out-expo absolute h-0.5 w-6 rounded-full transition-transform duration-300 motion-reduce:transition-none",
-            open ? "-rotate-45" : "translate-y-[4px]"
-          )}
+          className="bg-foreground burger-line burger-bottom absolute h-0.5 w-6 rounded-full"
         />
       </Button>
       {mounted &&
@@ -103,9 +97,8 @@ const MobileNav = ({ currentPath, items }: MobileNavProps) => {
             data-open={open}
             className={cn(
               "bg-background/70 fixed inset-0 z-30 flex flex-col overflow-y-auto backdrop-blur-2xl backdrop-saturate-150 md:hidden",
-              "pointer-events-none opacity-0 transition-opacity duration-300 ease-out",
-              "data-[open=true]:pointer-events-auto data-[open=true]:opacity-100",
-              "motion-reduce:transition-none"
+              "menu-overlay pointer-events-none",
+              "data-[open=true]:pointer-events-auto"
             )}
           >
             <nav
