@@ -112,17 +112,13 @@ const MobileNav = ({ currentPath, items }: MobileNavProps) => {
                   href={item.href}
                   aria-current={currentPath === item.href ? "page" : undefined}
                   onClick={close}
-                  data-i={index}
                   className="cascade text-foreground/70 aria-[current=page]:text-foreground py-2 text-4xl font-light tracking-tight lowercase outline-none focus-visible:underline"
                 >
                   {item.label}
                 </a>
               ))}
             </nav>
-            <div
-              data-i={items.length}
-              className="cascade container-page pb-safe"
-            >
+            <div className="cascade container-page pb-safe">
               <a
                 href="/contact"
                 onClick={close}
