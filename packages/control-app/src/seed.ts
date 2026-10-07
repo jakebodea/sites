@@ -1,3 +1,4 @@
+import { COMPLETION_PATH } from "@jakebodea/cloudflare-kit/emdash/published-content";
 import { Schema } from "effect";
 
 import { request } from "./http.ts";
@@ -37,9 +38,52 @@ export interface SeedResult {
   readonly detail: string;
 }
 
+const completeProductionContent = async (
+  origin: string,
+  headers: Headers
+): Promise<void> => {
+  let previousIndex = -1;
+  let expectedTotal: number | undefined;
+  while (true) {
+    const completionResponse = await request(`${origin}${COMPLETION_PATH}`, {
+      headers,
+      method: "POST",
+      signal: AbortSignal.timeout(SETUP_TIMEOUT_MS),
+    });
+    if (!completionResponse.ok) {
+      throw new Error(
+        `Published completion answered ${completionResponse.status}: ${await completionResponse.text()}`
+      );
+    }
+    const completionResult = Schema.decodeUnknownSync(
+      Schema.Struct({
+        complete: Schema.Boolean,
+        index: Schema.Number,
+        total: Schema.Number,
+      })
+    )(await completionResponse.json());
+    const { index, total } = completionResult;
+    const valid = [
+      [index, total].every(Number.isSafeInteger),
+      [index >= 0, total >= 0, index <= total].every(Boolean),
+      expectedTotal === undefined || total === expectedTotal,
+      completionResult.complete ? index === total : index > previousIndex,
+    ].every(Boolean);
+    if (!valid) {
+      throw new Error("Published completion did not make consistent progress");
+    }
+    if (completionResult.complete) {
+      return;
+    }
+    previousIndex = index;
+    expectedTotal = total;
+  }
+};
+
 export const seedStage = async (
   origin: string,
-  bootstrapToken: string | undefined = process.env.CMS_BOOTSTRAP_TOKEN
+  bootstrapToken: string | undefined = process.env.CMS_BOOTSTRAP_TOKEN,
+  productionContent = false
 ): Promise<SeedResult> => {
   const headers = new Headers({ "content-type": "application/json", origin });
   if (bootstrapToken !== undefined) {
@@ -65,9 +109,14 @@ export const seedStage = async (
     await statusResponse.json()
   );
   if (!status.data.needsSetup || status.data.step !== "start") {
+    if (productionContent && status.data.needsSetup) {
+      await completeProductionContent(origin, headers);
+    }
     await finishOwner();
     return {
-      detail: "existing content preserved; studio owner verified",
+      detail: productionContent
+        ? "existing content preserved; production copy was not reloaded; studio owner verified"
+        : "existing content preserved; studio owner verified",
       seeded: false,
     };
   }
@@ -89,6 +138,9 @@ export const seedStage = async (
       await response.json()
     );
     if (result.data.seedComplete === true) {
+      if (productionContent) {
+        await completeProductionContent(origin, headers);
+      }
       await finishOwner();
       return {
         detail: `seed applied in ${round} request(s); studio owner reserved`,

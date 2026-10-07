@@ -27,6 +27,8 @@ import { fileURLToPath } from "node:url";
 
 import type { AstroIntegration } from "astro";
 
+import { readPublishedPlan } from "./published-integration.ts";
+
 export const SEED_MEDIA_PATH = "/_seed/media/";
 
 export interface SeedMediaOptions {
@@ -85,10 +87,12 @@ export const seedMedia = (options: SeedMediaOptions): AstroIntegration => ({
         path.join(root, options.seed ?? "seed/seed.json"),
         "utf-8"
       );
+      const plan = readPublishedPlan(root);
+      const contentSeed = plan === null ? seedJson : JSON.stringify(plan.seed);
       const resolved =
         options.mediaBase === undefined
-          ? seedJson
-          : resolveSeedMedia(seedJson, options.mediaBase);
+          ? contentSeed
+          : resolveSeedMedia(contentSeed, options.mediaBase);
       mkdirSync(path.join(root, ".emdash"), { recursive: true });
       writeFileSync(path.join(root, ".emdash", "seed.json"), resolved);
       if (options.mediaBase === undefined) {

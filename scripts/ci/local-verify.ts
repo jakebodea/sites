@@ -42,6 +42,7 @@ for (const site of sites) {
       );
     }
     writeBuildInputs(directory, {
+      contentDigest: "seed",
       seedMediaBase: config.site.localSeedMediaBase,
     });
   }

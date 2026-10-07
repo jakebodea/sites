@@ -8,11 +8,12 @@
  * Needs an Alchemy profile that can create Cloudflare API tokens and a GitHub
  * login (`gh auth login`). Deploy once per repository, again to rotate.
  */
+import { siteSecrets } from "@jakebodea/cloudflare-kit/infra";
 import * as Alchemy from "alchemy";
 import * as Cloudflare from "alchemy/Cloudflare";
 import * as GitHub from "alchemy/GitHub";
 import { Random, RandomProvider } from "alchemy/Random";
-import { Effect, Layer } from "effect";
+import { Config, Effect, Layer } from "effect";
 
 import { deployTokens, repository } from "./config.ts";
 
@@ -85,6 +86,7 @@ export default Alchemy.Stack(
       GitHub.providers(),
       RandomProvider()
     ),
+    secrets: siteSecrets(),
     state: ciOnly,
   },
   Effect.gen(function* controlPlane() {
@@ -97,6 +99,16 @@ export default Alchemy.Stack(
       owner,
       repository: repo,
     });
+    yield* GitHub.Label("ProductionContentLabel", {
+      color: "5319e7",
+      description: "Load published production content into a fresh PR preview",
+      name: "production-content",
+      owner,
+      repository: repo,
+    });
+    const publishedExport = yield* Config.Redacted(
+      "PUBLISHED_CONTENT_EXPORT_TOKEN"
+    );
     for (const environment of environments) {
       const githubEnvironment = yield* GitHub.Environment(
         `${environment.id}Environment`,
@@ -107,6 +119,13 @@ export default Alchemy.Stack(
           repository: repo,
         }
       );
+      yield* GitHub.Secret(`${environment.id}PublishedContentSecret`, {
+        environment: githubEnvironment,
+        name: "PUBLISHED_CONTENT_EXPORT_TOKEN",
+        owner,
+        repository: repo,
+        value: publishedExport,
+      });
       const cmsBootstrap = yield* Random(`${environment.id}CmsBootstrapToken`, {
         bytes: 32,
       });

@@ -5,6 +5,7 @@
  * is gitignored but listed in the site's Alchemy `memo` globs, so changing a
  * value triggers a rebuild.
  */
+import { createHash } from "node:crypto";
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 
@@ -15,6 +16,7 @@ export const BUILD_INPUTS_FILE = ".build-inputs.json";
 const Value = Schema.optionalKey(Schema.NonEmptyString);
 
 export const BuildInputs = Schema.Struct({
+  contentDigest: Value,
   /** Verified Cloudflare Email Service sender; enables CMS email when set. */
   emailFrom: Value,
   /** Display name for CMS email. */
@@ -40,4 +42,18 @@ export const writeBuildInputs = (root: string, inputs: BuildInputs): void => {
   if (!existsSync(file) || readFileSync(file, "utf-8") !== next) {
     writeFileSync(file, next);
   }
+};
+
+/** The generated plan is excluded from globs; its digest is an explicit public build input. */
+export const publishedContentDigest = (
+  root: string,
+  required = false
+): string => {
+  const file = path.join(root, ".published-content.json");
+  if (required && !existsSync(file)) {
+    throw new Error("Requested production content plan is missing");
+  }
+  return existsSync(file)
+    ? createHash("sha256").update(readFileSync(file)).digest("hex")
+    : "seed";
 };
