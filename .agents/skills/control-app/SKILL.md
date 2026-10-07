@@ -12,7 +12,9 @@ Everything runs locally under `alchemy dev` with emulated D1/R2/KV (no cloud res
 ```bash
 ALCHEMY_PROFILE=admin bun run app -- start    # start or reuse the server (~15 s warm, ~70 s first ever)
 bun run app -- restart                        # ~15 s: after server/island edits break hot reload
-bun run app -- reset                          # ~16 s: fresh seeded data + signed-in CMS session
+bun run app -- reset --content seed           # fresh native setup; seed is default
+bun run app -- start --content prod           # load/reuse published production content
+bun run app -- content refresh                 # explicitly refetch; rollback on failure
 bun run app -- status | stop | logs --lines 120
 ```
 
@@ -24,11 +26,14 @@ Pick the cheapest step that proves your change:
 | Server code, islands, `astro.config.ts`, `alchemy.run.ts` | `restart` |
 | `seed/`, CMS schema, or local data looks wrong | `reset` |
 
-`reset` restores a snapshot of the seeded data (`.artifacts/app/<site>/<stage>/seeded-<hash>`); the first reset after a seed or dependency change seeds for real (~45 s, it downloads every seed image) and saves a new snapshot. Vite's dependency cache is kept across restarts; `start` clears it only to recover a boot that came up broken. Add `--site <name>` when the repo has several sites and you are not inside `apps/<site>`.
+`reset` runs fresh native setup with the selected seed or validated production copy. It replaces only this worktree's emulator; hosted reset is refused. Restart retains selected mode. Production plans recompose against branch schema on reset; ordinary starts reuse the validated local copy and preserve edits. `content refresh` requires the privately configured `PUBLISHED_CONTENT_EXPORT_TOKEN`, fetches only the fixed site origin, preflights, and restores the stopped prior emulator and plan on load failure. No silent seed fallback. Missing selected production plans fail explicitly. Fresh hosted stages use `content prepare` through CI, not local reset. See [ADR 0003](../../../docs/adr/0003-published-production-content.md).
+
+Vite's dependency cache is kept across restarts; `start` clears it only to recover a broken boot. Add `--site <name>` outside a site directory. `reset` signs in after loading content; `login` is explicit after a content refresh. Seed resets reuse a snapshot matched to the seed and dependency versions.
 
 ## Verify
 
 ```bash
+bun run app -- smoke --no-submit                       # read-only form checks; skip submission
 bun run app -- smoke                                   # ~4 s: pages, 404, admin, images, contact action, cron
 bun run app -- seo                                     # ~2 s: technical SEO audit of every page
 bun run app -- screenshot / /about /contact            # 1280 + 375 full-page PNGs (lazy images loaded)

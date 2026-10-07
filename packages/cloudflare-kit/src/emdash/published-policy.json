@@ -1,0 +1,825 @@
+{
+  "access-electric": {
+    "origin": "https://access-electric-prod.jakebodea.workers.dev",
+    "collections": {
+      "home": [
+        {
+          "slug": "title",
+          "type": "string"
+        },
+        {
+          "slug": "intro",
+          "type": "text"
+        },
+        {
+          "slug": "content",
+          "type": "blocks",
+          "validation": {
+            "allowedTypes": [
+              "hero",
+              "services",
+              "story",
+              "facts",
+              "current_projects",
+              "cta_band",
+              "rich_text",
+              "badges",
+              "service_area"
+            ]
+          }
+        }
+      ],
+      "pages": [
+        {
+          "slug": "title",
+          "type": "string"
+        },
+        {
+          "slug": "intro",
+          "type": "text"
+        },
+        {
+          "slug": "content",
+          "type": "blocks",
+          "validation": {
+            "allowedTypes": [
+              "hero",
+              "services",
+              "story",
+              "facts",
+              "current_projects",
+              "cta_band",
+              "rich_text",
+              "badges",
+              "service_area"
+            ]
+          }
+        }
+      ],
+      "projects": [
+        {
+          "slug": "title",
+          "type": "string"
+        },
+        {
+          "slug": "progress",
+          "type": "select",
+          "validation": {
+            "options": ["completed", "in_progress"]
+          }
+        },
+        {
+          "slug": "featured_image",
+          "type": "image"
+        },
+        {
+          "slug": "gallery",
+          "type": "repeater",
+          "validation": {
+            "subFields": [
+              {
+                "slug": "image",
+                "type": "image"
+              }
+            ]
+          }
+        },
+        {
+          "slug": "location",
+          "type": "string"
+        },
+        {
+          "slug": "general_contractor",
+          "type": "string"
+        },
+        {
+          "slug": "architect",
+          "type": "string"
+        },
+        {
+          "slug": "size",
+          "type": "string"
+        },
+        {
+          "slug": "scope",
+          "type": "text"
+        },
+        {
+          "slug": "categories",
+          "type": "reference",
+          "validation": {
+            "relation": "category_projects"
+          }
+        }
+      ],
+      "categories": [
+        {
+          "slug": "title",
+          "type": "string"
+        },
+        {
+          "slug": "description",
+          "type": "text"
+        },
+        {
+          "slug": "cover_image",
+          "type": "image"
+        },
+        {
+          "slug": "sort_order",
+          "type": "integer"
+        },
+        {
+          "slug": "projects",
+          "type": "reference",
+          "validation": {
+            "relation": "category_projects"
+          }
+        }
+      ]
+    },
+    "blocks": {
+      "hero": [
+        {
+          "version": 1,
+          "fields": [
+            {
+              "slug": "headline",
+              "type": "string"
+            },
+            {
+              "slug": "subheadline",
+              "type": "text"
+            },
+            {
+              "slug": "slides",
+              "type": "repeater",
+              "validation": {
+                "subFields": [
+                  {
+                    "slug": "image",
+                    "type": "image"
+                  }
+                ]
+              }
+            },
+            {
+              "slug": "primary_cta_label",
+              "type": "string"
+            },
+            {
+              "slug": "primary_cta_url",
+              "type": "string",
+              "validation": {}
+            },
+            {
+              "slug": "secondary_cta_label",
+              "type": "string"
+            },
+            {
+              "slug": "secondary_cta_url",
+              "type": "string",
+              "validation": {}
+            }
+          ]
+        }
+      ],
+      "services": [
+        {
+          "version": 1,
+          "fields": [
+            {
+              "slug": "headline",
+              "type": "string"
+            },
+            {
+              "slug": "intro",
+              "type": "text"
+            },
+            {
+              "slug": "items",
+              "type": "repeater",
+              "validation": {
+                "subFields": [
+                  {
+                    "slug": "icon",
+                    "type": "select"
+                  },
+                  {
+                    "slug": "title",
+                    "type": "string"
+                  },
+                  {
+                    "slug": "body",
+                    "type": "text"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ],
+      "story": [
+        {
+          "version": 1,
+          "fields": [
+            {
+              "slug": "eyebrow",
+              "type": "string"
+            },
+            {
+              "slug": "headline",
+              "type": "string"
+            },
+            {
+              "slug": "body",
+              "type": "portableText"
+            },
+            {
+              "slug": "image",
+              "type": "image"
+            },
+            {
+              "slug": "image_position",
+              "type": "select",
+              "validation": {
+                "options": ["left", "right"]
+              }
+            },
+            {
+              "slug": "cta_label",
+              "type": "string"
+            },
+            {
+              "slug": "cta_url",
+              "type": "string",
+              "validation": {}
+            }
+          ]
+        }
+      ],
+      "facts": [
+        {
+          "version": 1,
+          "fields": [
+            {
+              "slug": "items",
+              "type": "repeater",
+              "validation": {
+                "subFields": [
+                  {
+                    "slug": "value",
+                    "type": "string"
+                  },
+                  {
+                    "slug": "label",
+                    "type": "string"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ],
+      "current_projects": [
+        {
+          "version": 1,
+          "fields": [
+            {
+              "slug": "headline",
+              "type": "string"
+            },
+            {
+              "slug": "intro",
+              "type": "text"
+            },
+            {
+              "slug": "link_label",
+              "type": "string"
+            }
+          ]
+        }
+      ],
+      "cta_band": [
+        {
+          "version": 1,
+          "fields": [
+            {
+              "slug": "headline",
+              "type": "string"
+            },
+            {
+              "slug": "body",
+              "type": "text"
+            },
+            {
+              "slug": "image",
+              "type": "image"
+            },
+            {
+              "slug": "cta_label",
+              "type": "string"
+            },
+            {
+              "slug": "cta_url",
+              "type": "string",
+              "validation": {}
+            }
+          ]
+        }
+      ],
+      "rich_text": [
+        {
+          "version": 1,
+          "fields": [
+            {
+              "slug": "headline",
+              "type": "string"
+            },
+            {
+              "slug": "body",
+              "type": "portableText"
+            }
+          ]
+        }
+      ],
+      "badges": [
+        {
+          "version": 1,
+          "fields": [
+            {
+              "slug": "headline",
+              "type": "string"
+            },
+            {
+              "slug": "items",
+              "type": "repeater",
+              "validation": {
+                "subFields": [
+                  {
+                    "slug": "image",
+                    "type": "image"
+                  },
+                  {
+                    "slug": "label",
+                    "type": "string"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ],
+      "service_area": [
+        {
+          "version": 1,
+          "fields": [
+            {
+              "slug": "headline",
+              "type": "string"
+            },
+            {
+              "slug": "body",
+              "type": "text"
+            },
+            {
+              "slug": "areas",
+              "type": "text"
+            }
+          ]
+        }
+      ]
+    },
+    "menus": ["primary", "footer"]
+  },
+  "ms-custom-homes": {
+    "origin": "https://ms-custom-homes-prod.jakebodea.workers.dev",
+    "collections": {
+      "home": [
+        {
+          "slug": "title",
+          "type": "string"
+        },
+        {
+          "slug": "intro",
+          "type": "text"
+        },
+        {
+          "slug": "content",
+          "type": "blocks",
+          "validation": {
+            "allowedTypes": [
+              "hero",
+              "statement",
+              "services",
+              "featured_projects",
+              "process",
+              "story",
+              "financing",
+              "facts",
+              "cta_band",
+              "rich_text"
+            ]
+          }
+        }
+      ],
+      "pages": [
+        {
+          "slug": "title",
+          "type": "string"
+        },
+        {
+          "slug": "intro",
+          "type": "text"
+        },
+        {
+          "slug": "content",
+          "type": "blocks",
+          "validation": {
+            "allowedTypes": [
+              "hero",
+              "statement",
+              "services",
+              "featured_projects",
+              "process",
+              "story",
+              "financing",
+              "facts",
+              "cta_band",
+              "rich_text"
+            ]
+          }
+        }
+      ],
+      "projects": [
+        {
+          "slug": "title",
+          "type": "string"
+        },
+        {
+          "slug": "project_type",
+          "type": "select",
+          "validation": {
+            "options": ["custom_home", "remodel", "kitchen", "bath", "outdoor"]
+          }
+        },
+        {
+          "slug": "progress",
+          "type": "select",
+          "validation": {
+            "options": ["completed", "in_progress"]
+          }
+        },
+        {
+          "slug": "featured",
+          "type": "boolean"
+        },
+        {
+          "slug": "sort_order",
+          "type": "integer"
+        },
+        {
+          "slug": "featured_image",
+          "type": "image"
+        },
+        {
+          "slug": "gallery",
+          "type": "repeater",
+          "validation": {
+            "subFields": [
+              {
+                "slug": "image",
+                "type": "image"
+              }
+            ]
+          }
+        },
+        {
+          "slug": "location",
+          "type": "string"
+        },
+        {
+          "slug": "summary",
+          "type": "text"
+        },
+        {
+          "slug": "details",
+          "type": "portableText"
+        }
+      ]
+    },
+    "blocks": {
+      "hero": [
+        {
+          "version": 1,
+          "fields": [
+            {
+              "slug": "eyebrow",
+              "type": "string"
+            },
+            {
+              "slug": "headline",
+              "type": "string"
+            },
+            {
+              "slug": "subheadline",
+              "type": "text"
+            },
+            {
+              "slug": "slides",
+              "type": "repeater",
+              "validation": {
+                "subFields": [
+                  {
+                    "slug": "image",
+                    "type": "image"
+                  }
+                ]
+              }
+            },
+            {
+              "slug": "primary_cta_label",
+              "type": "string"
+            },
+            {
+              "slug": "primary_cta_url",
+              "type": "string",
+              "validation": {}
+            },
+            {
+              "slug": "secondary_cta_label",
+              "type": "string"
+            },
+            {
+              "slug": "secondary_cta_url",
+              "type": "string",
+              "validation": {}
+            }
+          ]
+        }
+      ],
+      "statement": [
+        {
+          "version": 1,
+          "fields": [
+            {
+              "slug": "eyebrow",
+              "type": "string"
+            },
+            {
+              "slug": "text",
+              "type": "text"
+            },
+            {
+              "slug": "signature",
+              "type": "string"
+            }
+          ]
+        }
+      ],
+      "services": [
+        {
+          "version": 1,
+          "fields": [
+            {
+              "slug": "eyebrow",
+              "type": "string"
+            },
+            {
+              "slug": "headline",
+              "type": "string"
+            },
+            {
+              "slug": "intro",
+              "type": "text"
+            },
+            {
+              "slug": "items",
+              "type": "repeater",
+              "validation": {
+                "subFields": [
+                  {
+                    "slug": "title",
+                    "type": "string"
+                  },
+                  {
+                    "slug": "body",
+                    "type": "text"
+                  },
+                  {
+                    "slug": "image",
+                    "type": "image"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ],
+      "featured_projects": [
+        {
+          "version": 1,
+          "fields": [
+            {
+              "slug": "eyebrow",
+              "type": "string"
+            },
+            {
+              "slug": "headline",
+              "type": "string"
+            },
+            {
+              "slug": "intro",
+              "type": "text"
+            },
+            {
+              "slug": "link_label",
+              "type": "string"
+            }
+          ]
+        }
+      ],
+      "process": [
+        {
+          "version": 1,
+          "fields": [
+            {
+              "slug": "eyebrow",
+              "type": "string"
+            },
+            {
+              "slug": "headline",
+              "type": "string"
+            },
+            {
+              "slug": "intro",
+              "type": "text"
+            },
+            {
+              "slug": "items",
+              "type": "repeater",
+              "validation": {
+                "subFields": [
+                  {
+                    "slug": "title",
+                    "type": "string"
+                  },
+                  {
+                    "slug": "body",
+                    "type": "text"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ],
+      "story": [
+        {
+          "version": 1,
+          "fields": [
+            {
+              "slug": "eyebrow",
+              "type": "string"
+            },
+            {
+              "slug": "headline",
+              "type": "string"
+            },
+            {
+              "slug": "body",
+              "type": "portableText"
+            },
+            {
+              "slug": "image",
+              "type": "image"
+            },
+            {
+              "slug": "image_position",
+              "type": "select",
+              "validation": {
+                "options": ["left", "right"]
+              }
+            },
+            {
+              "slug": "cta_label",
+              "type": "string"
+            },
+            {
+              "slug": "cta_url",
+              "type": "string",
+              "validation": {}
+            }
+          ]
+        }
+      ],
+      "financing": [
+        {
+          "version": 1,
+          "fields": [
+            {
+              "slug": "eyebrow",
+              "type": "string"
+            },
+            {
+              "slug": "headline",
+              "type": "string"
+            },
+            {
+              "slug": "body",
+              "type": "text"
+            },
+            {
+              "slug": "image",
+              "type": "image"
+            },
+            {
+              "slug": "cta_label",
+              "type": "string"
+            },
+            {
+              "slug": "cta_url",
+              "type": "string",
+              "validation": {}
+            },
+            {
+              "slug": "disclosure",
+              "type": "text"
+            }
+          ]
+        }
+      ],
+      "facts": [
+        {
+          "version": 1,
+          "fields": [
+            {
+              "slug": "items",
+              "type": "repeater",
+              "validation": {
+                "subFields": [
+                  {
+                    "slug": "value",
+                    "type": "string"
+                  },
+                  {
+                    "slug": "label",
+                    "type": "string"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ],
+      "cta_band": [
+        {
+          "version": 1,
+          "fields": [
+            {
+              "slug": "eyebrow",
+              "type": "string"
+            },
+            {
+              "slug": "headline",
+              "type": "string"
+            },
+            {
+              "slug": "body",
+              "type": "text"
+            },
+            {
+              "slug": "image",
+              "type": "image"
+            },
+            {
+              "slug": "cta_label",
+              "type": "string"
+            },
+            {
+              "slug": "cta_url",
+              "type": "string",
+              "validation": {}
+            }
+          ]
+        }
+      ],
+      "rich_text": [
+        {
+          "version": 1,
+          "fields": [
+            {
+              "slug": "headline",
+              "type": "string"
+            },
+            {
+              "slug": "body",
+              "type": "portableText"
+            }
+          ]
+        }
+      ]
+    },
+    "menus": ["primary", "footer", "announcement"]
+  }
+}

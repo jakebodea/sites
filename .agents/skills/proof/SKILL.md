@@ -23,3 +23,7 @@ High-risk changes also need `--verifier-verdict PASS --verifier-summary "…" --
 4. `bun run proof -- verify --receipt <path>`; then `bun run proof -- publish --pr <n> --receipt <path>`.
 
 Report the verdict and receipt path. `BLOCKED` means evidence is missing (see the receipt's notes); fix that rather than lowering `--risk`.
+
+## Published-content evidence
+
+Use `node scripts/ci/published-content-fixture.ts` for disposable native Worker/D1/R2 evidence and the published-content SQLite tests for exclusions/schema/SEO/reference checks. Keep artifacts ignored. Include rendered relationship pages, native media bytes plus an optimized response, repeated setup/owner preservation, explicit auth/stage/source/site failures, and local rollback evidence. Use smoke `--no-submit` when form submission is outside the authorized scope. A dirty reviewable draft has no revision-bound receipt and must report its validation blockers instead of claiming done.

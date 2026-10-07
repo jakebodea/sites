@@ -24,6 +24,12 @@ ALCHEMY_PROFILE=admin bun alchemy destroy --stage <stage>   # non-prod buckets a
 bun run app -- smoke --url <stage url>
 ```
 
+## Published-content previews
+
+Add `production-content` alongside `preview` to opt a same-repository PR into published production content. Required credential-free checks remain seed-only. CI fetches fixed public source collections/fields, preflights this branch's schema/defaults, and bundles a native fresh seed. Existing completed stages preserve edits; this does not refresh them in place. Missing source/auth or incompatible content fails explicitly. Preview recreation requires separate destroy/deploy authorization.
+
+One-time private setup: set `PUBLISHED_CONTENT_EXPORT_TOKEN` (random, at least 32 characters) in the main checkout's private `.env`. The separately authorized `stacks/github.ts` deployment writes it to production/preview environments and creates the opt-in label. A normal CI production deployment then exposes the production-only GET exporter. Never retrieve credentials through a full Alchemy state read. See [ADR 0003](../../../docs/adr/0003-published-production-content.md).
+
 ## When a deployed stage misbehaves
 
 1. Read its logs: `cd apps/<site> && ALCHEMY_PROFILE=admin bun alchemy logs --stage <stage> --since 1h` (`--tail` to stream, `-r Website` to filter).

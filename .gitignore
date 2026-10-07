@@ -34,3 +34,6 @@ emdash-env.d.ts
 # OS / editors
 .DS_Store
 .idea/
+
+# Validated public content plans contain production copy, never credentials.
+.published-content.json

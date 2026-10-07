@@ -19,6 +19,9 @@ export const previewPolicy = (
     pull.state === "OPEN" &&
     pull.labels.some((label) => label.name === "preview");
   return {
+    content: pull.labels.some((label) => label.name === "production-content")
+      ? "prod"
+      : "seed",
     deploy: requested && pull.headRefOid === expectedHead,
     destroy: !requested,
   };
@@ -37,5 +40,7 @@ if (import.meta.main) {
     )
   );
   const policy = previewPolicy(pull, process.env.EXPECTED_HEAD);
-  process.stdout.write(`deploy=${policy.deploy}\ndestroy=${policy.destroy}\n`);
+  process.stdout.write(
+    `deploy=${policy.deploy}\ndestroy=${policy.destroy}\ncontent=${policy.content}\n`
+  );
 }

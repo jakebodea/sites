@@ -17,6 +17,7 @@ export interface SmokeOptions {
   readonly origin: string;
   /** Local `alchemy dev`: Turnstile test keys and the manual cron route are available. */
   readonly local: boolean;
+  readonly submit?: boolean;
   /** The site runs EmDash: check its admin, and treat an empty sitemap as setup pending. */
   readonly cms: boolean;
 }
@@ -192,7 +193,10 @@ export const smoke = async (options: SmokeOptions): Promise<SmokeCheck[]> => {
   }
   checks.push(...(await imageChecks(origin, paths)));
   if (options.local) {
-    checks.push(await contactCheck(origin), await cronCheck(origin));
+    checks.push(
+      ...(options.submit === false ? [] : [await contactCheck(origin)]),
+      await cronCheck(origin)
+    );
   }
   return checks;
 };

@@ -248,6 +248,8 @@ export const wipeLocalState = async (site: SiteContext): Promise<void> => {
  */
 const seedKey = (site: SiteContext): string => {
   const hash = createHash("sha256");
+  // Older snapshots contain a dev-bypass admin rather than a verified native owner.
+  hash.update("native-owner-content-v1");
   const seed = path.join(site.directory, "seed");
   hash.update(readFileSync(path.join(seed, "seed.json")));
   const media = path.join(seed, "media");

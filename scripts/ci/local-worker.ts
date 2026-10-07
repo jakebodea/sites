@@ -33,7 +33,20 @@ const text = (value: string) =>
   >[string];
 
 /** Execute Alchemy's standalone build with disposable, local-only bindings. */
-export const localWorker = async (directory: string, cms: boolean) => {
+interface WorkerFixture {
+  readonly stage?: string;
+  readonly site?: string;
+  readonly exportToken?: string;
+  readonly publicMediaSource?: {
+    readonly publishedOrigin: string;
+    readonly localOrigin: string;
+  };
+}
+export const localWorker = async (
+  directory: string,
+  cms: boolean,
+  fixture: WorkerFixture = {}
+) => {
   const scope = `audit-${randomUUID()}`;
   const server = path.join(directory, "dist/server");
   const modules: NonNullable<WorkerOptions["config"]["manifest"]>["modules"] =
@@ -56,14 +69,15 @@ export const localWorker = async (directory: string, cms: boolean) => {
     CF_ANALYTICS_API_TOKEN: text(""),
     CMS_BOOTSTRAP_TOKEN: text(LOCAL_CMS_BOOTSTRAP_TOKEN),
     CMS_OWNER_EMAIL: text("owner@example.test"),
-    CMS_OWNER_SITE: text(path.basename(directory)),
+    CMS_OWNER_SITE: text(fixture.site ?? path.basename(directory)),
     DB: { id: `${scope}-db`, type: "d1" },
     LEAD_NOTIFY_FROM: text(""),
     LEAD_NOTIFY_FROM_NAME: text(""),
     LEAD_NOTIFY_TO: text(""),
+    PUBLISHED_CONTENT_EXPORT_TOKEN: text(fixture.exportToken ?? ""),
     SESSION: { id: `${scope}-session`, type: "kv" },
     SITE_ORIGIN: text("http://localhost"),
-    STAGE: text("dev-seo"),
+    STAGE: text(fixture.stage ?? "dev-seo"),
     TURNSTILE_SECRET_KEY: text(TURNSTILE_TEST_KEYS.secretKey),
     TURNSTILE_SITE_KEY: text(TURNSTILE_TEST_KEYS.siteKey),
     WEB_ANALYTICS_ACCOUNT_ID: text(""),
@@ -122,6 +136,16 @@ export const localWorker = async (directory: string, cms: boolean) => {
                   MEDIA_TYPES.get(path.extname(file)) ??
                   "application/octet-stream",
               },
+            });
+          }
+          const source = fixture.publicMediaSource;
+          if (
+            source !== undefined &&
+            url.origin === source.publishedOrigin &&
+            url.pathname.startsWith("/_emdash/api/media/file/")
+          ) {
+            return await workerFetch(`${source.localOrigin}${url.pathname}`, {
+              signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
             });
           }
           return await workerFetch(request, {

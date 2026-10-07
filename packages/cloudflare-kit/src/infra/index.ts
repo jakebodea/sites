@@ -21,6 +21,7 @@ export {
   BUILD_INPUTS_FILE,
   BuildInputs,
   readBuildInputs,
+  publishedContentDigest,
   writeBuildInputs,
 } from "./build-inputs.ts";
 export { TURNSTILE_TEST_KEYS } from "./turnstile.ts";

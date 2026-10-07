@@ -20,7 +20,12 @@
     "./emdash/owner-gate": "./src/emdash/owner-gate.ts",
     "./emdash/owner-middleware": "./src/emdash/owner-middleware.ts",
     "./emdash/owner-integration": "./src/emdash/owner-integration.ts",
-    "./emdash/owner-route": "./src/emdash/owner-route.ts"
+    "./emdash/owner-route": "./src/emdash/owner-route.ts",
+    "./emdash/published-content": "./src/emdash/published-content.ts",
+    "./emdash/published-integration": "./src/emdash/published-integration.ts",
+    "./emdash/published-route": "./src/emdash/published-route.ts",
+    "./emdash/published-completion-route": "./src/emdash/published-completion-route.ts",
+    "./emdash/published-preflight": "./src/emdash/published-preflight.ts"
   },
   "scripts": {
     "test": "vitest run",
@@ -29,7 +34,8 @@
   "dependencies": {
     "@eisbachcode/emdash-plugin-analytics": "catalog:",
     "@emdash-cms/auth": "catalog:",
-    "effect": "catalog:"
+    "effect": "catalog:",
+    "kysely": "catalog:"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "catalog:",

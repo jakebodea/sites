@@ -11,6 +11,7 @@ import {
   siteObservability,
   siteSecrets,
   writeBuildInputs,
+  publishedContentDigest,
 } from "@jakebodea/cloudflare-kit/infra";
 /**
  * MS Custom Homes infrastructure (one Alchemy stack, one stage per environment):
@@ -57,6 +58,11 @@ export default Alchemy.Stack(
     // Build inputs the Astro config reads (origin, seed media, CMS email sender).
     const emailFrom = studio.sender;
     writeBuildInputs(root, {
+      contentDigest:
+        (dev || stage.stage.startsWith("pr-")) &&
+        process.env.CONTENT_MODE === "prod"
+          ? publishedContentDigest(root, true)
+          : "seed",
       emailFrom,
       emailFromName: `${site.shortName} website`,
       origin,
@@ -104,6 +110,9 @@ export default Alchemy.Stack(
       // EmDash's /_image endpoint resizes media with this binding.
       IMAGES: Cloudflare.Images.Images("IMAGES"),
       MEDIA: media,
+      PUBLISHED_CONTENT_EXPORT_TOKEN: stage.production
+        ? yield* Config.Redacted("PUBLISHED_CONTENT_EXPORT_TOKEN")
+        : Redacted.make(""),
       SITE_ORIGIN: origin,
       STAGE: stage.stage,
       TURNSTILE_SECRET_KEY: turnstile.secret,
@@ -140,6 +149,7 @@ export default Alchemy.Stack(
           ".wrangler/**",
           ".emdash/**",
           "public/_seed/**",
+          ".published-content.json",
         ],
         include: ["**/*", BUILD_INPUTS_FILE],
         lockfile: true,

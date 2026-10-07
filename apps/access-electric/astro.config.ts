@@ -10,6 +10,7 @@ import { emdashOnAlchemyAliases } from "@jakebodea/cloudflare-kit/emdash/alchemy
 import { analyticsPlugin } from "@jakebodea/cloudflare-kit/emdash/analytics";
 import { emailPlugin } from "@jakebodea/cloudflare-kit/emdash/email-plugin";
 import { siteOwner } from "@jakebodea/cloudflare-kit/emdash/owner-integration";
+import { publishedContent } from "@jakebodea/cloudflare-kit/emdash/published-integration";
 import { seedMedia } from "@jakebodea/cloudflare-kit/emdash/seed-media";
 import {
   WORKER_COMPATIBILITY,
@@ -85,6 +86,7 @@ export default defineConfig({
     seedMedia({ mediaBase: inputs.seedMediaBase }),
     react(),
     siteOwner(),
+    publishedContent(),
     emdash({
       database: d1({ binding: "DB", session: "auto" }),
       middleware: { outer: "@jakebodea/cloudflare-kit/emdash/owner-gate" },

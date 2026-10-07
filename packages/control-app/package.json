@@ -8,7 +8,8 @@
   "type": "module",
   "exports": {
     "./site": "./src/site.ts",
-    "./sitemap": "./src/sitemap.ts"
+    "./sitemap": "./src/sitemap.ts",
+    "./content": "./src/content.ts"
   },
   "scripts": {
     "test": "vitest run",
