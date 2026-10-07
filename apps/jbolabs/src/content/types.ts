@@ -21,7 +21,7 @@ export interface ExampleBusiness {
   readonly headline: string;
   readonly body: string;
   readonly cta: string;
-  /** OKLCH hue of the business's brand colour. */
+  /** OKLCH hue of the business's brand color. */
   readonly hue: number;
   readonly icon: ExampleIcon;
 }

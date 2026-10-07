@@ -1,6 +1,6 @@
 ---
 /**
- * Hero illustration: a phone-sized demo site visitors can edit in place.
+ * Hero illustration: a browser-framed template site visitors can edit in place.
  * Brand swatches and a playful mobile menu need a tiny script; everything
  * else is contenteditable fields and CSS `:has()`.
  */
@@ -18,7 +18,13 @@ const { class: className, value } = Astro.props;
 const businesses = value.businesses.slice(0, 4);
 const [defaultBusiness] = businesses;
 const defaultHue = defaultBusiness?.hue ?? 258;
-const menuLinks = ["Services", "Gallery", "Reviews"];
+const menuLinks = ["Services", "About", "Contact"];
+const copy = {
+  body: "Subtitle goes here. A short line about what you do.",
+  cta: "Get started",
+  headline: "Heading here",
+  name: "ACME Company",
+};
 const swatchRules = businesses
   .map(
     (business, index) =>
@@ -29,93 +35,123 @@ const swatchRules = businesses
 
 {defaultBusiness && (
 <figure
-  class={cn("example mx-auto w-full max-w-sm lg:mr-0", className)}
+  class={cn("example mx-auto w-full max-w-xl lg:mr-0", className)}
   data-example-site
   aria-label="Try editing an example website"
 >
-  <div class="relative rounded-[2.25rem] border border-border bg-card p-2.5 shadow-[0_1px_2px_oklch(0.2_0.02_265/0.04),0_32px_64px_-32px_oklch(0.2_0.02_265/0.28)]">
-    <div class="relative z-10 flex items-center justify-between px-3.5 pt-2.5 pb-4">
-      <span class="flex min-w-0 items-center gap-2 text-sm font-semibold tracking-[-0.01em]">
-        <span class="size-2.5 shrink-0 rounded-full bg-(--brand)" aria-hidden="true"></span>
-        <span contenteditable="plaintext-only" spellcheck="false" class="editable min-w-0 truncate">{defaultBusiness.name}</span>
-      </span>
-      <button
-        type="button"
-        class="menu-toggle -mr-1 flex size-9 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-        data-menu-toggle
-        aria-expanded="false"
-        aria-controls="example-site-menu"
-        aria-label="Open menu"
-      >
-        <Menu class="menu-icon size-4" aria-hidden="true" />
-        <X class="menu-close size-4" aria-hidden="true" />
-      </button>
-    </div>
+  <div class="relative rounded-2xl border border-border bg-card shadow-[0_1px_2px_oklch(0.2_0.02_265/0.04),0_32px_64px_-32px_oklch(0.2_0.02_265/0.28)]">
+    <div class="overflow-hidden rounded-2xl">
+      <div class="flex items-center gap-3 border-b border-border bg-muted/60 px-4 py-2.5" aria-hidden="true">
+        <span class="flex gap-1.5">
+          <span class="size-2.5 rounded-full bg-foreground/15"></span>
+          <span class="size-2.5 rounded-full bg-foreground/15"></span>
+          <span class="size-2.5 rounded-full bg-foreground/15"></span>
+        </span>
+        <span class="min-w-0 flex-1 truncate rounded-md bg-card px-3 py-1 text-center text-xs text-muted-foreground">acmecompany.com</span>
+        <span class="w-9 shrink-0"></span>
+      </div>
 
-    <nav
-      id="example-site-menu"
-      class="menu-panel absolute inset-x-3 top-[3.25rem] z-20 overflow-hidden rounded-2xl border border-border bg-card shadow-[0_12px_40px_-16px_oklch(0.2_0.02_265/0.35)]"
-      data-menu-panel
-      hidden
-    >
-      <ul class="flex flex-col gap-0.5 p-1.5">
-        {menuLinks.map((label) => (
-          <li>
-            <button type="button" class="menu-item w-full rounded-xl px-3 py-2.5 text-left text-sm font-medium transition-colors hover:bg-muted" data-menu-item>
-              {label}
-            </button>
-          </li>
-        ))}
-        <li>
+      <div class="relative">
+        <div class="flex items-center justify-between gap-4 px-5 py-3.5">
+          <span class="flex min-w-0 items-center gap-2 text-sm font-semibold tracking-[-0.01em]">
+            <span class="size-2.5 shrink-0 rounded-full bg-(--brand)" aria-hidden="true"></span>
+            <span contenteditable="plaintext-only" spellcheck="false" class="editable min-w-0 truncate">{copy.name}</span>
+          </span>
+          <ul class="hidden shrink-0 items-center gap-4 text-sm text-muted-foreground sm:flex">
+            {menuLinks.slice(0, 2).map((label) => (
+              <li>{label}</li>
+            ))}
+            <li class="rounded-full border border-(--brand) px-3.5 py-1 font-medium whitespace-nowrap text-(--brand)" >{copy.cta}</li>
+          </ul>
           <button
             type="button"
-            class="menu-item w-full rounded-xl px-3 py-2.5 text-left text-sm font-medium text-(--brand) transition-colors hover:bg-(--brand-soft)"
-            data-menu-item
+            class="menu-toggle -mr-1 flex size-9 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-muted hover:text-foreground sm:hidden"
+            data-menu-toggle
+            aria-expanded="false"
+            aria-controls="example-site-menu"
+            aria-label="Open menu"
           >
-            {defaultBusiness.cta}
+            <Menu class="menu-icon size-4" aria-hidden="true" />
+            <X class="menu-close size-4" aria-hidden="true" />
           </button>
-        </li>
-      </ul>
-    </nav>
+        </div>
 
-    <div class="relative rounded-[1.75rem] bg-(--brand-soft) px-6 pt-8 pb-7 transition-[filter] duration-200" data-menu-dim>
-      <p contenteditable="plaintext-only" spellcheck="false" class="editable text-[1.7rem] leading-[1.12] font-semibold tracking-[-0.025em] text-balance">
-        {defaultBusiness.headline}
-      </p>
-      <p contenteditable="plaintext-only" spellcheck="false" class="editable mt-3 text-sm leading-relaxed text-ink-soft">
-        {defaultBusiness.body}
-      </p>
-      <span class="mt-6 inline-flex h-10 items-center rounded-full bg-(--brand) px-5 text-sm font-medium text-(--brand-ink)">{defaultBusiness.cta}</span>
-    </div>
+        <nav
+          id="example-site-menu"
+          class="menu-panel absolute inset-x-3 top-[3.5rem] z-20 overflow-hidden rounded-2xl border border-border bg-card shadow-[0_12px_40px_-16px_oklch(0.2_0.02_265/0.35)] sm:hidden"
+          data-menu-panel
+          hidden
+        >
+          <ul class="flex flex-col gap-0.5 p-1.5">
+            {menuLinks.map((label) => (
+              <li>
+                <button type="button" class="menu-item w-full rounded-xl px-3 py-2.5 text-left text-sm font-medium transition-colors hover:bg-muted" data-menu-item>
+                  {label}
+                </button>
+              </li>
+            ))}
+            <li>
+              <button
+                type="button"
+                class="menu-item w-full rounded-xl px-3 py-2.5 text-left text-sm font-medium text-(--brand) transition-colors hover:bg-(--brand-soft)"
+                data-menu-item
+                
+              >
+                {copy.cta}
+              </button>
+            </li>
+          </ul>
+        </nav>
 
-    <div class="flex items-center justify-between gap-3 px-3.5 pt-4 pb-2">
-      <span class="text-xs text-muted-foreground">Brand colour</span>
-      <div class="flex gap-1.5">
-        {businesses.map((business, index) => (
-          <label
-            class="swatch size-6 cursor-pointer rounded-full ring-offset-2 ring-offset-card has-checked:ring-2 has-checked:ring-foreground/70"
-            style={`--swatch: oklch(0.55 0.16 ${business.hue})`}
-          >
-            <input
-              type="radio"
-              name="example-brand-hue"
-              value={index}
-              data-swatch={index}
-              class="sr-only"
-              checked={index === 0}
-              aria-label={`${business.kind} brand colour`}
-            />
-          </label>
-        ))}
+        <div class="mx-2.5 rounded-[1.25rem] bg-(--brand-soft) px-6 pt-9 pb-8 transition-[filter] duration-200 sm:px-9 sm:pt-12 sm:pb-11" data-menu-dim>
+          <p contenteditable="plaintext-only" spellcheck="false" class="editable max-w-[16ch] text-[1.9rem] leading-[1.1] font-semibold tracking-[-0.025em] text-balance sm:text-[2.4rem]">
+            {copy.headline}
+          </p>
+          <p contenteditable="plaintext-only" spellcheck="false" class="editable mt-3 max-w-[38ch] text-sm leading-relaxed text-ink-soft sm:text-base">
+            {copy.body}
+          </p>
+          <span class="mt-6 inline-flex h-10 items-center rounded-full bg-(--brand) px-5 text-sm font-medium text-(--brand-ink)">{copy.cta}</span>
+        </div>
+
+        <div class="fade-out relative grid grid-cols-3 gap-2.5 px-2.5 pt-2.5 pb-1" aria-hidden="true">
+          {[0, 1, 2].map(() => (
+            <div class="flex h-24 flex-col gap-2 rounded-2xl border border-border p-3.5">
+              <span class="size-6 rounded-lg bg-(--brand-soft)"></span>
+              <span class="mt-auto h-2 w-3/4 rounded-full bg-foreground/10"></span>
+              <span class="h-2 w-1/2 rounded-full bg-foreground/[0.06]"></span>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
 
-    <span class="hint pointer-events-none absolute -top-3 -left-3 flex items-center gap-1.5 rounded-full bg-signal px-3 py-1.5 text-xs font-medium text-white shadow-lg">
+    <span class="hint pointer-events-none absolute -top-3 -left-3 z-30 flex items-center gap-1.5 rounded-full bg-signal px-3 py-1.5 text-xs font-medium text-white shadow-lg">
       <MousePointerClick class="size-3.5" aria-hidden="true" />
       Click any text to edit
     </span>
   </div>
-  <figcaption class="mt-5 text-center text-sm text-muted-foreground">Your site works the same way. Change it, publish, done.</figcaption>
+  <div class="mt-5 flex h-6 items-center justify-center gap-3" role="radiogroup" aria-label="Brand color">
+    <span class="text-xs font-medium text-muted-foreground">Brand color</span>
+    <div class="flex gap-1.5">
+      {businesses.map((business, index) => (
+        <label
+          class="swatch size-5 cursor-pointer rounded-full ring-offset-2 ring-offset-background has-checked:ring-2 has-checked:ring-foreground/70 has-focus-visible:ring-2 has-focus-visible:ring-ring"
+          style={`background: oklch(0.55 0.16 ${business.hue})`}
+        >
+          <input
+            type="radio"
+            name="example-brand-hue"
+            value={index}
+            data-swatch={index}
+            class="sr-only"
+            checked={index === 0}
+            aria-label={`${business.kind} brand color`}
+          />
+        </label>
+      ))}
+    </div>
+  </div>
+  <figcaption class="mt-4 text-center text-sm text-muted-foreground">Your site works the same way. Change it, publish, done.</figcaption>
 </figure>
 )}
 
@@ -196,8 +232,8 @@ const swatchRules = businesses
 <style is:global set:html={swatchRules} />
 
 <style>
-  .example .swatch {
-    background: var(--swatch);
+  .example .fade-out {
+    mask-image: linear-gradient(to bottom, black 20%, transparent);
   }
 
   .example .editable {
