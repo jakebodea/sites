@@ -47,6 +47,135 @@ const database = async () => {
 };
 
 describe("published content", () => {
+  it("retains nested branch repeater values by item key and fills new item defaults", () => {
+    const branch = branchSeed();
+    const gallery = branch.collections
+      ?.find((collection) => collection.slug === "projects")
+      ?.fields.find((field) => field.slug === "gallery");
+    if (!gallery) {
+      throw new Error("Fixture lacks gallery");
+    }
+    gallery.validation = {
+      subFields: [
+        { label: "Image", slug: "image", type: "image" },
+        {
+          defaultValue: "Default caption",
+          label: "Caption",
+          required: true,
+          slug: "caption",
+          type: "string",
+        },
+      ],
+    };
+    const slides = branch.blockTypes
+      ?.find((block) => block.slug === "hero")
+      ?.versions[0]?.fields.find((field) => field.slug === "slides");
+    if (!slides) {
+      throw new Error("Fixture lacks hero slides");
+    }
+    slides.validation = gallery.validation;
+    branch.content = {
+      pages: [
+        {
+          data: {
+            content: [
+              {
+                _key: "hero",
+                _type: "hero",
+                _version: 1,
+                headline: "Branch headline",
+                slides: [{ _key: "slide", caption: "Branch hero caption" }],
+              },
+            ],
+            title: "About",
+          },
+          id: "about",
+          slug: "about",
+          status: "published",
+        },
+      ],
+      projects: [
+        {
+          data: {
+            gallery: [
+              {
+                _key: "slide",
+                caption: "Branch caption",
+              },
+            ],
+            title: "Branch project",
+          },
+          id: "project",
+          slug: "project",
+          status: "published",
+        },
+      ],
+    };
+    const snapshot = decodeSnapshot({
+      entries: [
+        {
+          collection: "pages",
+          data: {
+            content: [
+              {
+                _key: "hero",
+                _type: "hero",
+                _version: 1,
+                headline: "Production headline",
+                slides: [{ _key: "slide" }],
+              },
+            ],
+            title: "About",
+          },
+          locale: "en",
+          references: {},
+          seo: {
+            canonical: null,
+            description: null,
+            image: null,
+            noIndex: false,
+            title: null,
+          },
+          slug: "about",
+        },
+        {
+          collection: "projects",
+          data: {
+            gallery: [{ _key: "slide" }, { _key: "new" }],
+            title: "Production project",
+          },
+          locale: "en",
+          references: {},
+          seo: {
+            canonical: null,
+            description: null,
+            image: null,
+            noIndex: false,
+            title: null,
+          },
+          slug: "project",
+        },
+      ],
+      menus: [],
+      origin: contentPolicy("access-electric").origin,
+      settings: {},
+      site: "access-electric",
+      version: 1,
+    });
+    const plan = composeFreshSeed(branch, snapshot, "access-electric");
+    expect(plan.seed.content?.projects?.[0]?.data.gallery).toStrictEqual([
+      {
+        _key: "slide",
+        caption: "Branch caption",
+        image: null,
+      },
+      { _key: "new", caption: "Default caption", image: null },
+    ]);
+    expect(
+      JSON.stringify(plan.seed.content?.pages?.[0]?.data.content)
+    ).toContain("Branch hero caption");
+  });
+
   it("refuses a newer plan before the first completion receipt is written", async () => {
     const target = await database();
     try {

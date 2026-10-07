@@ -598,8 +598,20 @@ const emptySeo: CompletionEntry["seo"] = {
   noIndex: false,
   title: null,
 };
+const SubField = Schema.Struct({
+  defaultValue: Schema.optionalKey(Schema.Json),
+  required: Schema.optionalKey(Schema.Boolean),
+  slug: Schema.String,
+  type: Schema.String,
+  validation: Schema.optionalKey(RecordValue),
+});
 const fillFields = (
-  fields: readonly { readonly slug: string; readonly defaultValue?: unknown }[],
+  fields: readonly {
+    readonly slug: string;
+    readonly type: string;
+    readonly defaultValue?: unknown;
+    readonly validation?: { readonly subFields?: unknown };
+  }[],
   incoming: ContentData,
   starter: ContentData
 ): ContentData => {
@@ -609,6 +621,31 @@ const fillFields = (
       output[field.slug] = Schema.decodeUnknownSync(Schema.Json)(
         starter[field.slug] ?? field.defaultValue ?? null
       );
+    }
+    if (field.type === "repeater" && output[field.slug] !== null) {
+      const subFields = field.validation?.subFields;
+      if (subFields !== undefined) {
+        const items = Schema.decodeUnknownSync(Schema.Array(RecordValue))(
+          output[field.slug]
+        );
+        const starterItems = Schema.decodeUnknownSync(
+          Schema.Array(RecordValue)
+        )(starter[field.slug] ?? []);
+        const byKey = new Map(
+          starterItems.flatMap((item) =>
+            Predicate.isString(item._key) ? [[item._key, item]] : []
+          )
+        );
+        output[field.slug] = items.map((item) =>
+          fillFields(
+            Schema.decodeUnknownSync(Schema.Array(SubField))(subFields),
+            item,
+            (Predicate.isString(item._key)
+              ? byKey.get(item._key)
+              : undefined) ?? {}
+          )
+        );
+      }
     }
   }
   return output;
@@ -1019,12 +1056,6 @@ export const composeFreshSeed = (
 };
 
 type CheckedField = Pick<SeedField, "type" | "required" | "validation">;
-const SubField = Schema.Struct({
-  required: Schema.optionalKey(Schema.Boolean),
-  slug: Schema.String,
-  type: Schema.String,
-  validation: Schema.optionalKey(RecordValue),
-});
 const FieldKind = Schema.Literals([
   "string",
   "text",
