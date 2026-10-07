@@ -157,82 +157,40 @@
 }
 
 /*
- * Mobile menu (islands/mobile-nav.tsx). Opening: the blurred overlay fades in
- * and the links drop in together from above, landing with a slight overshoot
- * (0.34, 1.45, 0.64, 1) so it feels like a tap, not a slide. Closing is
- * quicker: the user already decided, so the system gets out of the way.
- * Curves are literal because `@theme inline` drops vars.
+ * Mobile menu (islands/mobile-nav.tsx): items drop in from above, staggered by
+ * `data-i` (the last item, the CTA, is index 4 at most). Closing is a plain fade of the overlay, so no exit choreography.
  */
-@utility menu-overlay {
-  opacity: 0;
-  transition: opacity 120ms ease-out;
-
-  &[data-open="true"] {
-    opacity: 1;
-    transition: opacity 120ms ease-out;
-  }
-}
-
 @utility cascade {
   opacity: 0;
-  translate: 0 -24px;
+  translate: 0 -14px;
   transition:
-    opacity 100ms ease-out,
-    translate 100ms ease-out;
+    opacity 200ms ease-out,
+    translate 320ms var(--ease-out-expo);
 
   [data-open="true"] & {
     opacity: 1;
     translate: 0 0;
-    transition:
-      opacity 120ms ease-out,
-      translate 320ms cubic-bezier(0.34, 1.45, 0.64, 1);
-  }
 
-  @media (prefers-reduced-motion: reduce) {
-    translate: 0 0;
-    transition: opacity 150ms ease;
-
-    [data-open="true"] & {
-      transition: opacity 150ms ease;
-      transition-delay: 0ms;
+    &[data-i="0"] {
+      transition-delay: 30ms;
     }
-  }
-}
-
-/*
- * Two-line toggle. Opening: the lines slide together, then rotate into an X.
- * Closing runs in reverse (un-rotate, then spread), so it never looks like a
- * different animation. Driven by the button's aria-expanded.
- */
-@utility burger-top {
-  --burger-dir: -1;
-}
-
-@utility burger-bottom {
-  --burger-dir: 1;
-}
-
-@utility burger-line {
-  translate: 0 calc(var(--burger-dir) * 4px);
-  rotate: 0deg;
-  transition:
-    rotate 180ms cubic-bezier(0.77, 0, 0.175, 1),
-    translate 150ms cubic-bezier(0.77, 0, 0.175, 1) 100ms;
-
-  [aria-expanded="true"] & {
-    translate: 0 0;
-    rotate: calc(var(--burger-dir) * -45deg);
-    transition:
-      translate 150ms cubic-bezier(0.77, 0, 0.175, 1),
-      rotate 180ms cubic-bezier(0.77, 0, 0.175, 1) 100ms;
+    &[data-i="1"] {
+      transition-delay: 60ms;
+    }
+    &[data-i="2"] {
+      transition-delay: 90ms;
+    }
+    &[data-i="3"] {
+      transition-delay: 120ms;
+    }
+    &[data-i="4"] {
+      transition-delay: 150ms;
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {
     transition: none;
-
-    [aria-expanded="true"] & {
-      transition: none;
-    }
+    translate: 0 0;
   }
 }
 

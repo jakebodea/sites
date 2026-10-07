@@ -82,11 +82,17 @@ const MobileNav = ({ currentPath, items }: MobileNavProps) => {
       >
         <span
           aria-hidden="true"
-          className="bg-foreground burger-line burger-top absolute h-0.5 w-6 rounded-full"
+          className={cn(
+            "bg-foreground ease-out-expo absolute h-0.5 w-6 rounded-full transition-transform duration-300 motion-reduce:transition-none",
+            open ? "rotate-45" : "-translate-y-[4px]"
+          )}
         />
         <span
           aria-hidden="true"
-          className="bg-foreground burger-line burger-bottom absolute h-0.5 w-6 rounded-full"
+          className={cn(
+            "bg-foreground ease-out-expo absolute h-0.5 w-6 rounded-full transition-transform duration-300 motion-reduce:transition-none",
+            open ? "-rotate-45" : "translate-y-[4px]"
+          )}
         />
       </Button>
       {mounted &&
@@ -97,8 +103,9 @@ const MobileNav = ({ currentPath, items }: MobileNavProps) => {
             data-open={open}
             className={cn(
               "bg-background/70 fixed inset-0 z-30 flex flex-col overflow-y-auto backdrop-blur-2xl backdrop-saturate-150 md:hidden",
-              "menu-overlay pointer-events-none",
-              "data-[open=true]:pointer-events-auto"
+              "pointer-events-none opacity-0 transition-opacity duration-300 ease-out",
+              "data-[open=true]:pointer-events-auto data-[open=true]:opacity-100",
+              "motion-reduce:transition-none"
             )}
           >
             <nav
@@ -112,13 +119,17 @@ const MobileNav = ({ currentPath, items }: MobileNavProps) => {
                   href={item.href}
                   aria-current={currentPath === item.href ? "page" : undefined}
                   onClick={close}
+                  data-i={index}
                   className="cascade text-foreground/70 aria-[current=page]:text-foreground py-2 text-4xl font-light tracking-tight lowercase outline-none focus-visible:underline"
                 >
                   {item.label}
                 </a>
               ))}
             </nav>
-            <div className="cascade container-page pb-safe">
+            <div
+              data-i={items.length}
+              className="cascade container-page pb-safe"
+            >
               <a
                 href="/contact"
                 onClick={close}
