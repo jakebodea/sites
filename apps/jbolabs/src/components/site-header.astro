@@ -16,7 +16,7 @@ const isActive = (url: string) =>
   url === "/" ? current === "/" : current === url || current.startsWith(`${url}/`);
 ---
 
-<header class="sticky top-0 z-40 bg-background">
+<header class="sticky top-0 z-40 bg-background transition-colors duration-300">
   <div class="container-page flex h-15 items-center justify-between gap-6 sm:h-16">
     <a href="/" class="rounded-sm" aria-label={`${title}, home`}>
       <Wordmark title={title} />

@@ -69,6 +69,8 @@
   --font-display: var(--font-wordmark), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-label), ui-monospace, monospace;
 
+  --ease-out-expo: cubic-bezier(0.23, 1, 0.32, 1);
+
   --color-ink: var(--ink);
   --color-ink-soft: var(--ink-soft);
   --color-signal: var(--signal);
@@ -147,6 +149,49 @@
 /* Bottom padding that clears the iPhone home indicator. */
 @utility pb-safe {
   padding-bottom: max(1.25rem, env(safe-area-inset-bottom));
+}
+
+/*
+ * Mobile menu (islands/mobile-nav.tsx): items drop in from above, staggered by
+ * `data-i` (the last item, the CTA, is index 4 at most). Closing is a plain fade of the overlay, so no exit choreography.
+ */
+@utility cascade {
+  opacity: 0;
+  translate: 0 -14px;
+  transition:
+    opacity 300ms ease-out,
+    translate 450ms var(--ease-out-expo);
+
+  [data-open="true"] & {
+    opacity: 1;
+    translate: 0 0;
+
+    &[data-i="0"] {
+      transition-delay: 80ms;
+    }
+    &[data-i="1"] {
+      transition-delay: 135ms;
+    }
+    &[data-i="2"] {
+      transition-delay: 190ms;
+    }
+    &[data-i="3"] {
+      transition-delay: 245ms;
+    }
+    &[data-i="4"] {
+      transition-delay: 300ms;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+    translate: 0 0;
+  }
+}
+
+/* The sticky header turns transparent while the mobile menu is open, so the blur covers it too. */
+html[data-nav-open] header {
+  background-color: transparent;
 }
 
 /*
