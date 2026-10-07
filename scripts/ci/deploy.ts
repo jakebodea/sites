@@ -7,12 +7,14 @@
  * Writes `deployments.json` ([{ site, url }]) for later steps (smoke, comment).
  * Production deploys are refused outside CI by each site's stack.
  */
-import { execFileSync } from "node:child_process";
+import { execFile } from "node:child_process";
 import { existsSync, writeFileSync } from "node:fs";
 import path from "node:path";
+import { promisify } from "node:util";
 
 import { listSites } from "@jakebodea/control-app/site";
 import { Schema } from "effect";
+import pLimit from "p-limit";
 
 import { migrateDatabase } from "./migrate.ts";
 
@@ -48,10 +50,40 @@ const deployEnv = Object.fromEntries(
   Object.entries(process.env).filter(([, value]) => value !== "")
 );
 
-const deployments = sites.map((site) => {
+const execute = promisify(
+  (
+    args: readonly string[],
+    directory: string,
+    done: (
+      error: Error | null,
+      output: { stderr: string; stdout: string }
+    ) => void
+  ): void => {
+    execFile(
+      "bun",
+      args,
+      {
+        cwd: directory,
+        encoding: "utf-8",
+        env: deployEnv,
+        maxBuffer: 8 * 1024 * 1024,
+      },
+      (error, stdout, stderr) => {
+        if (error) {
+          process.stdout.write(stdout);
+          process.stderr.write(stderr);
+        }
+        done(error, { stderr, stdout });
+      }
+    );
+  }
+);
+// Site stacks own separate resources and state. Keep production and destruction serial.
+const concurrency = pLimit(stage.startsWith("pr-") && !destroy ? 3 : 1);
+const deploySite = async (site: string) => {
+  const started = performance.now();
   const directory = path.join(root, "apps", site);
-  const output = execFileSync(
-    "bun",
+  const { stdout: output, stderr } = await execute(
     [
       "alchemy",
       destroy ? "destroy" : "deploy",
@@ -60,9 +92,10 @@ const deployments = sites.map((site) => {
       "--yes",
       "--no-input",
     ],
-    { cwd: directory, encoding: "utf-8", env: deployEnv }
+    directory
   );
   process.stdout.write(output);
+  process.stderr.write(stderr);
   if (!destroy && existsSync(path.join(directory, "seed/seed.json"))) {
     const databaseId = DATABASE_OUTPUT.exec(output)?.groups?.id;
     if (databaseId === undefined) {
@@ -70,8 +103,29 @@ const deployments = sites.map((site) => {
     }
     migrateDatabase(directory, databaseId, deployEnv);
   }
+  process.stdout.write(
+    `${site}: deployment and migration finished in ${((performance.now() - started) / 1000).toFixed(1)}s\n`
+  );
   return { site, url: URL_OUTPUT.exec(output)?.groups?.url ?? null };
-});
+};
+// Await every active stack before reporting failure; do not abandon an in-flight deployment.
+const results = await Promise.allSettled(
+  sites.map(
+    async (site) => await concurrency(async () => await deploySite(site))
+  )
+);
+const failures: unknown[] = [];
+for (const result of results) {
+  if (result.status === "rejected") {
+    failures.push(result.reason);
+  }
+}
+if (failures.length > 0) {
+  throw new AggregateError(failures, "Site deployment failed");
+}
+const deployments = results.flatMap((result) =>
+  result.status === "fulfilled" ? [result.value] : []
+);
 
 writeFileSync(
   path.join(root, "deployments.json"),

@@ -1,12 +1,11 @@
 /**
  * After a CI deploy: smoke-test every deployed site, run the technical SEO
- * audit (errors fail; on production it catches a stray noindex), and hold
- * previews to the Lighthouse budgets in `lighthouserc.json` (which skips `is-crawlable`:
- * previews send `X-Robots-Tag: noindex` on purpose, and the SEO audit polices that). Reads `deployments.json` from
+ * audit (errors fail; on production it catches a stray noindex). Lighthouse
+ * budgets already run in the required per-site verification jobs. Reads `deployments.json` from
  * `scripts/ci/deploy.ts`; results land in `.artifacts/ci/`.
  *
  *   bun scripts/ci/verify-previews.ts               # previews
- *   bun scripts/ci/verify-previews.ts --production  # no Lighthouse: never fail on its noise
+ *   bun scripts/ci/verify-previews.ts --production  # same hosted checks
  */
 import { mkdirSync, readFileSync } from "node:fs";
 import path from "node:path";
@@ -16,7 +15,6 @@ import pLimit from "p-limit";
 
 import { command } from "./command.ts";
 import { controlCheck } from "./control-check.ts";
-import { lighthouse } from "./lighthouse.ts";
 import { waitForDeployment } from "./readiness.ts";
 
 const Deployments = Schema.fromJsonString(
@@ -25,7 +23,6 @@ const Deployments = Schema.fromJsonString(
   )
 );
 const root = path.resolve(import.meta.dirname, "../..");
-const production = process.argv.includes("--production");
 const output = path.join(root, ".artifacts", "ci");
 mkdirSync(output, { recursive: true });
 
@@ -34,8 +31,6 @@ const deployments = Schema.decodeUnknownSync(Deployments)(
 );
 
 const sites = pLimit(3);
-// Concurrent browser audits compete for CPU and change the performance scores.
-const browser = pLimit(1);
 const results = await Promise.all(
   deployments.map(
     async ({ site, url }) =>
@@ -65,15 +60,7 @@ const results = await Promise.all(
             controlCheck({ name: "smoke", origin: url, output, site }),
             controlCheck({ name: "seo", origin: url, output, site }),
           ]);
-          if (checks.includes(false)) {
-            return false;
-          }
-          if (!production) {
-            await browser(async () => {
-              await lighthouse(url, path.join(output, site, "lighthouse"));
-            });
-          }
-          return true;
+          return !checks.includes(false);
         } catch (error) {
           process.stderr.write(
             `${site}: verification failed: ${String(error)}\n`

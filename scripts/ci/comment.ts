@@ -52,7 +52,7 @@ const body = `${MARKER}
 | --- | --- |
 ${rows}
 
-Smoke and Lighthouse results are in the workflow run. EmDash admin on a preview starts at first-run setup.
+Hosted smoke and SEO results are in the workflow run; Lighthouse budgets run in the required site checks. EmDash admin uses the studio owner account.
 `;
 
 const gh = (args: string[]) => execFileSync("gh", args, { encoding: "utf-8" });

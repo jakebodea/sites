@@ -200,7 +200,7 @@ jobs:
         run: bun scripts/ci/comment.ts --pr ${{ github.event.pull_request.number }} --stage "$STAGE"
         env:
           GH_TOKEN: ${{ github.token }}
-      - name: Smoke test and Lighthouse budgets
+      - name: Hosted smoke and SEO checks
         env:
           CONTENT_MODE: ${{ steps.policy.outputs.content }}
         if: steps.policy.outputs.deploy == 'true'
