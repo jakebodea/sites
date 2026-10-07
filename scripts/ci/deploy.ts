@@ -78,8 +78,18 @@ const execute = promisify(
     );
   }
 );
-// Site stacks own separate resources and state. Keep production and destruction serial.
-const concurrency = pLimit(stage.startsWith("pr-") && !destroy ? 3 : 1);
+const parallel = stage.startsWith("pr-") && !destroy && sites.length > 1;
+// Site state is separate, but the account-wide state-store service upgrades in place.
+if (parallel) {
+  const { stdout, stderr } = await execute(
+    ["alchemy", "provider", "cloudflare", "bootstrap"],
+    root
+  );
+  process.stdout.write(stdout);
+  process.stderr.write(stderr);
+}
+// Keep production and destruction serial.
+const concurrency = pLimit(parallel ? 3 : 1);
 const deploySite = async (site: string) => {
   const started = performance.now();
   const directory = path.join(root, "apps", site);
