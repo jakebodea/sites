@@ -210,224 +210,232 @@ describe("published content", () => {
     }
   });
 
-  it("exports live public rows and restores semantic relationships/SEO while retaining branch additions", async () => {
-    const source = await database();
-    const target = await database();
-    try {
-      const branch = branchSeed();
-      await applySeed(source, {
-        blockTypes: branch.blockTypes,
-        collections: branch.collections,
-        relations: branch.relations,
-        version: "1",
-      });
-      const category = await handleContentCreate(source, "categories", {
-        data: { title: "Schools" },
-        slug: "schools",
-        status: "published",
-      });
-      const project = await handleContentCreate(source, "projects", {
-        data: { progress: "completed", title: "School one" },
-        slug: "school-one",
-        status: "published",
-      });
-      if (!category.success || !project.success) {
-        throw new Error("Fixture creation failed");
-      }
-      await handleContentCreate(source, "pages", {
-        data: { content: [], title: "Production about" },
-        seo: { description: "Published description", title: "Published SEO" },
-        slug: "about",
-        status: "published",
-      });
-      await handleContentCreate(source, "pages", {
-        data: { title: "Private draft" },
-        slug: "private-draft",
-      });
-      await handleContentCreate(source, "leads", {
-        data: {
-          email: "private@example.test",
-          message: "Private lead",
-          title: "Private published lead",
-        },
-        slug: "private-lead",
-        status: "published",
-      });
-      // Public side-write fixture models the already-published live selection.
-      const { handleContentUpdate } = await import("emdash");
-      await handleContentUpdate(source, "categories", category.data.item.id, {
-        references: { projects: [project.data.item.id] },
-      });
-      await new OptionsRepository(source).set("plugin:private", {
-        secret: "source-secret",
-      });
-      await new OptionsRepository(source).set("studio:published-content", {
-        receipt: "source-receipt",
-      });
-      const snapshot = await exportPublished(source, "access-electric", {
-        menus: [
-          {
-            items: [
-              { label: "Schools", type: "custom", url: "/portfolio/schools" },
-            ],
-            label: "Primary",
-            name: "primary",
+  // Three native SQLite migration/setup cycles exceed the unit-test deadline on shared CI runners.
+  it(
+    "exports live public rows and restores semantic relationships/SEO while retaining branch additions",
+    { timeout: 15_000 },
+    async () => {
+      const source = await database();
+      const target = await database();
+      try {
+        const branch = branchSeed();
+        await applySeed(source, {
+          blockTypes: branch.blockTypes,
+          collections: branch.collections,
+          relations: branch.relations,
+          version: "1",
+        });
+        const category = await handleContentCreate(source, "categories", {
+          data: { title: "Schools" },
+          slug: "schools",
+          status: "published",
+        });
+        const project = await handleContentCreate(source, "projects", {
+          data: { progress: "completed", title: "School one" },
+          slug: "school-one",
+          status: "published",
+        });
+        if (!category.success || !project.success) {
+          throw new Error("Fixture creation failed");
+        }
+        await handleContentCreate(source, "pages", {
+          data: { content: [], title: "Production about" },
+          seo: { description: "Published description", title: "Published SEO" },
+          slug: "about",
+          status: "published",
+        });
+        await handleContentCreate(source, "pages", {
+          data: { title: "Private draft" },
+          slug: "private-draft",
+        });
+        await handleContentCreate(source, "leads", {
+          data: {
+            email: "private@example.test",
+            message: "Private lead",
+            title: "Private published lead",
           },
-        ],
-        settings: { tagline: "Published tagline", title: "Published title" },
-      });
-      const serialized = JSON.stringify(snapshot);
-      expect(
-        [
-          "private@example.test",
-          "Private draft",
-          "source-secret",
-          "source-receipt",
-          project.data.item.id,
-        ].filter((value) => serialized.includes(value))
-      ).toStrictEqual([]);
-      const pages = branch.collections?.find(
-        (collection) => collection.slug === "pages"
-      );
-      if (!pages) {
-        throw new Error("Fixture lacks pages");
-      }
-      pages.fields.push({
-        defaultValue: "Branch default",
-        label: "Branch note",
-        required: true,
-        slug: "branch_note",
-        type: "string",
-      });
-      branch.blockTypes?.push({
-        currentVersion: 1,
-        label: "Branch card",
-        slug: "branch_card",
-        versions: [
-          {
-            fields: [
-              { label: "Note", required: true, slug: "note", type: "string" },
-            ],
-            version: 1,
-          },
-        ],
-      });
-      const blocks = pages.fields.find((field) => field.slug === "content");
-      if (
-        !blocks?.validation ||
-        !Array.isArray(blocks.validation.allowedTypes)
-      ) {
-        throw new Error("Fixture lacks blocks");
-      }
-      blocks.validation.allowedTypes.push("branch_card");
-      const starter = branch.content?.pages?.find(
-        (row) => row.slug === "about"
-      );
-      if (!starter) {
-        throw new Error("Fixture lacks starter");
-      }
-      starter.data.branch_note = "Branch starter";
-      starter.data.content = [
-        {
-          _key: "branch",
-          _type: "branch_card",
-          _version: 1,
-          note: "Branch block",
-        },
-      ];
-      branch.content = { pages: [starter] };
-      const plan = composeFreshSeed(branch, snapshot, "access-electric");
-      await validateFreshPlan(plan);
-      await applySeed(target, plan.seed, {
-        includeContent: true,
-        skipMediaDownload: true,
-      });
-      await new OptionsRepository(target).set("emdash:setup_state", {
-        step: "site_complete",
-      });
-      let result = await completeFresh(
-        target,
-        plan,
-        "dev-fixture",
-        "access-electric"
-      );
-      while (!result.complete) {
-        result = await completeFresh(
-          target,
-          plan,
-          "dev-fixture",
-          "access-electric"
+          slug: "private-lead",
+          status: "published",
+        });
+        // Public side-write fixture models the already-published live selection.
+        const { handleContentUpdate } = await import("emdash");
+        await handleContentUpdate(source, "categories", category.data.item.id, {
+          references: { projects: [project.data.item.id] },
+        });
+        await new OptionsRepository(source).set("plugin:private", {
+          secret: "source-secret",
+        });
+        await new OptionsRepository(source).set("studio:published-content", {
+          receipt: "source-receipt",
+        });
+        const snapshot = await exportPublished(source, "access-electric", {
+          menus: [
+            {
+              items: [
+                { label: "Schools", type: "custom", url: "/portfolio/schools" },
+              ],
+              label: "Primary",
+              name: "primary",
+            },
+          ],
+          settings: { tagline: "Published tagline", title: "Published title" },
+        });
+        const serialized = JSON.stringify(snapshot);
+        expect(
+          [
+            "private@example.test",
+            "Private draft",
+            "source-secret",
+            "source-receipt",
+            project.data.item.id,
+          ].filter((value) => serialized.includes(value))
+        ).toStrictEqual([]);
+        const pages = branch.collections?.find(
+          (collection) => collection.slug === "pages"
         );
-      }
-      const about = await handleContentGet(target, "pages", "about", "en", {
-        includeDrafts: false,
-      });
-      const schools = await handleContentGet(
-        target,
-        "categories",
-        "schools",
-        "en",
-        { includeDrafts: false }
-      );
-      if (!about.success || !schools.success) {
-        throw new Error("Imported rows absent");
-      }
-      const leads = await new ContentRepository(target).findMany("leads");
-      expect({
-        blocks: about.data.item.data.content,
-        leads: leads.items,
-        note: about.data.item.data.branch_note,
-        projects: schools.data.item.references?.projects?.children.map(
-          (entry) => entry.slug
-        ),
-        seo: about.data.item.seo?.title,
-        tokens: await target.selectFrom("auth_tokens").selectAll().execute(),
-        users: await target.selectFrom("users").selectAll().execute(),
-      }).toStrictEqual({
-        blocks: [
+        if (!pages) {
+          throw new Error("Fixture lacks pages");
+        }
+        pages.fields.push({
+          defaultValue: "Branch default",
+          label: "Branch note",
+          required: true,
+          slug: "branch_note",
+          type: "string",
+        });
+        branch.blockTypes?.push({
+          currentVersion: 1,
+          label: "Branch card",
+          slug: "branch_card",
+          versions: [
+            {
+              fields: [
+                { label: "Note", required: true, slug: "note", type: "string" },
+              ],
+              version: 1,
+            },
+          ],
+        });
+        const blocks = pages.fields.find((field) => field.slug === "content");
+        if (
+          !blocks?.validation ||
+          !Array.isArray(blocks.validation.allowedTypes)
+        ) {
+          throw new Error("Fixture lacks blocks");
+        }
+        blocks.validation.allowedTypes.push("branch_card");
+        const starter = branch.content?.pages?.find(
+          (row) => row.slug === "about"
+        );
+        if (!starter) {
+          throw new Error("Fixture lacks starter");
+        }
+        starter.data.branch_note = "Branch starter";
+        starter.data.content = [
           {
             _key: "branch",
             _type: "branch_card",
             _version: 1,
             note: "Branch block",
           },
-        ],
-        leads: [],
-        note: "Branch starter",
-        projects: ["school-one"],
-        seo: "Published SEO",
-        tokens: [],
-        users: [],
-      });
-      const before = await target.selectFrom("revisions").selectAll().execute();
-      const repeated = await completeFresh(
-        target,
-        plan,
-        "dev-fixture",
-        "access-electric"
-      );
-      expect({
-        repeated,
-        revisions: await target.selectFrom("revisions").selectAll().execute(),
-      }).toStrictEqual({
-        repeated: {
-          complete: true,
-          index: plan.entries.length,
-          total: plan.entries.length,
-        },
-        revisions: before,
-      });
-      await expect(
-        completeFresh(target, plan, "prod", "access-electric")
-      ).rejects.toThrow("Destination stage/site mismatch");
-      await expect(
-        completeFresh(target, plan, "pr-3", "ms-custom-homes")
-      ).rejects.toThrow("Destination stage/site mismatch");
-    } finally {
-      await source.destroy();
-      await target.destroy();
+        ];
+        branch.content = { pages: [starter] };
+        const plan = composeFreshSeed(branch, snapshot, "access-electric");
+        await validateFreshPlan(plan);
+        await applySeed(target, plan.seed, {
+          includeContent: true,
+          skipMediaDownload: true,
+        });
+        await new OptionsRepository(target).set("emdash:setup_state", {
+          step: "site_complete",
+        });
+        let result = await completeFresh(
+          target,
+          plan,
+          "dev-fixture",
+          "access-electric"
+        );
+        while (!result.complete) {
+          result = await completeFresh(
+            target,
+            plan,
+            "dev-fixture",
+            "access-electric"
+          );
+        }
+        const about = await handleContentGet(target, "pages", "about", "en", {
+          includeDrafts: false,
+        });
+        const schools = await handleContentGet(
+          target,
+          "categories",
+          "schools",
+          "en",
+          { includeDrafts: false }
+        );
+        if (!about.success || !schools.success) {
+          throw new Error("Imported rows absent");
+        }
+        const leads = await new ContentRepository(target).findMany("leads");
+        expect({
+          blocks: about.data.item.data.content,
+          leads: leads.items,
+          note: about.data.item.data.branch_note,
+          projects: schools.data.item.references?.projects?.children.map(
+            (entry) => entry.slug
+          ),
+          seo: about.data.item.seo?.title,
+          tokens: await target.selectFrom("auth_tokens").selectAll().execute(),
+          users: await target.selectFrom("users").selectAll().execute(),
+        }).toStrictEqual({
+          blocks: [
+            {
+              _key: "branch",
+              _type: "branch_card",
+              _version: 1,
+              note: "Branch block",
+            },
+          ],
+          leads: [],
+          note: "Branch starter",
+          projects: ["school-one"],
+          seo: "Published SEO",
+          tokens: [],
+          users: [],
+        });
+        const before = await target
+          .selectFrom("revisions")
+          .selectAll()
+          .execute();
+        const repeated = await completeFresh(
+          target,
+          plan,
+          "dev-fixture",
+          "access-electric"
+        );
+        expect({
+          repeated,
+          revisions: await target.selectFrom("revisions").selectAll().execute(),
+        }).toStrictEqual({
+          repeated: {
+            complete: true,
+            index: plan.entries.length,
+            total: plan.entries.length,
+          },
+          revisions: before,
+        });
+        await expect(
+          completeFresh(target, plan, "prod", "access-electric")
+        ).rejects.toThrow("Destination stage/site mismatch");
+        await expect(
+          completeFresh(target, plan, "pr-3", "ms-custom-homes")
+        ).rejects.toThrow("Destination stage/site mismatch");
+      } finally {
+        await source.destroy();
+        await target.destroy();
+      }
     }
-  });
+  );
 
   it.each(["access-electric", "ms-custom-homes"] as const)(
     "exports only the approved collections for %s",
