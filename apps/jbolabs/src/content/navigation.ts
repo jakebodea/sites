@@ -3,8 +3,8 @@ import type { Link } from "./types.ts";
 
 /** Home-page sections use `/#id` so they work from every page; the root `scroll-behavior` animates them. */
 export const primaryNav: readonly Link[] = [
-  { href: "/#work", label: "The work" },
-  { href: "/#process", label: "How I work" },
+  { href: "/#work", label: "Services" },
+  { href: "/#process", label: "Process" },
   { href: "/#faq", label: "FAQ" },
   { href: "/about", label: "About" },
 ];
