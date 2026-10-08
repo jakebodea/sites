@@ -37,6 +37,7 @@ interface WorkerFixture {
   readonly stage?: string;
   readonly site?: string;
   readonly exportToken?: string;
+  readonly publicHtmlCacheTtl?: string;
   readonly publicMediaSource?: {
     readonly publishedOrigin: string;
     readonly localOrigin: string;
@@ -67,6 +68,7 @@ export const localWorker = async (
     ASSETS: { type: "assets" },
     BACKUPS: { name: `${scope}-backups`, type: "r2" },
     CF_ANALYTICS_API_TOKEN: text(""),
+    CF_VERSION_METADATA: { type: "json", value: { id: scope } },
     CMS_BOOTSTRAP_TOKEN: text(LOCAL_CMS_BOOTSTRAP_TOKEN),
     CMS_OWNER_EMAIL: text("owner@example.test"),
     CMS_OWNER_SITE: text(fixture.site ?? path.basename(directory)),
@@ -74,6 +76,7 @@ export const localWorker = async (
     LEAD_NOTIFY_FROM: text(""),
     LEAD_NOTIFY_FROM_NAME: text(""),
     LEAD_NOTIFY_TO: text(""),
+    PUBLIC_HTML_CACHE_TTL_SECONDS: text(fixture.publicHtmlCacheTtl ?? "0"),
     PUBLISHED_CONTENT_EXPORT_TOKEN: text(fixture.exportToken ?? ""),
     SESSION: { id: `${scope}-session`, type: "kv" },
     SITE_ORIGIN: text("http://localhost"),
@@ -170,7 +173,19 @@ export const localWorker = async (
           port: Number(url.port),
           workers: [worker],
         });
-        return { origin: url.origin, runtime };
+        return {
+          origin: url.origin,
+          runtime,
+          // Keep local data and cache storage while simulating a new deployment.
+          setVersionMetadata: async (id: string) => {
+            config.env.CF_VERSION_METADATA = { type: "json", value: { id } };
+            await runtime.setOptions({
+              cf: false,
+              port: Number(url.port),
+              workers: [worker],
+            });
+          },
+        };
       })(),
       (async () => {
         await delay(30_000, undefined, { signal: startup.signal });

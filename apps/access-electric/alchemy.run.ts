@@ -1,5 +1,7 @@
+/// <reference types="bun" />
 import {
   BUILD_INPUTS_FILE,
+  cmsCrons,
   TURNSTILE_TEST_KEYS,
   WORKER_COMPATIBILITY,
   devPort,
@@ -100,6 +102,7 @@ export default Alchemy.Stack(
       }),
       ...(yield* emdashSecrets),
       BACKUPS: backups,
+      CF_VERSION_METADATA: Cloudflare.Workers.VersionMetadata(),
       CMS_BOOTSTRAP_TOKEN: dev
         ? Redacted.make("local-only-cms-bootstrap-credential")
         : yield* Config.Redacted("CMS_BOOTSTRAP_TOKEN"),
@@ -110,6 +113,7 @@ export default Alchemy.Stack(
       // EmDash's /_image endpoint resizes media with this binding.
       IMAGES: Cloudflare.Images.Images("IMAGES"),
       MEDIA: media,
+      PUBLIC_HTML_CACHE_TTL_SECONDS: stage.production ? "30" : "0",
       PUBLISHED_CONTENT_EXPORT_TOKEN: stage.production
         ? yield* Config.Redacted("PUBLISHED_CONTENT_EXPORT_TOKEN")
         : Redacted.make(""),
@@ -130,11 +134,19 @@ export default Alchemy.Stack(
           };
 
     const website = yield* Cloudflare.Website.Astro("Website", {
+      // Keep the pre-Worker cache off so static asset requests remain free.
+      cache: { enabled: false },
       compatibility: {
         date: WORKER_COMPATIBILITY.date,
         flags: [...WORKER_COMPATIBILITY.flags],
       },
-      crons: stage.production ? [EMDASH_CRON, BACKUP_CRON] : [EMDASH_CRON],
+      crons: cmsCrons({
+        backupCron: BACKUP_CRON,
+        previewScheduledPublishing:
+          process.env.PREVIEW_SCHEDULED_PUBLISHING === "1",
+        production: stage.production,
+        publishCron: EMDASH_CRON,
+      }),
       dev: { port, strictPort: true },
       domain: stage.domain,
       env,
