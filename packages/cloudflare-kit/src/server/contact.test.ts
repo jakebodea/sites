@@ -111,9 +111,9 @@ describe(leadNotificationText, () => {
   });
 
   it("leaves the referrer line out when there is none", () => {
-    expect(
-      leadNotificationText({ ...form, sourcePath: "/contact" })
-    ).not.toContain("Referred by");
+    const text = leadNotificationText({ ...form, sourcePath: "/contact" });
+    expect(text).toContain("Page: /contact");
+    expect(text).not.toContain("Referred by");
   });
 });
 

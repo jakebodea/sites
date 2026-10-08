@@ -52,6 +52,10 @@ The Alchemy profile comes from `ALCHEMY_PROFILE` (e.g. `ALCHEMY_PROFILE=admin`).
 - Never disable a lint rule inline without a `-- reason`. Fix the code first.
 - Don't touch `packages/cloudflare-kit/src/emdash/alchemy-workarounds.ts` or the Vite `ssr.optimizeDeps` block in `astro.config.ts` without reading why each line exists; both keep EmDash working on Alchemy.
 
+## Tests
+
+A test must be able to fail when the code under test does nothing: assert a literal produced value, not only absence, a restated constant, or an expectation computed with the module under test. `packages/config/oxlint-plugin-test-quality.ts` enforces the mechanical cases (including inside `it.effect`/`it.live`/`it.scoped`); fix a violation by pairing the absence with a presence check or using a literal, and disable a rule only with a `-- reason` for a genuine guard.
+
 ## Definition of done
 
 1. `bun run ci` passes (zero lint warnings).
@@ -61,6 +65,12 @@ The Alchemy profile comes from `ALCHEMY_PROFILE` (e.g. `ALCHEMY_PROFILE=admin`).
 ## Decisions
 
 Hosting, CMS login, email, analytics, monitoring, backups, secrets, and stages are decided. Read [docs/stack.md](docs/stack.md) before changing any of them, and the linked ADR for why. A change to a decision edits `docs/stack.md` in the same PR. An `/architect` run writes its design into a new ADR.
+
+## Tests
+
+- Test behavior, not implementation. Call the code the way its users do and assert a literal expected value from an independent source (a worked example or the spec), never one recomputed the way the code computes it. Keep a test only if it would fail when every function it imports returned `undefined`: rewrite or delete tests whose only assertions are calls made (`toHaveBeenCalled*`), absence (`toBeUndefined`, `toEqual([])`), a restated constant, or data the test built itself.
+- Fake only real system boundaries (external APIs, time, randomness, platform APIs) and pass them in; never mock the project's own modules. Freeze the clock in any test whose result depends on today's date.
+- A site's real proof is `bun run app -- smoke`/`seo` on the running site (Definition of done), not more unit tests.
 
 ## Style
 

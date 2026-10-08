@@ -101,11 +101,22 @@ describe("analytics settings reconciliation", () => {
     repo.values.set(key("cfApiToken"), env.CF_ANALYTICS_API_TOKEN);
     await reconcileAnalyticsPluginSettings(repo, env);
     const oldEnvelope = repo.values.get(key("cfApiToken"));
-    await reconcileAnalyticsPluginSettings(repo, {
+    const rotated = {
       ...env,
       EMDASH_ENCRYPTION_KEY: `emdash_enc_v1_${btoa(String.fromCodePoint(...new Uint8Array(32).fill(8))).replaceAll("=", "")}`,
-    });
-    expect(repo.values.get(key("cfApiToken"))).not.toStrictEqual(oldEnvelope);
+    };
+    await reconcileAnalyticsPluginSettings(repo, rotated);
+    const newEnvelope = repo.values.get(key("cfApiToken"));
+    expect(newEnvelope).not.toStrictEqual(oldEnvelope);
+    await expect(
+      decodePluginSettingValue(
+        "analytics",
+        "cfApiToken",
+        newEnvelope,
+        { cfApiToken: { label: "Token", type: "secret" } },
+        await resolvePluginEncryptionKeys(rotated)
+      )
+    ).resolves.toBe("test-token");
   });
 
   it("deletes Cloudflare keys in demo mode and restores them on production", async () => {

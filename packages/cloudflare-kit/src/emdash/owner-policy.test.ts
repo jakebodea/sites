@@ -67,6 +67,9 @@ describe("hosted CMS ownership", () => {
       const method = path.endsWith("/status") ? "GET" : "POST";
       expect(earlyOwnershipGate(request(path, method), config)).toBeUndefined();
     }
+    expect(
+      earlyOwnershipGate(request("/_emdash/api/setup/admin"), config)?.status
+    ).toBe(403);
   });
 
   it("rejects missing owner configuration", () => {

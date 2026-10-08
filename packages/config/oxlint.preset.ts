@@ -1,7 +1,8 @@
 /**
  * Shared strict oxlint preset: every Ultracite preset this stack uses, the
  * JS-plugin rules (react-doctor, sonarjs, @shadcn/lint, anti-slop), and the
- * project-local rules in `oxlint-plugin-local.ts`. The root `oxlint.config.ts`
+ * project-local rules in `oxlint-plugin-local.ts` and the test-quality rules in
+ * `oxlint-plugin-test-quality.ts`. The root `oxlint.config.ts`
  * re-exports it (a nested `oxlint.config.ts` would be picked up as a
  * per-directory config, hence the `.preset.ts` name).
  *
@@ -43,6 +44,12 @@ export default defineConfig({
       name: "local",
       specifier: fileURLToPath(
         new URL("oxlint-plugin-local.ts", import.meta.url)
+      ),
+    },
+    {
+      name: "test-quality",
+      specifier: fileURLToPath(
+        new URL("oxlint-plugin-test-quality.ts", import.meta.url)
       ),
     },
   ],
@@ -92,6 +99,12 @@ export default defineConfig({
       rules: {
         // Rule tests embed the forbidden dashes as fixtures.
         "local/no-long-dashes": "off",
+        // Expected values are literals, not computed with the module under test.
+        "test-quality/no-self-referential-expected": "error",
+        // At least one assertion pins a produced value, not only absence, presence, or type.
+        "test-quality/no-weak-only-assertions": "error",
+        // The test runs code instead of only reading constants or its own fixtures.
+        "test-quality/require-subject-call": "error",
         // @effect/vitest's `it.effect` is a test block.
         "vitest/no-standalone-expect": [
           "error",
