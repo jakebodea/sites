@@ -48,7 +48,7 @@
     "alchemy": "catalog:",
     "tailwindcss": "catalog:",
     "tw-animate-css": "catalog:",
-    "typescript": "catalog:",
+    "typescript": "catalog:typescript-api",
     "vitest": "catalog:",
     "wrangler": "catalog:"
   },
