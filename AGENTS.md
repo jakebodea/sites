@@ -62,6 +62,12 @@ The Alchemy profile comes from `ALCHEMY_PROFILE` (e.g. `ALCHEMY_PROFILE=admin`).
 
 Hosting, CMS login, email, analytics, monitoring, backups, secrets, and stages are decided. Read [docs/stack.md](docs/stack.md) before changing any of them, and the linked ADR for why. A change to a decision edits `docs/stack.md` in the same PR. An `/architect` run writes its design into a new ADR.
 
+## Tests
+
+- Test behavior, not implementation. Call the code the way its users do and assert a literal expected value from an independent source (a worked example or the spec), never one recomputed the way the code computes it. Keep a test only if it would fail when every function it imports returned `undefined`: rewrite or delete tests whose only assertions are calls made (`toHaveBeenCalled*`), absence (`toBeUndefined`, `toEqual([])`), a restated constant, or data the test built itself.
+- Fake only real system boundaries (external APIs, time, randomness, platform APIs) and pass them in; never mock the project's own modules. Freeze the clock in any test whose result depends on today's date.
+- A site's real proof is `bun run app -- smoke`/`seo` on the running site (Definition of done), not more unit tests.
+
 ## Style
 
 Ultracite (oxlint + oxfmt) is strict and the source of truth: see `.agents/skills/ultracite`. Project skills live in `.agents/skills/` (symlinked into `.claude/skills/`): `new-site`, `add-section`, `control-app`, `seo`, `deploy`, `proof`. Prefer Effect Schema at every I/O boundary, `Data`/`Schema.TaggedError` for failures, small focused modules, and comments that explain why, not what.
