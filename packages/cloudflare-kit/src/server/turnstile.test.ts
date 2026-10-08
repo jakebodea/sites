@@ -39,6 +39,7 @@ const verifyToken = (token: string) =>
   });
 
 describe("Turnstile verification", () => {
+  // oxlint-disable-next-line test-quality/require-subject-call -- pins Cloudflare's documented always-pass site key; a constant has no function to call
   it("documents Cloudflare's always-pass test keys", () => {
     expect(TURNSTILE_TEST_KEYS.siteKey).toMatch(/^1x0+AA$/u);
   });

@@ -10,6 +10,9 @@ describe(retirementSite, () => {
     expect(() => {
       retirementSite("ms-custom-homes", "preview");
     }).not.toThrow();
+    expect(() => {
+      retirementSite("access-electric", "prod");
+    }).toThrow("Refusing retirement of access-electric/prod");
   });
 
   it.each([
