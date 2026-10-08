@@ -7,7 +7,8 @@
     "./tsconfig.base.json": "./tsconfig.base.json",
     "./oxlint": "./oxlint.preset.ts",
     "./oxfmt": "./oxfmt.preset.ts",
-    "./oxlint-plugin-local": "./oxlint-plugin-local.ts"
+    "./oxlint-plugin-local": "./oxlint-plugin-local.ts",
+    "./oxlint-plugin-test-quality": "./oxlint-plugin-test-quality.ts"
   },
   "scripts": {
     "test": "vitest run",

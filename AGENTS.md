@@ -52,6 +52,10 @@ The Alchemy profile comes from `ALCHEMY_PROFILE` (e.g. `ALCHEMY_PROFILE=admin`).
 - Never disable a lint rule inline without a `-- reason`. Fix the code first.
 - Don't touch `packages/cloudflare-kit/src/emdash/alchemy-workarounds.ts` or the Vite `ssr.optimizeDeps` block in `astro.config.ts` without reading why each line exists; both keep EmDash working on Alchemy.
 
+## Tests
+
+A test must be able to fail when the code under test does nothing: assert a literal produced value, not only absence, a restated constant, or an expectation computed with the module under test. `packages/config/oxlint-plugin-test-quality.ts` enforces the mechanical cases (including inside `it.effect`/`it.live`/`it.scoped`); fix a violation by pairing the absence with a presence check or using a literal, and disable a rule only with a `-- reason` for a genuine guard.
+
 ## Definition of done
 
 1. `bun run ci` passes (zero lint warnings).

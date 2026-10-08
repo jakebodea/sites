@@ -246,7 +246,7 @@ describe(fetchPublicHtml, () => {
   ])(
     "does not store private, negotiated, error, or non-HTML responses %#",
     async (response) => {
-      const { cache, ctx } = fixture();
+      const { cache, ctx, pending } = fixture();
       await fetchPublicHtml(
         request("/"),
         env,
@@ -254,7 +254,18 @@ describe(fetchPublicHtml, () => {
         async () => await Promise.resolve(response),
         cache
       );
+      await Promise.all(pending);
       expect(cache.put).not.toHaveBeenCalled();
+      // A plain public page through the same cache is stored.
+      await fetchPublicHtml(
+        request("/about"),
+        env,
+        ctx,
+        async () => await Promise.resolve(html("public")),
+        cache
+      );
+      await Promise.all(pending);
+      expect(cache.put).toHaveBeenCalledOnce();
     }
   );
 

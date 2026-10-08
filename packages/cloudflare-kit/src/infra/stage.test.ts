@@ -72,6 +72,7 @@ describe(productionDeployRefusal, () => {
   });
 
   it("allows prod from CI or with the explicit override", () => {
+    expect(productionDeployRefusal(prod, {})).toMatch(/Refusing/u);
     expect(productionDeployRefusal(prod, { CI: "true" })).toBeUndefined();
     expect(
       productionDeployRefusal(prod, { ALLOW_PROD_DEPLOY: "1" })
@@ -79,6 +80,7 @@ describe(productionDeployRefusal, () => {
   });
 
   it("never blocks other stages", () => {
+    expect(productionDeployRefusal(prod, {})).toMatch(/Refusing/u);
     expect(
       productionDeployRefusal(resolveStage(site, "pr-3"), {})
     ).toBeUndefined();
