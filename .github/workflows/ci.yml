@@ -128,13 +128,14 @@ jobs:
       - name: Require every gate
         if: contains(needs.*.result, 'failure')
         run: exit 1
-      # A newer run cancels a superseded run's gates: report cancelled, not failed. Either
-      # way the check is not a success, so it still blocks merging.
+      # A newer run cancels a superseded run's gates: mark the run cancelled, not failed. This
+      # job itself keeps running (`always()` jobs ignore cancellation), so it exits at once
+      # instead of waiting; either way the check is not a success, so it still blocks merging.
       - name: Mirror a cancelled gate
         if: contains(needs.*.result, 'cancelled')
         run: |
           gh run cancel "$RUN" --repo "$REPO"
-          sleep 120
+          echo "::notice::A newer run superseded this one."
           exit 1
         env:
           GH_TOKEN: ${{ github.token }}
@@ -142,8 +143,8 @@ jobs:
           RUN: ${{ github.run_id }}
 
   dependency-review:
-    # GitHub supports dependency review only on public repos or with Advanced Security;
-    # on this private repo the action errors on every PR. Runs again if either changes.
+    # GitHub supports dependency review only on public repos or with Advanced Security, so
+    # this skips (rather than errors) if the repo goes private again.
     if: github.event_name == 'pull_request' && !github.event.repository.private
     runs-on: ubuntu-latest
     steps:
