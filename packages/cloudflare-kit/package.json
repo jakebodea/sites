@@ -16,6 +16,7 @@
     "./astro/web-analytics-beacon.astro": "./src/astro/web-analytics-beacon.astro",
     "./emdash/analytics": "./src/emdash/analytics.ts",
     "./emdash/worker": "./src/emdash/worker.ts",
+    "./emdash/public-html": "./src/emdash/public-html.ts",
     "./emdash/owner-policy": "./src/emdash/owner-policy.ts",
     "./emdash/owner-gate": "./src/emdash/owner-gate.ts",
     "./emdash/owner-middleware": "./src/emdash/owner-middleware.ts",

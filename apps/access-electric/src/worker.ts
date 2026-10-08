@@ -7,6 +7,7 @@
  * robots.txt, because a Disallow hides the noindex).
  */
 import handler from "@emdash-cms/cloudflare/worker";
+import { fetchPublicHtml } from "@jakebodea/cloudflare-kit/emdash/public-html";
 import { siteScheduled } from "@jakebodea/cloudflare-kit/emdash/worker";
 
 import { BACKUP_CRON } from "./lib/schedule.ts";
@@ -18,9 +19,14 @@ const SWITCHING_PROTOCOLS = 101;
 
 export default {
   async fetch(request, env, ctx) {
-    const response =
-      (await handler.fetch?.(request, env, ctx)) ??
-      new Response(null, { status: 404 });
+    const response = await fetchPublicHtml(
+      request,
+      env,
+      ctx,
+      async () =>
+        (await handler.fetch?.(request, env, ctx)) ??
+        new Response(null, { status: 404 })
+    );
     if (env.STAGE === "prod" || response.status === SWITCHING_PROTOCOLS) {
       return response;
     }

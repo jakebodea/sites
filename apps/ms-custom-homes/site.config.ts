@@ -61,7 +61,7 @@ export const site = {
    * Deployed stages use their own `/_seed/media`.
    */
   localSeedMediaBase:
-    "https://ms-custom-homes-preview.jakebodea.workers.dev/_seed/media",
+    "https://ms-custom-homes-prod.jakebodea.workers.dev/_seed/media",
 
   name: "MS Custom Homes, Inc.",
 

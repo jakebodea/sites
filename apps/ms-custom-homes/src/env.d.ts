@@ -18,11 +18,13 @@ declare global {
       SESSION: KVNamespace;
       /** Cloudflare Email Service; bound once a verified sending domain exists. */
       EMAIL?: SendEmail;
+      CF_VERSION_METADATA: { readonly id: string };
       CMS_OWNER_EMAIL: string;
       CMS_OWNER_SITE: string;
       CMS_BOOTSTRAP_TOKEN: string;
       STAGE: string;
       SITE_ORIGIN: string;
+      PUBLIC_HTML_CACHE_TTL_SECONDS: string;
       TURNSTILE_SITE_KEY: string;
       TURNSTILE_SECRET_KEY: string;
     }

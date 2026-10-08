@@ -16,7 +16,7 @@ Guiding principle: be all-in on Cloudflare + Alchemy + Effect, add as few vendor
 
 ## Marketing sites
 
-- **Astro + EmDash CMS** on **Alchemy v2** (`Cloudflare.Website.Astro`): D1 (content), R2 (media), Images binding (resizing), auto-provisioned KV (sessions), every-minute cron (EmDash scheduled publishing). Zero client JS by default.
+- **Astro + EmDash CMS** on **Alchemy v2** (`Cloudflare.Website.Astro`): D1 (content), R2 (media), Images binding (resizing), auto-provisioned KV (sessions), production every-minute cron (EmDash scheduled publishing). Preview cron triggers are off unless `PREVIEW_SCHEDULED_PUBLISHING=1` is deliberately supplied for a scheduling test. Zero client JS by default.
 - **shadcn/ui as React islands** only where interactive (mobile nav, gallery, contact form). Tailwind v4. Mobile-first, accessible, Core Web Vitals budgets.
 - **Effect on the server only** (contact form, email). React islands stay plain React.
 - **Content**: client-editable through EmDash. Draft production-content loading uses a purpose-limited published exporter and fresh branch-native setup; local `start/reset --content seed|prod` defaults to seed, restart retains selection, and `content refresh` replaces the isolated local copy with rollback. Fresh hosted PR stages opt in with both `preview` and `production-content`; completed hosted stages preserve edits. See [ADR 0003](adr/0003-published-production-content.md). **CMS login**: Jake is the permanent Admin, configured by `studio.cmsOwnerEmail`. CI reserves the owner account after seeding; first login uses an emailed EmDash sign-in link, then Jake can add a passkey. Clients receive **Editor** invitations only. Public first-admin setup is closed. See [ADR 0002](adr/0002-studio-owned-cms-admin.md).
@@ -48,6 +48,8 @@ Also:
 - **Layering**: never import `@jakebodea/cloudflare-kit/infra` from runtime code; it pulls Alchemy's deploy-time modules into the Worker.
 
 Local verification runs entirely under `alchemy dev`, which (as of `alchemy@2.0.0-beta.80`) emulates Workers, D1, R2, KV, Queues, Secrets Store, and Images locally; only Turnstile (test keys) and Email are cloud-only. Spike notes: `spikes/emdash-alchemy/README.md`.
+
+- **Public CMS HTML cache**: production anonymous GETs to public page/portfolio/project route shapes use the existing Worker Cache API with a 30-second TTL. The TTL binding is declared in each Alchemy stack; set it to `"0"` to disable. Cookies, authorization, queries (including preview links), reload directives, CMS/admin/auth/action/media routes, contact, non-GET methods, non-HTML/error/negotiated responses, and any `Set-Cookie` or private/no-store response bypass it. Browsers receive `Cache-Control: no-store`; `X-Public-HTML-Cache` distinguishes MISS/HIT. Each Cloudflare data center fills its own copy, every request still invokes the Worker, and anonymous visitors may see the previous published revision for up to 30 seconds after a CMS edit. Native version metadata, bound through Alchemy, partitions the cache so code deploys start cold and cannot reuse HTML from an older asset build. There is no stale-while-revalidate and no global purge claim. Authenticated CMS/editing requests see current content immediately. Alchemy explicitly leaves the newer pre-Worker `cache` feature disabled, because [Workers Cache bills otherwise-free asset requests](https://developers.cloudflare.com/workers/cache/#pricing). No zone cache rules, new cloud storage, or dashboard settings are required. `node scripts/ci/public-html-fixture.ts` verifies the built Worker, local D1/KV/R2, real CMS draft/publish APIs, cache hits and expiry for both sites.
 
 - **SEO**: SSR everywhere; EmDash sitemap/robots; non-prod stages send `X-Robots-Tag: noindex` from the worker; `@jakebodea/cloudflare-kit/seo` keeps titles and descriptions inside snippet budgets and builds BreadcrumbList JSON-LD. The `seo` skill maps the full checklist to automated rules and the manual launch steps (Search Console, copy review, E-E-A-T, backlinks).
 
@@ -88,6 +90,7 @@ No Infisical, no 1Password.
 - `pr-<n>`: per-PR preview for affected sites only, requested by adding the `preview` label. Subsequent pushes update it while the label remains; removing the label or closing the PR destroys it. Shared code changes affect every site; docs-only changes deploy none.
 - `prod`: custom domain attached only here. JBO Labs uses `jbolabs.com`, with HTTP, `www`, and the old workers.dev hostname redirecting to HTTPS on the apex. Client domains remain unset until their zones are on the account and serve from workers.dev meanwhile. Deploys only from CI on `main`.
 - State: `Cloudflare.state()`.
+- Legacy named previews `access-electric/ae-preview` and `ms-custom-homes/preview` were retired through Alchemy on 2026-10-08. The daily PR janitor deliberately owns only `pr-<n>` stages; it never guesses whether an ad-hoc demo is still needed. `scripts/ci/retire-preview.alchemy.ts` is a teardown-only entrypoint restricted to these two exact site/stage pairs and uses their existing state without loading app build inputs or current CMS secrets.
 
 ## DevOps
 
@@ -123,7 +126,7 @@ T3 Code / Executor style: root `AGENTS.md` (+ `CLAUDE.md` symlink) with stack ma
 
 ## Open items
 
-- Consider Workers Cache in front of each site's Worker (Alchemy `cache` prop + `Cache-Control`) to cut CPU per visit.
+- Reassess the newer pre-Worker Workers Cache only after measuring asset/request billing and defining global publish invalidation; production CMS pages currently use the bounded internal Cache API described above.
 - Get a scoped `agent` Alchemy profile; re-auth the `default` OAuth profile from a real terminal.
 - Apply the CI control-plane changes with explicit authorization to provision the analytics-read token. Verify that Account Settings Write permits Rum site creation on the first prod deploy. Real domains and verified senders are still needed for email.
 - File Alchemy issues: supported custom Worker entry for `Website.Astro`; `config:` path bug; EmDash image endpoint support; SSR dep-optimizer instability under the workerd dev runner (stale chunks / duplicate React); dev proxy resetting curl connections.
