@@ -106,6 +106,7 @@ No Infisical, no 1Password.
 ## Tooling
 
 - **Bun** (`[install] peer = false`), workspaces + catalogs, exact pins (never `latest`).
+- **TypeScript 7** (the Go compiler) type-checks the library packages. The root and the Astro apps stay on TypeScript 6 through the `typescript-api` catalog, because TypeScript 7 ships no JavaScript API yet and they load tools that need it: `astro check`, `eslint-plugin-sonarjs` (via `ts-api-utils`), and `scripts/ci/workflow-env.test.ts`. Move them to the main catalog once those tools support TypeScript 7.
 - **Ultracite strict**: presets `core`, `react`, `astro`, `shadcn` (`@shadcn/lint`), `anti-slop`, `vitest`; JS plugins `react-doctor`, `sonarjs`; type-aware; a local plugin (no `transition-colors`, prefer shared controls, no em dashes in user-facing copy). `--max-warnings 0` everywhere; disabling a rule needs a written reason.
 - **lefthook**: pre-commit `ultracite fix` on staged files; pre-push typecheck; post-checkout worktree setup.
 - **Tests**: `@effect/vitest` with test Layers; Playwright e2e for products; workerd smoke + Lighthouse for marketing sites.
