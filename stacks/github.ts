@@ -208,7 +208,10 @@ export default Alchemy.Stack(
         pullRequest: { requiredApprovingReviewCount: 0 },
         requiredStatusChecks: {
           checks: [{ context: "check" }],
-          strictRequiredStatusChecksPolicy: true,
+          // A PR need not be rebased onto the latest main before merging: with many parallel PRs
+          // that reran every check after each merge. The push to main reruns `check` (affected
+          // sites, cached) before `production` deploys, so a conflict between two PRs fails there.
+          strictRequiredStatusChecksPolicy: false,
         },
       },
       target: "branch",
