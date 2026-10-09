@@ -16,7 +16,7 @@ Current choices: [docs/stack.md](docs/stack.md). Why each one-way choice was mad
 | `packages/control-app` | `bun run app -- …`: run, sign in, screenshot, record, smoke-test a site |
 | `packages/proof` | `bun run proof -- …`: revision-bound proof receipts |
 | `packages/config` | tsconfig + strict oxlint/oxfmt presets + local lint rules |
-| `stacks/` | Repo-level Alchemy stacks: `github.ts` (CI control plane), `turbo-cache.ts` (remote cache) |
+| `stacks/` | Repo-level Alchemy stacks: `github.ts` (CI control plane), `turbo-cache.ts` (remote cache). The jbolabs.com domain and email live in the separate `jbolabs` repo |
 | `scripts/ci/` | Logic the GitHub workflows call (tested TypeScript, thin YAML) |
 | `docs/` | `stack.md` (current choices), `adr/` (one dated record per decision, from `adr/template.md`) |
 

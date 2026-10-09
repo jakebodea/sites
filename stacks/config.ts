@@ -20,9 +20,10 @@ export const deployTokens = {
 } as const;
 
 /**
- * The studio domain (bought 2026-10-06, managed by `stacks/studio.ts`). Every
+ * The studio domain (bought 2026-10-06, managed by `stacks/studio.ts` in the
+ * jbolabs repo, which also runs the Mailflare inbox at inbox.jbolabs.com). Every
  * site sends lead notifications and alerts from `sender`, and alerts go to
- * `alertInbox`, which forwards to a private inbox.
+ * `alertInbox`, which lands in that Mailflare inbox.
  */
 export const studio = {
   alertInbox: "alerts@jbolabs.com",
