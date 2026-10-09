@@ -47,7 +47,7 @@ Read every screenshot you take; check both widths. `brokenImages` and `consoleEr
 
 ## Gotchas
 
-- Sites without `seed/seed.json` keep their content in code (no EmDash, e.g. `jbolabs`): smoke skips the CMS admin check, `seed` is a no-op, `reset` just wipes local D1/KV and restarts, and `login`/`--auth` do not apply.
+- Sites without `seed/seed.json` keep their content in code (no EmDash): smoke skips the CMS admin check, `seed` is a no-op, `reset` just wipes local D1/KV and restarts, and `login`/`--auth` do not apply.
 
 - A cold start (no Vite cache) optimizes dependencies on the first requests; `start` waits until three clean rounds pass, retrying once from a clean cache if the boot wedges. A 500 seconds after a manual `alchemy dev` is usually that, not your change.
 - Every control-app request has a 20 s deadline (`src/http.ts`): a dev page can answer 200 and never finish streaming. Lint blocks a bare `fetch` in control-app.

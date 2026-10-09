@@ -20,7 +20,7 @@ Guiding principle: be all-in on Cloudflare + Alchemy + Effect, add as few vendor
 - **shadcn/ui as React islands** only where interactive (mobile nav, gallery, contact form). Tailwind v4. Mobile-first, accessible, Core Web Vitals budgets.
 - **Effect on the server only** (contact form, email). React islands stay plain React.
 - **Content**: client-editable through EmDash. Draft production-content loading uses a purpose-limited published exporter and fresh branch-native setup; local `start/reset --content seed|prod` defaults to seed, restart retains selection, and `content refresh` replaces the isolated local copy with rollback. Fresh hosted PR stages opt in with both `preview` and `production-content`; completed hosted stages preserve edits. See [ADR 0003](adr/0003-published-production-content.md). **CMS login**: Jake is the permanent Admin, configured by `studio.cmsOwnerEmail`. CI reserves the owner account after seeding; first login uses an emailed EmDash sign-in link, then Jake can add a passkey. Clients receive **Editor** invitations only. Public first-admin setup is closed. See [ADR 0002](adr/0002-studio-owned-cms-admin.md).
-- **Contact form**: Turnstile → store lead → email the client through Cloudflare Email Service. Sender and alert inbox come from `studio` in `stacks/config.ts`; the client inbox is `site.leadInbox`. jbolabs.com is registered (Cloudflare Registrar) and `stacks/studio.ts` manages its zone, registrar settings, `mail.jbolabs.com` sending subdomain, and Email Routing. Mail is logged instead of sent only when `studio.sender` is unset. Failure alerts are under [Analytics, logs, monitoring](#analytics-logs-monitoring).
+- **Contact form**: Turnstile → store lead → email the client through Cloudflare Email Service. Sender and alert inbox come from `studio` in `stacks/config.ts`; the client inbox is `site.leadInbox`. jbolabs.com is registered (Cloudflare Registrar); its zone, registrar settings, `mail.jbolabs.com` sending subdomain, and Email Routing live in the separate `jbolabs` repo (`stacks/studio.ts`), and inbound mail (including `studio.alertInbox`) lands in the Mailflare inbox at inbox.jbolabs.com. Mail is logged instead of sent only when `studio.sender` is unset. Failure alerts are under [Analytics, logs, monitoring](#analytics-logs-monitoring).
 - **Hosting**: all client sites in Jake's Cloudflare account; hand off later with Alchemy adopt/transfer if a client wants ownership.
 
 ### EmDash on Alchemy workarounds (verified live 2026-10-05)
@@ -68,7 +68,7 @@ Local verification runs entirely under `alchemy dev`, which (as of `alchemy@2.0.
 Why each client-site choice was made, and how it is built: [ADR 0001](adr/0001-client-site-analytics-and-alerting.md).
 
 - **Client traffic**: Cloudflare Web Analytics, one prod-only `Cloudflare.Rum.Site` per site. Cookieless, no consent banner. Dev and preview collect nothing.
-- **Client stats**: `@eisbachcode/emdash-plugin-analytics` in the EmDash admin. Its settings come from Worker bindings, never the settings form. Dev and preview show demo data. jbolabs has no CMS and uses the Cloudflare dashboard.
+- **Client stats**: `@eisbachcode/emdash-plugin-analytics` in the EmDash admin. Its settings come from Worker bindings, never the settings form. Dev and preview show demo data.
 - **Client alerts**: a contact submission that may be lost is logged with the lead and emailed to the committed `studio.alertInbox` (`alerts@jbolabs.com`) on prod. Alerts name the site and include its origin. No PostHog or Axiom on client sites.
 - **Logs and traces**: Cloudflare Workers Logs and traces on every stage, through `siteObservability`.
 - **Products**: PostHog for funnels, replay, flags, experiments, and errors, through a custom Alchemy provider on `@distilled.cloud/posthog`. Axiom when a product needs log search and retention beyond Workers Logs.
@@ -79,7 +79,7 @@ Why each client-site choice was made, and how it is built: [ADR 0001](adr/0001-c
 No Infisical, no 1Password.
 
 - Local: one `.env` in the **main checkout** only. Worktrees get a symlink (`scripts/setup-worktree.ts` via `t3.json` `runOnWorktreeCreate` + lefthook `post-checkout`), and Alchemy's DotEnv provider reads the main checkout's file via `git rev-parse --path-format=absolute --git-common-dir` as a fallback.
-- CI: every workflow variable and secret is written by Alchemy in `stacks/`. `scripts/ci/workflow-env.test.ts` rejects references without a stack writer. Email addresses are committed configuration, not secrets. `FORWARD_TO` is the real inbox that `stacks/studio.ts` registers as the Email Routing destination.
+- CI: every workflow variable and secret is written by Alchemy in `stacks/`. `scripts/ci/workflow-env.test.ts` rejects references without a stack writer. Email addresses are committed configuration, not secrets.
 - Published export: private `PUBLISHED_CONTENT_EXPORT_TOKEN` (at least 32 random characters) shared through main-checkout `.env` and Alchemy-written production/preview GitHub environment secrets; production-only export and dev/pr-only bootstrap completion. One-time control-plane deployment plus normal CI production deployment is required.
 - Generated secrets: `Alchemy.Random`. Shared rotatable secrets: Cloudflare Secrets Store.
 - Cloudflare credentials: Alchemy profiles (`~/.alchemy`), never exported env vars.
@@ -88,7 +88,7 @@ No Infisical, no 1Password.
 
 - `dev-<worktree>`: per-worktree `alchemy dev` stage (parallel agents never collide).
 - `pr-<n>`: per-PR preview for affected sites only, requested by adding the `preview` label. Subsequent pushes update it while the label remains; removing the label or closing the PR destroys it. Shared code changes affect every site; docs-only changes deploy none.
-- `prod`: custom domain attached only here. JBO Labs uses `jbolabs.com`, with HTTP, `www`, and the old workers.dev hostname redirecting to HTTPS on the apex. Client domains remain unset until their zones are on the account and serve from workers.dev meanwhile. Deploys only from CI on `main`.
+- `prod`: custom domain attached only here, with HTTP, `www`, and the old workers.dev hostname redirecting to HTTPS on the apex. Client domains remain unset until their zones are on the account and serve from workers.dev meanwhile. Deploys only from CI on `main`.
 - State: `Cloudflare.state()`.
 - Legacy named previews `access-electric/ae-preview` and `ms-custom-homes/preview` were retired through Alchemy on 2026-10-08. The daily PR janitor deliberately owns only `pr-<n>` stages; it never guesses whether an ad-hoc demo is still needed. `scripts/ci/retire-preview.alchemy.ts` is a teardown-only entrypoint restricted to these two exact site/stage pairs and uses their existing state without loading app build inputs or current CMS secrets.
 

@@ -12,6 +12,6 @@ CMS sites register `analyticsPlugin` from `./emdash/analytics` in `emdash({ plug
 
 Contact actions decode their site schema and call `submitContact` with `sourcePath`, `requestId` from `cf-ray` or `crypto.randomUUID()`, and optional `remoteIp`. Merge `LeadMailFromConfig` and `emailFromEnv(env.EMAIL)` into the contact layer with Turnstile and the site's lead store. The pipeline owns alert policy. Turnstile outages, save failures, and defects alert; rejected visitors do not. Inbox delivery failure logs and still succeeds because the lead is saved.
 
-`stacks/github.ts` provisions the production Account Analytics Read token. Site stacks pass the committed studio sender and alert inbox plus their client inbox and display name to `leadMail`. Setting the verified `studio.sender` enables mail; otherwise failed leads remain recoverable in Workers Logs. jbolabs uses the beacon and alerts without CMS or plugin secrets.
+`stacks/github.ts` provisions the production Account Analytics Read token. Site stacks pass the committed studio sender and alert inbox plus their client inbox and display name to `leadMail`. Setting the verified `studio.sender` enables mail; otherwise failed leads remain recoverable in Workers Logs.
 
 See [ADR 0001](../../docs/adr/0001-client-site-analytics-and-alerting.md).
