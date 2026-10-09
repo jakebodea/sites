@@ -75,45 +75,6 @@
         "wrangler": "catalog:",
       },
     },
-    "apps/jbolabs": {
-      "name": "@sites/jbolabs",
-      "dependencies": {
-        "@astrojs/cloudflare": "catalog:",
-        "@astrojs/react": "catalog:",
-        "@base-ui/react": "catalog:",
-        "@jakebodea/cloudflare-kit": "workspace:*",
-        "@lucide/astro": "catalog:",
-        "astro": "catalog:",
-        "class-variance-authority": "catalog:",
-        "clsx": "catalog:",
-        "effect": "catalog:",
-        "lucide-react": "catalog:",
-        "react": "catalog:",
-        "react-dom": "catalog:",
-        "tailwind-merge": "catalog:",
-      },
-      "devDependencies": {
-        "@alchemy.run/frontend-frameworks": "catalog:",
-        "@astrojs/check": "catalog:",
-        "@cloudflare/workers-types": "catalog:",
-        "@effect/platform-bun": "catalog:",
-        "@effect/platform-node": "catalog:",
-        "@effect/vitest": "catalog:",
-        "@emnapi/core": "catalog:",
-        "@emnapi/runtime": "catalog:",
-        "@jakebodea/config": "workspace:*",
-        "@tailwindcss/vite": "catalog:",
-        "@types/bun": "catalog:",
-        "@types/react": "catalog:",
-        "@types/react-dom": "catalog:",
-        "alchemy": "catalog:",
-        "tailwindcss": "catalog:",
-        "tw-animate-css": "catalog:",
-        "typescript": "catalog:typescript-api",
-        "vitest": "catalog:",
-        "wrangler": "catalog:",
-      },
-    },
     "apps/ms-custom-homes": {
       "name": "@sites/ms-custom-homes",
       "dependencies": {
@@ -1117,8 +1078,6 @@
     "@sindresorhus/merge-streams": ["@sindresorhus/merge-streams@4.0.0", "", {}, "sha512-tlqY9xq5ukxTUZBmoOp+m61cqwQD5pHJtFY3Mn8CA8ps6yghLH/Hw8UPdqg4OLmFW3IFlcXnQNmo/dh8HzXYIQ=="],
 
     "@sites/access-electric": ["@sites/access-electric@workspace:apps/access-electric"],
-
-    "@sites/jbolabs": ["@sites/jbolabs@workspace:apps/jbolabs"],
 
     "@sites/ms-custom-homes": ["@sites/ms-custom-homes@workspace:apps/ms-custom-homes"],
 

@@ -49,11 +49,11 @@ describe(controlCheck, () => {
           name: "seo",
           origin: `http://localhost:${address.port}`,
           output,
-          site: "jbolabs",
+          site: "access-electric",
         });
         expect(passed).toBe(valid);
         const report = Schema.decodeUnknownSync(Report)(
-          readFileSync(path.join(output, "jbolabs-seo.json"), "utf-8")
+          readFileSync(path.join(output, "access-electric-seo.json"), "utf-8")
         );
         expect(report.errors).toBe(valid ? 0 : 1);
         expect(report.findings).toStrictEqual(

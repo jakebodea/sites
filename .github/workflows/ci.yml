@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
     inputs:
       sites:
-        description: 'Sites to deploy to prod, as a JSON array (e.g. ["jbolabs"])'
+        description: 'Sites to deploy to prod, as a JSON array (e.g. ["access-electric"])'
         required: true
         type: string
 
