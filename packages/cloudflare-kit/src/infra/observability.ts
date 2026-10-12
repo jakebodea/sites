@@ -1,9 +1,10 @@
 /** Workers Logs and traces on every stage; contact failures also email the configured alert route. */
 import type { StageSettings } from "./stage.ts";
 
-/** Logs on everywhere; traces sampled on prod. */
+/** Logs and Issues on everywhere; traces sampled on prod. */
 export const siteObservability = (settings: StageSettings) => ({
   enabled: true,
+  issues: { enabled: true },
   logs: {
     enabled: true,
     headSamplingRate: 1,
