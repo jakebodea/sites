@@ -80,3 +80,15 @@ Verified live: public pages, admin setup + passkey login, page edit (draft), sch
 media upload to R2, resized WebP via `/_image`. Gotchas: Alchemy's `config:` prop double-joins the
 path (use the default `astro.config.mjs`); bun needs `[install] peer = false`; R2 buckets need
 `forceDestroy: true` on disposable stages or `destroy` fails with BucketNotEmpty.
+
+
+### Offline repository typecheck
+
+This experiment keeps a separate Bun lockfile and is outside the production workspace gates. From the repository root, run:
+
+```bash
+bun install --cwd spikes/emdash-alchemy --frozen-lockfile --ignore-scripts
+bun run --cwd spikes/emdash-alchemy typecheck
+```
+
+The check synchronizes Astro, generates ignored `emdash-env.d.ts` from the seed using the shared offline generator, then runs `astro-check` directly so missing checker dependencies fail instead of opening an install prompt. TypeScript 6.0.3 and `@emnapi/runtime` 1.11.3 are explicit dev dependencies because automatic peer installation is disabled. The seed generator uses an in-memory database; these checks do not start Alchemy or access cloud state. Astro synchronization can log EmDash's session-driver warning because Alchemy injects the session driver only when running the site.
