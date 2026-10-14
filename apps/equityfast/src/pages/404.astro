@@ -13,14 +13,15 @@ const copy =
 ---
 
 <Base title={locale === "es" ? "Página no encontrada" : "Page not found"} robots="noindex">
-  <section class="bg-navy-deep text-white">
+  <section class="relative isolate overflow-hidden bg-navy-deep text-white">
+    <div class="glow-navy absolute inset-0 -z-10" aria-hidden="true"></div>
     <div class="container-page flex min-h-[60svh] flex-col items-start justify-center gap-6 py-24">
       <p class="eyebrow text-gold">404</p>
-      <h1 class="headline-section text-white">{copy.title}</h1>
-      <p class="max-w-xl text-lg text-white/80">{copy.body}</p>
+      <h1 class="headline-hero text-white">{copy.title}</h1>
+      <p class="max-w-xl text-lg text-white/70">{copy.body}</p>
       <div class="flex flex-wrap gap-3">
-        <ButtonLink href={APPLY_PATH[locale]} data-apply variant="accent" size="cta">{copy.start}</ButtonLink>
-        <ButtonLink href={copy.homeHref} variant="outline-inverse" size="cta">{copy.home}</ButtonLink>
+        <ButtonLink href={APPLY_PATH[locale]} data-apply variant="accent" size="hero">{copy.start}</ButtonLink>
+        <ButtonLink href={copy.homeHref} variant="outline-inverse" size="hero">{copy.home}</ButtonLink>
       </div>
     </div>
   </section>

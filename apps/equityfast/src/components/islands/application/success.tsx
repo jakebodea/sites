@@ -20,7 +20,7 @@ const ApplicationSuccess = ({
   readonly strings: UiStrings["form"];
 }) => (
   <div className="py-4 text-center" aria-live="polite">
-    <div className="bg-orange/20 mx-auto flex size-14 items-center justify-center rounded-full">
+    <div className="bg-gold/25 mx-auto flex size-14 items-center justify-center rounded-full">
       <CheckIcon className="text-navy size-7" aria-hidden="true" />
     </div>
     <div className="mt-5">

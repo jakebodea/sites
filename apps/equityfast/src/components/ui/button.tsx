@@ -18,18 +18,18 @@ const buttonVariants = cva(
         destructive:
           "bg-destructive/10 text-destructive hover:bg-destructive/20 focus-visible:border-destructive/40 focus-visible:ring-destructive/20 dark:bg-destructive/20 dark:hover:bg-destructive/30 dark:focus-visible:ring-destructive/40",
         link: "text-primary underline-offset-4 hover:underline",
-        // Site additions: the orange application CTA, its outline partner on navy, and an outline on white.
+        // Site additions: the gold application CTA, its hairline partner on navy, and an outline on light grounds.
         accent:
-          "bg-orange text-navy-deep hover:bg-gold shadow-[0_10px_30px_-12px_color-mix(in_oklch,var(--brand-orange)_70%,transparent)]",
+          "bg-gold text-navy-deep hover:bg-gold-deep shadow-[inset_0_1px_0_rgb(255_255_255/0.45),0_12px_32px_-14px_color-mix(in_oklch,var(--brand-gold)_80%,transparent)]",
         "outline-inverse":
-          "border-white/60 bg-transparent text-white hover:bg-white/10 hover:text-white",
+          "border-white/25 bg-white/5 text-white hover:border-white/50 hover:bg-white/10 hover:text-white",
         "outline-navy":
-          "border-navy text-navy hover:bg-navy border-2 bg-transparent hover:text-white",
+          "border-navy/20 text-navy hover:border-navy hover:bg-navy bg-transparent hover:text-white",
         // Icon buttons on the navy header.
         "ghost-inverse": "text-white hover:bg-white/10 hover:text-white",
-        // Small tracked-caps text actions ("Reset plan", "Remove from plan").
+        // Small text actions ("Reset plan", "Remove from plan").
         quiet:
-          "text-slate-blue hover:text-navy tracking-label bg-transparent text-xs font-bold uppercase",
+          "text-slate-blue hover:text-navy bg-transparent text-sm font-medium underline-offset-4 hover:underline",
         // A full-width list row that expands (the planner's projects).
         row: "hover:bg-mist/70 w-full items-start justify-start gap-3 rounded-none text-left whitespace-normal",
       },
@@ -39,10 +39,10 @@ const buttonVariants = cva(
         xs: "h-6 gap-1 rounded-[min(var(--radius-md),10px)] px-2 text-xs in-data-[slot=button-group]:rounded-lg has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 [&_svg:not([class*='size-'])]:size-3",
         sm: "h-7 gap-1 rounded-[min(var(--radius-md),12px)] px-2.5 text-[0.8rem] in-data-[slot=button-group]:rounded-lg has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 [&_svg:not([class*='size-'])]:size-3.5",
         lg: "h-9 gap-1.5 px-2.5 has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2",
-        // Site additions: square, tracked-caps marketing CTAs with comfortable touch targets.
+        // Site additions: pill marketing CTAs with comfortable touch targets.
         // Labels wrap on narrow phones (long Spanish CTAs) instead of overflowing.
-        cta: "tracking-label h-auto min-h-11 gap-2 rounded-none px-6 py-2 text-center text-xs font-semibold whitespace-normal uppercase",
-        hero: "tracking-label h-auto min-h-13 gap-2 rounded-none px-8 py-3 text-center text-sm font-semibold whitespace-normal uppercase",
+        cta: "h-auto min-h-11 gap-2 rounded-full px-5 py-2 text-center text-sm font-medium whitespace-normal",
+        hero: "h-auto min-h-13 gap-2 rounded-full px-7 py-3 text-center text-base font-medium whitespace-normal",
         bare: "h-auto p-0",
         // Padded, auto-height content (the planner's list rows).
         block: "h-auto p-4",

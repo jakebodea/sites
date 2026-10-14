@@ -3,7 +3,7 @@
  * Questions that open in place (native `<details>`: no JavaScript, and the
  * answers stay in the HTML for search), plus their FAQPage JSON-LD.
  */
-import ChevronDown from "@lucide/astro/icons/chevron-down";
+import Plus from "@lucide/astro/icons/plus";
 import type { BlockComponentProps } from "emdash/ui";
 
 import type { PageContentFaqBlock } from "../../../emdash-env";
@@ -22,20 +22,22 @@ const jsonLd = JSON.stringify({
 });
 ---
 
-<section class="py-20 sm:py-24">
-  <div class="container-page">
-    {value.eyebrow && <p class="eyebrow text-sky-ink">{value.eyebrow}</p>}
-    <h2 class="headline-section mt-4">{value.headline}</h2>
-    <div class="mt-10 border-t border-border">
+<section class="bg-paper py-24 sm:py-32">
+  <div class="container-page grid *:min-w-0 gap-12 lg:grid-cols-[1fr_1.6fr] lg:gap-20">
+    <div class="lg:sticky lg:top-32 lg:self-start">
+      {value.eyebrow && <p class="eyebrow text-sky-ink">{value.eyebrow}</p>}
+      <h2 class="headline-section mt-5">{value.headline}</h2>
+    </div>
+    <div class="border-t border-navy/15">
       {value.items.map((item, index) => (
-        <details class="group border-b border-border" open={index === 0}>
-          <summary class="flex cursor-pointer list-none items-center justify-between gap-6 py-7 text-left text-xl font-semibold text-navy marker:hidden [&::-webkit-details-marker]:hidden">
+        <details class="group border-b border-navy/15" open={index === 0}>
+          <summary class="flex cursor-pointer list-none items-center justify-between gap-6 py-6 text-left text-lg font-medium text-navy marker:hidden sm:text-xl [&::-webkit-details-marker]:hidden">
             {item.question}
-            <span class="flex size-9 shrink-0 items-center justify-center rounded-full border border-border transition-colors group-open:border-gold group-open:bg-gold">
-              <ChevronDown class="size-4 transition-transform group-open:rotate-180" aria-hidden="true" />
+            <span class="relative flex size-9 shrink-0 items-center justify-center rounded-full border border-navy/15 group-open:border-navy group-open:bg-navy group-open:text-white">
+              <Plus class="size-4 transition-transform duration-300 group-open:rotate-45" aria-hidden="true" />
             </span>
           </summary>
-          <p class="max-w-3xl pb-8 text-lg leading-relaxed text-slate-blue">{item.answer}</p>
+          <p class="max-w-2xl pb-7 text-lg leading-relaxed text-slate-blue">{item.answer}</p>
         </details>
       ))}
     </div>

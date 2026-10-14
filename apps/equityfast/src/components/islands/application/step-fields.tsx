@@ -226,7 +226,7 @@ const StepFields = (props: StepFieldsProps) => {
           />
           <label
             className={cn(
-              "bg-mist text-navy flex cursor-pointer items-start gap-3 rounded-sm border-2 px-4 py-3.5 text-base leading-relaxed",
+              "bg-paper text-navy flex cursor-pointer items-start gap-3 rounded-xl border px-4 py-3.5 text-base leading-relaxed",
               problems.includes("consent")
                 ? "border-destructive"
                 : "border-border"

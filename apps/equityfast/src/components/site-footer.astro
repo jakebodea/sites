@@ -25,35 +25,34 @@ const fullAddress = `${address.street}, ${address.city}, ${address.region} ${add
 const mapsHref = `https://maps.google.com/?q=${encodeURIComponent(fullAddress)}`;
 ---
 
-<footer class="bg-navy-deep text-white/75">
-  <div class="mx-auto grid w-full max-w-[1440px] gap-10 px-5 pt-14 pb-10 sm:px-8 md:grid-cols-[1fr_auto] lg:px-10">
-    <div class="space-y-5">
-      <div>
-        <p class="text-sm font-semibold tracking-[0.3em] text-white uppercase">EquityFast</p>
-        <p class="mt-1 text-xs font-semibold tracking-[0.3em] text-gold uppercase">{legalName}</p>
+<footer class="relative isolate overflow-hidden bg-navy-deep text-white/70">
+  <div class="mx-auto grid w-full max-w-[1440px] gap-12 px-5 pt-20 pb-12 sm:px-8 md:grid-cols-[1.4fr_1fr_auto] lg:px-10">
+    <div class="space-y-6">
+      <img src="/brand/equityfast.webp" alt="EquityFast" width="1200" height="172" loading="lazy" class="h-7 w-auto" />
+      <p class="max-w-xs text-sm leading-relaxed">{t.poweredBy} {legalName}<br />NMLS #{nmls} · {t.equalHousing}</p>
+      <div class="flex items-center gap-4">
+        <EqualHousingIcon class="size-9 text-white/80" label={t.equalHousing} />
+        <a href={instagram} rel="noopener me" target="_blank" class="flex size-9 items-center justify-center rounded-full border border-white/15 text-white/80 hover:border-white/40 hover:text-white" aria-label="Instagram @equityfast">
+          <InstagramIcon class="size-4" />
+        </a>
       </div>
-      <address class="space-y-1 text-sm not-italic">
-        <a href={mapsHref} rel="noopener" target="_blank" class="block hover:text-white">{address.street}<br />{address.city}, {address.region} {address.postalCode}</a>
-        <a href={`mailto:${email}`} class="block hover:text-white">{email}</a>
-      </address>
-      <a href={instagram} rel="noopener me" target="_blank" class="inline-flex items-center gap-2 text-xs font-semibold tracking-label text-white uppercase hover:text-gold">
-        <InstagramIcon class="size-4" />@equityfast
-      </a>
-      <p class="text-xs tracking-label text-white/60 uppercase">NMLS #{nmls} · {t.equalHousing}</p>
-      <EqualHousingIcon class="size-11 text-white" label={t.equalHousing} />
     </div>
+    <address class="space-y-2 text-sm not-italic">
+      <a href={mapsHref} rel="noopener" target="_blank" class="block leading-relaxed hover:text-white">{address.street}<br />{address.city}, {address.region} {address.postalCode}</a>
+      <a href={`mailto:${email}`} class="block hover:text-white">{email}</a>
+    </address>
     <nav aria-label={t.footerNav}>
-      <ul class="grid gap-2.5 text-xs font-semibold tracking-label uppercase sm:grid-cols-2 md:grid-cols-1">
+      <ul class="grid gap-x-10 gap-y-2.5 text-sm sm:grid-cols-2 md:grid-cols-1">
         {items.map((item) => (
-          <li><a href={item.url} class="inline-flex min-h-6 items-center hover:text-white">{item.label}</a></li>
+          <li><a href={item.url} class="inline-flex min-h-6 items-center text-white/80 hover:text-white">{item.label}</a></li>
         ))}
       </ul>
     </nav>
   </div>
   <div class="mx-auto w-full max-w-[1440px] px-5 sm:px-8 lg:px-10">
-    <div class="space-y-3 border-t border-white/10 pt-6 text-[11px] leading-relaxed text-white/55">
+    <div class="space-y-3 border-t border-white/8 pt-8 text-xs leading-relaxed text-white/45">
       {disclosure.map((paragraph) => <p>{paragraph}</p>)}
     </div>
-    <p class="pb-safe pt-5 text-[11px] text-white/55">&copy; {year} {legalName} {t.rights}</p>
+    <p class="pb-safe pt-6 text-xs text-white/45">&copy; {year} {legalName} {t.rights}</p>
   </div>
 </footer>

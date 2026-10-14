@@ -35,7 +35,7 @@ type Status =
   | { readonly state: "error"; readonly message: string };
 
 const defaultTitle = (title: string) => (
-  <h2 className="text-navy text-question font-semibold">{title}</h2>
+  <h2 className="text-navy text-question font-display">{title}</h2>
 );
 
 const address = (
@@ -223,7 +223,7 @@ const ApplicationForm = ({
             key={key}
             className={cn(
               "h-1 flex-1 rounded-full",
-              position <= index ? "bg-navy" : "bg-border"
+              position <= index ? "bg-gold" : "bg-border"
             )}
           />
         ))}

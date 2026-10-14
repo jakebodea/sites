@@ -10,7 +10,7 @@ type Props = BlockComponentProps<PageContentRichTextBlock>;
 const { value } = Astro.props;
 ---
 
-<section class="py-16 sm:py-24">
+<section class="py-20 sm:py-28">
   <div class="container-page">
     {value.headline && <h2 class="headline-section mb-10">{value.headline}</h2>}
     <div class="prose-site"><PortableText value={value.body} /></div>

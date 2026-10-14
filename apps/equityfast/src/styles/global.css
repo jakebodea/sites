@@ -6,22 +6,25 @@
 @custom-variant data-vertical (&[data-orientation="vertical"]);
 
 /*
- * EquityFast design tokens, taken from the current site: deep navy, sky blue
- * (the "FAST" in the wordmark), gold, and the CTA orange. shadcn/ui primitives
- * read the semantic names (--primary, --muted, ...), so restyling starts here.
- * `--brand-sky-ink` is a darker sky for text on white: the original sky only
- * reaches about 2.5:1 there, below the 3:1 large-text minimum.
+ * EquityFast design tokens: the brand's navy, sky (the "FAST" in the
+ * wordmark), and gold, tuned quieter than the original site. Navy is a deep
+ * ink rather than electric indigo, gold is the single call to action, and
+ * warm paper alternates with white so fewer sections need a navy slab.
+ * shadcn/ui primitives read the semantic names (--primary, --muted, ...).
+ * `--brand-sky-ink` is a darker sky for text on light grounds (the brand sky
+ * only reaches about 2.5:1 on white).
  */
 :root {
-  --brand-navy: oklch(0.29 0.126 268.5);
-  --brand-navy-deep: oklch(0.24 0.14 269);
-  --brand-navy-soft: oklch(0.36 0.12 268);
-  --brand-sky: oklch(0.72 0.099 233);
-  --brand-sky-ink: oklch(0.55 0.11 238);
-  --brand-gold: oklch(0.83 0.16 84);
-  --brand-orange: oklch(0.82 0.17 79);
-  --brand-slate: oklch(0.47 0.036 268);
-  --brand-mist: oklch(0.97 0.017 227);
+  --brand-navy: oklch(0.27 0.075 264);
+  --brand-navy-deep: oklch(0.2 0.055 265);
+  --brand-navy-soft: oklch(0.33 0.07 263);
+  --brand-sky: oklch(0.79 0.085 232);
+  --brand-sky-ink: oklch(0.5 0.1 242);
+  --brand-gold: oklch(0.85 0.125 84);
+  --brand-gold-deep: oklch(0.78 0.135 78);
+  --brand-slate: oklch(0.47 0.03 264);
+  --brand-mist: oklch(0.965 0.012 240);
+  --brand-paper: oklch(0.982 0.006 85);
 
   --background: oklch(1 0 0);
   --foreground: var(--brand-navy);
@@ -35,17 +38,19 @@
   --secondary-foreground: var(--brand-navy);
   --muted: var(--brand-mist);
   --muted-foreground: var(--brand-slate);
-  --accent: var(--brand-orange);
+  --accent: var(--brand-gold);
   --accent-foreground: var(--brand-navy-deep);
   --destructive: oklch(0.55 0.21 27);
-  --border: oklch(0.91 0.013 255);
-  --input: oklch(0.88 0.015 255);
-  --ring: var(--brand-sky);
-  --radius: 0.25rem;
+  --border: oklch(0.915 0.01 255);
+  --input: oklch(0.87 0.014 255);
+  --ring: var(--brand-sky-ink);
+  --radius: 0.75rem;
 }
 
 @theme inline {
   --font-sans: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+  /* Headlines and big figures: a high-contrast serif against the Jost body. */
+  --font-display: var(--font-serif), ui-serif, Georgia, serif;
 
   --color-navy: var(--brand-navy);
   --color-navy-deep: var(--brand-navy-deep);
@@ -53,9 +58,10 @@
   --color-sky: var(--brand-sky);
   --color-sky-ink: var(--brand-sky-ink);
   --color-gold: var(--brand-gold);
-  --color-orange: var(--brand-orange);
+  --color-gold-deep: var(--brand-gold-deep);
   --color-slate-blue: var(--brand-slate);
   --color-mist: var(--brand-mist);
+  --color-paper: var(--brand-paper);
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -82,12 +88,12 @@
   --radius-xl: calc(var(--radius) + 6px);
 
   /* Tracked caps labels, eyebrows, and buttons. */
-  --tracking-label: 0.2em;
+  --tracking-label: 0.14em;
   --text-2xs: 0.625rem;
   /* The application's question heading and the estimator's big figures. */
-  --text-question: clamp(1.5rem, 5vw, 1.875rem);
-  --text-question--line-height: 1.2;
-  --text-figure: clamp(2.25rem, 5vw, 3rem);
+  --text-question: clamp(1.75rem, 5vw, 2.25rem);
+  --text-question--line-height: 1.1;
+  --text-figure: clamp(2.75rem, 6vw, 3.75rem);
   --text-figure--line-height: 1;
 
   --animate-ticker: ticker 40s linear infinite;
@@ -121,6 +127,11 @@
     @apply text-navy font-normal text-balance;
   }
 
+  h3,
+  h4 {
+    @apply font-medium tracking-tight;
+  }
+
   p {
     text-wrap: pretty;
   }
@@ -135,14 +146,39 @@
   padding-bottom: max(1.25rem, env(safe-area-inset-bottom));
 }
 
-/* Small tracked caps label above a headline. */
+/* Small tracked caps label above a headline, led by a short rule. */
 @utility eyebrow {
-  @apply tracking-label text-xs font-semibold uppercase;
+  @apply tracking-label inline-flex items-center gap-3 text-xs font-medium uppercase;
+
+  &::before {
+    @apply h-px w-6 bg-current opacity-60;
+    content: "";
+  }
 }
 
-/* Section headline scale shared by the content blocks. */
+/* Display serif at section scale, shared by the content blocks. */
 @utility headline-section {
-  @apply text-[clamp(2rem,4.4vw,3.25rem)] leading-[1.04] tracking-tight;
+  @apply font-display text-[clamp(2.25rem,4.8vw,3.75rem)] leading-[1.02] tracking-[-0.01em];
+}
+
+/* The page-opening headline scale. */
+@utility headline-hero {
+  @apply font-display text-[clamp(3rem,8.5vw,6.25rem)] leading-[0.95] tracking-[-0.015em];
+}
+
+/* A soft sky glow for navy grounds (heroes, CTA panels). */
+@utility glow-navy {
+  background-image:
+    radial-gradient(
+      60% 80% at 85% 0%,
+      color-mix(in oklch, var(--brand-sky) 22%, transparent),
+      transparent 70%
+    ),
+    radial-gradient(
+      50% 60% at 0% 100%,
+      color-mix(in oklch, var(--brand-gold) 10%, transparent),
+      transparent 70%
+    );
 }
 
 /* Long-form copy from the CMS (Portable Text): numbered legal sections. */
@@ -151,7 +187,7 @@
   counter-reset: section;
 
   & h2 {
-    @apply text-navy mt-12 mb-3 text-2xl first:mt-0 sm:text-3xl;
+    @apply text-navy font-display mt-14 mb-3 text-3xl first:mt-0 sm:text-4xl;
     counter-increment: section;
 
     &::before {

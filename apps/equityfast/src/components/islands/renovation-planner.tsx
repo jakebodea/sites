@@ -74,9 +74,9 @@ const BudgetPanel = ({
   return (
     <div
       id={panelId(project.name)}
-      className="border-navy/15 border-t bg-white p-5"
+      className="border-navy/10 border-t bg-white p-5 sm:p-6"
     >
-      <p className="eyebrow text-slate-blue">{strings.drag}</p>
+      <p className="text-slate-blue text-sm">{strings.drag}</p>
       <div className="mt-3 flex items-center gap-4">
         <Slider
           variant="brand"
@@ -113,11 +113,14 @@ const BudgetPanel = ({
       </div>
       <dl className="mt-3 grid grid-cols-3 gap-2 text-center">
         {facts.map((fact) => (
-          <div key={fact.label} className="bg-mist rounded-sm px-2 py-2">
-            <dt className="text-slate-blue text-2xs font-semibold tracking-wider uppercase">
-              {fact.label}
-            </dt>
-            <dd className={cn("text-sm font-semibold tabular-nums", fact.tone)}>
+          <div key={fact.label} className="bg-paper rounded-xl px-2 py-3">
+            <dt className="text-slate-blue text-xs">{fact.label}</dt>
+            <dd
+              className={cn(
+                "mt-0.5 text-sm font-medium tabular-nums",
+                fact.tone
+              )}
+            >
               {fact.value}
             </dd>
           </div>
@@ -162,27 +165,23 @@ const PlanSummary = ({
     { label: strings.count, value: String(totals.count) },
   ];
   return (
-    <aside className="border-navy min-w-0 border-2 bg-white p-5 shadow-xl sm:p-7 lg:sticky lg:top-28">
-      <p className="eyebrow text-sky-ink">{strings.plan}</p>
-      <p className="text-slate-blue mt-3 text-xs font-semibold tracking-wider uppercase">
-        {strings.gained}
-      </p>
+    <aside className="bg-navy-deep min-w-0 rounded-3xl p-6 text-white shadow-2xl sm:p-8 lg:sticky lg:top-28">
+      <p className="eyebrow text-gold">{strings.plan}</p>
+      <p className="mt-6 text-sm text-white/65">{strings.gained}</p>
       <output
         aria-live="polite"
-        className="text-navy mt-1 block text-5xl leading-none font-semibold tabular-nums"
+        className="text-figure font-display mt-2 block tabular-nums"
       >
         {usd(totals.gain)}
       </output>
-      <dl className="mt-6 divide-y border-t">
+      <dl className="mt-7 divide-y divide-white/10 border-y border-white/10">
         {lines.map((line) => (
           <div
             key={line.label}
             className="flex items-center justify-between py-3"
           >
-            <dt className="text-slate-blue">{line.label}</dt>
-            <dd className="text-navy font-semibold tabular-nums">
-              {line.value}
-            </dd>
+            <dt className="text-white/65">{line.label}</dt>
+            <dd className="font-medium tabular-nums">{line.value}</dd>
           </div>
         ))}
       </dl>
@@ -190,13 +189,16 @@ const PlanSummary = ({
         href={`${applyHref}?amount=${encodeURIComponent(amount)}`}
         data-apply=""
         data-amount={totals.budget > 0 ? amount : undefined}
-        className={cn(buttonVariants({ size: "cta" }), "mt-5 w-full")}
+        className={cn(
+          buttonVariants({ size: "hero", variant: "accent" }),
+          "mt-7 w-full"
+        )}
       >
         {strings.cta}
       </a>
       <Button
         type="button"
-        variant="quiet"
+        variant="ghost-inverse"
         size="cta"
         className="mt-2 w-full"
         onClick={onReset}
@@ -204,7 +206,7 @@ const PlanSummary = ({
         {strings.reset}
       </Button>
       {disclaimer !== undefined && (
-        <p className="text-slate-blue mt-4 text-xs leading-relaxed">
+        <p className="mt-5 text-xs leading-relaxed text-white/50">
           {disclaimer}
         </p>
       )}
@@ -249,8 +251,8 @@ const RenovationPlanner = ({
     <div className="grid gap-8 lg:grid-cols-[1fr_360px] lg:items-start">
       <div className="min-w-0">
         <div className="flex flex-wrap items-baseline justify-between gap-2">
-          <h3 className="eyebrow text-slate-blue">{strings.pick}</h3>
-          <p className="text-slate-blue text-xs">{strings.pickHelp}</p>
+          <h3 className="text-navy text-lg">{strings.pick}</h3>
+          <p className="text-slate-blue text-sm">{strings.pickHelp}</p>
         </div>
         <ul className="mt-4 grid gap-3">
           {rows.map((project) => {
@@ -260,10 +262,10 @@ const RenovationPlanner = ({
               <li
                 key={project.name}
                 className={cn(
-                  "overflow-hidden rounded-sm border-2",
+                  "overflow-hidden rounded-2xl border transition-shadow",
                   active
-                    ? "border-navy bg-mist shadow-md"
-                    : "border-border bg-white"
+                    ? "border-navy/30 bg-mist shadow-lg"
+                    : "border-border bg-white shadow-xs hover:shadow-md"
                 )}
               >
                 <Button
@@ -277,7 +279,7 @@ const RenovationPlanner = ({
                   }}
                 >
                   <span className="min-w-0 flex-1">
-                    <span className="text-navy block text-base leading-snug font-semibold">
+                    <span className="text-navy block text-base leading-snug font-medium">
                       {project.name}
                     </span>
                     <span
@@ -291,8 +293,8 @@ const RenovationPlanner = ({
                   </span>
                   <span
                     className={cn(
-                      "shrink-0 px-2.5 py-1 text-xs font-semibold tabular-nums",
-                      active ? "bg-gold text-navy-deep" : "bg-mist text-navy"
+                      "shrink-0 rounded-full px-2.5 py-1 text-xs font-medium tabular-nums",
+                      active ? "bg-gold text-navy-deep" : "bg-paper text-navy"
                     )}
                   >
                     {project.roiPercent}%

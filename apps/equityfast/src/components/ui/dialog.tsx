@@ -42,12 +42,12 @@ function DialogOverlay({
 const dialogContentVariants = {
   default: "bg-popover text-popover-foreground ring-foreground/10 gap-4 p-4",
   /**
-   * The multi-step application: roomy, square-cornered, scrolls on short
+   * The multi-step application: roomy, softly rounded, scrolls on short
    * phones. Phones get a slimmer margin and padding so Turnstile's 300px
    * widget fits a 375px screen.
    */
   application:
-    "bg-white text-navy ring-navy/10 max-h-[calc(100svh-2rem)] max-w-[calc(100%-1rem)] gap-0 overflow-x-hidden overflow-y-auto rounded-sm p-5 shadow-2xl sm:max-w-lg sm:p-8",
+    "bg-white text-navy ring-navy/10 max-h-[calc(100svh-2rem)] max-w-[calc(100%-1rem)] gap-0 overflow-x-hidden overflow-y-auto rounded-2xl p-5 shadow-2xl sm:max-w-lg sm:p-9",
 } as const;
 
 function DialogContent({
@@ -135,9 +135,8 @@ function DialogFooter({
 
 const dialogTitleVariants = {
   default: "font-medium",
-  /** Large navy question heading, leaving room for the close button. */
-  application:
-    "text-navy pr-10 text-[clamp(1.5rem,5vw,1.875rem)] leading-tight font-semibold",
+  /** Large navy serif question heading, leaving room for the close button. */
+  application: "text-navy font-display text-question pr-10 font-normal",
 } as const;
 
 function DialogTitle({

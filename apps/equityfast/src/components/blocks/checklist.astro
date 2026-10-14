@@ -13,25 +13,22 @@ type Props = BlockComponentProps<PageContentChecklistBlock>;
 const { value } = Astro.props;
 ---
 
-<section class="py-20 sm:py-24">
-  <div class="container-page grid *:min-w-0 gap-12 lg:grid-cols-2 lg:gap-0">
-    <div class="lg:pr-16">
+<section class="py-24 sm:py-32">
+  <div class="container-page grid *:min-w-0 gap-14 lg:grid-cols-[1fr_1.2fr] lg:gap-20">
+    <div class="lg:sticky lg:top-32 lg:self-start">
       {value.eyebrow && <p class="eyebrow text-sky-ink">{value.eyebrow}</p>}
-      <Headline text={value.headline} accent={value.headline_accent} class="mt-4" />
-      <div class="mt-6 h-1 w-16 bg-gold" aria-hidden="true"></div>
-      {value.body && <p class="mt-6 max-w-lg text-lg leading-relaxed text-slate-blue">{value.body}</p>}
-      {value.apply_label && <ButtonLink href={applyHref(Astro.currentLocale)} data-apply variant="outline-navy" size="hero" class="mt-9">{value.apply_label}</ButtonLink>}
+      <Headline text={value.headline} accent={value.headline_accent} class="mt-5" />
+      {value.body && <p class="mt-7 max-w-md text-lg leading-relaxed text-slate-blue">{value.body}</p>}
+      {value.apply_label && <ButtonLink href={applyHref(Astro.currentLocale)} data-apply variant="outline-navy" size="hero" class="mt-10">{value.apply_label}</ButtonLink>}
     </div>
-    <ul class="space-y-8 border-sky/40 lg:border-l lg:pl-12">
+    <ul class="grid gap-4 sm:grid-cols-2">
       {value.items.map((item) => (
-        <li class="flex gap-5">
-          <span class="flex size-12 shrink-0 items-center justify-center rounded-sm border border-sky/50 bg-mist text-sky-ink" aria-hidden="true">
-            <Check class="size-5" stroke-width={3} />
+        <li class="rounded-2xl border border-border bg-white p-7 shadow-xs">
+          <span class="flex size-10 items-center justify-center rounded-full bg-mist text-sky-ink" aria-hidden="true">
+            <Check class="size-5" stroke-width={2.25} />
           </span>
-          <div>
-            <h3 class="text-base font-semibold tracking-[0.04em] uppercase">{item.title}</h3>
-            <p class="mt-1 leading-relaxed text-slate-blue">{item.body}</p>
-          </div>
+          <h3 class="mt-6 text-lg leading-snug">{item.title}</h3>
+          <p class="mt-2 leading-relaxed text-slate-blue">{item.body}</p>
         </li>
       ))}
     </ul>

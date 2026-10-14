@@ -11,8 +11,8 @@ const sliderVariants = {
   },
   brand: {
     indicator: "bg-gold",
-    thumb: "size-5 border-2 border-white bg-gold shadow-md",
-    track: "bg-current/25 data-horizontal:h-1.5",
+    thumb: "size-5 border-5 border-gold bg-white shadow-lg",
+    track: "bg-current/15 data-horizontal:h-1",
   },
 } as const;
 

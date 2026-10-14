@@ -54,13 +54,10 @@ const DollarSlider = ({
   return (
     <div>
       <div className="flex items-baseline justify-between gap-3">
-        <span
-          id={id}
-          className="tracking-label text-xs font-semibold text-white/75 uppercase"
-        >
+        <span id={id} className="text-sm text-white/65">
           {label}
         </span>
-        <span className="text-lg font-semibold tabular-nums">{usd(value)}</span>
+        <span className="text-lg font-medium tabular-nums">{usd(value)}</span>
       </div>
       <Slider
         variant="brand"
@@ -91,22 +88,20 @@ const EquityEstimator = ({ applyHref, strings }: EquityEstimatorProps) => {
   const amount = prefillAmount(Math.max(line, MIN_AMOUNT));
 
   return (
-    <div className="border border-white/15 bg-white/8 p-6 text-white shadow-2xl backdrop-blur-md sm:p-8">
+    <div className="rounded-3xl border border-white/12 bg-white/6 p-6 text-white shadow-2xl ring-1 ring-white/5 backdrop-blur-xl sm:p-9">
       <p className="eyebrow text-gold">{strings.eyebrow}</p>
-      <p className="tracking-label mt-4 text-xs font-semibold text-white/75 uppercase">
-        {strings.line}
-      </p>
+      <p className="mt-6 text-sm text-white/65">{strings.line}</p>
       <output
         aria-live="polite"
-        className="text-figure mt-1 block font-semibold tabular-nums"
+        className="text-figure font-display mt-2 block tabular-nums"
       >
         {usd(line)}
       </output>
-      <p className="text-sky mt-2 text-sm font-semibold">
+      <p className="text-sky mt-3 text-sm">
         {line >= MIN_AMOUNT ? strings.within : strings.below}
       </p>
 
-      <div className="mt-7 space-y-6">
+      <div className="mt-8 space-y-7 border-t border-white/10 pt-7">
         <DollarSlider
           label={strings.homeValue}
           range={HOME_VALUE}
@@ -132,7 +127,7 @@ const EquityEstimator = ({ applyHref, strings }: EquityEstimatorProps) => {
       >
         {strings.cta}
       </a>
-      <p className="mt-4 text-center text-xs leading-relaxed text-white/70">
+      <p className="mt-5 text-center text-xs leading-relaxed text-white/50">
         {strings.note}
       </p>
     </div>

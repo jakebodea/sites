@@ -12,22 +12,22 @@ type Props = BlockComponentProps<PageContentImageCardsBlock>;
 const { value } = Astro.props;
 ---
 
-<section class="bg-navy-deep py-20 text-white sm:py-24">
+<section class="relative isolate overflow-hidden bg-navy-deep py-24 text-white sm:py-32">
+  <div class="glow-navy absolute inset-0 -z-10" aria-hidden="true"></div>
   <div class="container-page">
     {value.eyebrow && <p class="eyebrow text-gold">{value.eyebrow}</p>}
-    <Headline text={value.headline} accent={value.headline_accent} inline tone="dark" class="mt-4 text-white" />
-    <ul class="mt-12 grid gap-8 md:grid-cols-3">
+    <Headline text={value.headline} accent={value.headline_accent} inline tone="dark" class="mt-5 text-white" />
+    <ul class="mt-14 grid gap-5 md:grid-cols-3">
       {value.items.map((item) => (
-        <li class="flex flex-col border border-white/12 bg-navy">
-          <div class="relative aspect-[4/2.2] overflow-hidden">
-            {item.image && <Image image={item.image} sizes="(min-width: 768px) 33vw, 100vw" class="size-full! object-cover" />}
-            <div class="absolute inset-0 bg-linear-to-t from-navy-deep/90 via-transparent to-transparent" aria-hidden="true"></div>
-            {item.kicker && <p class="absolute bottom-3 left-5 text-xs font-semibold tracking-label text-gold uppercase">{item.kicker}</p>}
+        <li class="group flex flex-col overflow-hidden rounded-3xl border border-white/10 bg-white/4">
+          <div class="relative aspect-[4/2.6] overflow-hidden">
+            {item.image && <Image image={item.image} sizes="(min-width: 768px) 33vw, 100vw" class="size-full! object-cover transition-transform duration-700 group-hover:scale-105" />}
+            <div class="absolute inset-0 bg-linear-to-t from-navy-deep/70 via-transparent to-transparent" aria-hidden="true"></div>
+            {item.kicker && <p class="absolute bottom-4 left-5 rounded-full bg-navy-deep/70 px-3 py-1 text-xs font-medium text-gold backdrop-blur">{item.kicker}</p>}
           </div>
-          <div class="flex-1 p-7">
-            <h3 class="text-2xl text-white">{item.title}</h3>
-            <div class="mt-4 mb-5 h-px w-16 bg-gold" aria-hidden="true"></div>
-            <div class="space-y-3 leading-relaxed text-white/80">
+          <div class="flex-1 p-7 sm:p-8">
+            <h3 class="font-display text-3xl font-normal tracking-normal text-white">{item.title}</h3>
+            <div class="mt-4 space-y-3 leading-relaxed text-white/65">
               {paragraphs(item.body).map((paragraph) => <p>{paragraph}</p>)}
             </div>
           </div>
