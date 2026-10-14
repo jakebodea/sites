@@ -52,6 +52,10 @@ tester.run("prefer-shared-controls", preferSharedControlsRule, {
       code: `<button className="rounded" />`,
       filename: "/repo/apps/site/src/components/ui/button.tsx",
     },
+    {
+      code: `<button type="button" aria-expanded={open} />`,
+      filename: "/repo/packages/site-ui/src/mobile-menu.tsx",
+    },
   ],
 });
 

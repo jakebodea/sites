@@ -9,9 +9,10 @@ Current choices: [docs/stack.md](docs/stack.md). Why each one-way choice was mad
 | Path | What lives there |
 | --- | --- |
 | `apps/<site>/` | One site: `alchemy.run.ts` (its stack), `astro.config.ts`, `site.config.ts` (identity, domain, business facts), `seed/seed.json` (CMS schema + starting content), `src/` |
-| `apps/<site>/src/components/islands/` | The only client JS: shadcn React islands (nav, gallery, contact form) |
+| `apps/<site>/src/components/islands/` | Site-specific client JS: shadcn React islands (gallery, contact form). The mobile menu comes from `packages/site-ui` |
 | `apps/<site>/src/components/ui/` | Vendored shadcn primitives. Add variants here; never restyle them at call sites |
 | `packages/cloudflare-kit` | Shared code: Effect server services (`./server`), Web Analytics bindings/beacon, Alchemy helpers (`./infra`), EmDash glue (`./emdash/*`) |
+| `packages/site-ui` | Shared React islands every site uses (the full-screen mobile menu), restyled per site through slot classes |
 | `packages/control-app` | `bun run app -- …`: run, sign in, screenshot, record, smoke-test a site |
 | `packages/proof` | `bun run proof -- …`: revision-bound proof receipts |
 | `packages/config` | tsconfig + strict oxlint/oxfmt presets + local lint rules |

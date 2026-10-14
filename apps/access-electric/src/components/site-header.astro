@@ -1,6 +1,6 @@
 ---
 import type { NavItem } from "@/lib/content";
-import MobileNav from "./islands/mobile-nav";
+import MobileMenu from "@jakebodea/site-ui/mobile-menu";
 import ButtonLink from "./button-link.astro";
 
 interface Props {
@@ -33,6 +33,19 @@ const isActive = (url: string) =>
       }
       <ButtonLink href="/contact" size="cta" class="ml-3">Request a bid</ButtonLink>
     </nav>
-    <MobileNav client:media="(max-width: 767px)" title={title} items={[...items]} currentPath={current} />
+    <MobileMenu
+      client:media="(max-width: 767px)"
+      items={items.map((item) => ({ href: item.url, label: item.label }))}
+      currentPath={current}
+      classNames={{
+        toggle: "text-navy md:hidden",
+        overlay: "bg-background/85 md:hidden",
+        nav: "container-page pt-8",
+        link: "border-b border-border/70 py-4 text-3xl font-semibold text-navy/60 aria-[current=page]:text-navy",
+        footer: "container-page",
+      }}
+    >
+      <ButtonLink href="/contact" size="hero" class="w-full">Request a bid</ButtonLink>
+    </MobileMenu>
   </div>
 </header>

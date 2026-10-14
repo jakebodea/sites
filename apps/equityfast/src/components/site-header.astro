@@ -12,7 +12,7 @@ import type { Alternates, NavItem } from "@/lib/content";
 import { site } from "../../site.config";
 import ButtonLink from "./button-link.astro";
 import InstagramIcon from "./instagram-icon.astro";
-import MobileNav from "./islands/mobile-nav";
+import MobileMenu from "@jakebodea/site-ui/mobile-menu";
 
 interface Props {
   locale: Locale;
@@ -65,15 +65,23 @@ const switchHref = alternates[other] ?? localePath(other, "/");
         <span aria-hidden="true">{other}</span>
       </a>
       <ButtonLink href={APPLY_PATH[locale]} data-apply variant="accent" size="cta" class="ml-2 hidden sm:inline-flex">{t.startNow}</ButtonLink>
-      <MobileNav
+      <MobileMenu
         client:media="(max-width: 1279px)"
-        items={[...items]}
+        items={items.map((item) => ({ href: item.url, label: item.label }))}
         currentPath={current}
-        applyHref={APPLY_PATH[locale]}
-        switchHref={switchHref}
-        switchLocale={other}
-        strings={{ close: t.close, menu: t.menu, mainNav: t.mainNav, startNow: t.startNow, switchTo: t.switchTo }}
-      />
+        homes={["/", "/es"]}
+        labels={{ close: t.close, nav: t.mainNav, open: t.menu }}
+        classNames={{
+          toggle: "ml-1 text-white xl:hidden",
+          overlay: "bg-navy-deep/90 text-white xl:hidden",
+          nav: "container-page pt-10",
+          link: "text-3xl font-semibold uppercase text-white/60 aria-[current=page]:text-white",
+          footer: "container-page flex flex-col gap-4",
+        }}
+      >
+        <ButtonLink href={APPLY_PATH[locale]} data-apply variant="accent" size="hero" class="w-full">{t.startNow}</ButtonLink>
+        <a href={switchHref} hreflang={other} lang={other} class="text-center text-sm text-white/70 hover:text-white">{t.switchTo}</a>
+      </MobileMenu>
     </div>
   </div>
 </header>

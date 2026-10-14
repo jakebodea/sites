@@ -1,0 +1,12 @@
+/*
+ * Lint-only theme (components.json): the semantic tokens every site defines,
+ * so `@shadcn/lint` can check this package's default classes. Sites never
+ * import it; each brings its own theme and imports `mobile-menu.css`.
+ */
+@import "tailwindcss";
+@import "./mobile-menu.css";
+
+@theme inline {
+  --color-background: oklch(1 0 0);
+  --color-foreground: oklch(0.2 0 0);
+}

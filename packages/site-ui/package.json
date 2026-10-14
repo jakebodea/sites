@@ -1,0 +1,32 @@
+{
+  "name": "@jakebodea/site-ui",
+  "private": true,
+  "description": "Shared React islands every marketing site uses, styled per site through slot classes and CSS variables.",
+  "type": "module",
+  "exports": {
+    "./mobile-menu": "./src/mobile-menu.tsx",
+    "./mobile-menu.css": "./src/mobile-menu.css"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "clsx": "catalog:",
+    "tailwind-merge": "catalog:"
+  },
+  "devDependencies": {
+    "@jakebodea/config": "workspace:*",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "tailwindcss": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  },
+  "peerDependencies": {
+    "react": "*",
+    "react-dom": "*"
+  }
+}

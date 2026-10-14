@@ -14,7 +14,8 @@ import type { ESTree } from "@oxlint/plugins";
 export const LONG_DASH = /[–—]/u;
 
 const TRANSITION_COLORS_CLASS = /(?:^|\s|:)transition-colors(?:\s|$)/u;
-const SHARED_UI_DIRECTORY = "/components/ui/";
+/** Where shared primitives live: each site's vendored shadcn set, and the cross-site islands package. */
+const SHARED_UI_DIRECTORIES = ["/components/ui/", "/packages/site-ui/src/"];
 const CLASS_ATTRIBUTES = new Set(["class", "className"]);
 const CLASS_FUNCTIONS = new Set(["cn", "cva", "clsx", "twMerge"]);
 
@@ -134,7 +135,10 @@ const isHiddenInput = (node: ESTree.JSXOpeningElement) =>
 
 export const preferSharedControlsRule = defineRule({
   create(context) {
-    if (context.filename.replaceAll("\\", "/").includes(SHARED_UI_DIRECTORY)) {
+    const filename = context.filename.replaceAll("\\", "/");
+    if (
+      SHARED_UI_DIRECTORIES.some((directory) => filename.includes(directory))
+    ) {
       return {};
     }
     return {
@@ -162,7 +166,7 @@ export const preferSharedControlsRule = defineRule({
   meta: {
     docs: {
       description:
-        "Disallow native buttons, inputs, selects, and textareas outside components/ui. Shared primitives own how controls look, focus, and announce state.",
+        "Disallow native buttons, inputs, selects, and textareas outside components/ui and packages/site-ui. Shared primitives own how controls look, focus, and announce state.",
     },
     messages: {
       raw: "Use {{replacement}} from components/ui instead of a native `<{{tag}}>`. Add a variant to the primitive if none fits.",

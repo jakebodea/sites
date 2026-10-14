@@ -4,7 +4,7 @@ import ArrowUpRight from "@lucide/astro/icons/arrow-up-right";
 import Logo from "@/components/brand/logo.astro";
 import type { NavItem } from "@/lib/content";
 import { isExternal } from "@/lib/content";
-import MobileNav from "./islands/mobile-nav";
+import MobileMenu from "@jakebodea/site-ui/mobile-menu";
 import ButtonLink from "./button-link.astro";
 
 interface Props {
@@ -49,7 +49,19 @@ const isActive = (url: string) =>
       <ButtonLink href="/contact" variant="hairline" size="cta" class="header-cta ml-4">Start your project</ButtonLink>
     </nav>
     <div class="header-ink transition-colors duration-500 lg:hidden">
-      <MobileNav client:media="(max-width: 1023px)" title={title} items={[...items]} currentPath={current} />
+      <MobileMenu
+        client:media="(max-width: 1023px)"
+        items={items.map((item) => ({ href: item.url, label: item.label }))}
+        currentPath={current}
+        classNames={{
+          overlay: "bg-background/85 lg:hidden",
+          nav: "container-page pt-10",
+          link: "font-display text-5xl text-slate/55 aria-[current=page]:text-slate",
+          footer: "container-page",
+        }}
+      >
+        <ButtonLink href="/contact" size="hero" class="w-full">Start your project</ButtonLink>
+      </MobileMenu>
     </div>
   </div>
 </header>
@@ -85,7 +97,8 @@ const isActive = (url: string) =>
   /*
    * Over the hero: the header keeps its sticky slot but pulls the hero up beneath
    * it (negative margin), staying transparent until the page scrolls. Only with
-   * JS, which is what restores the solid header (header.ts).
+   * JS, which is what restores the solid header (header.ts). The open mobile
+   * menu sits under a solid header too, like a scrolled page.
    */
   :global(.js) .is-overlay {
     margin-bottom: -5rem;
@@ -97,25 +110,25 @@ const isActive = (url: string) =>
     }
   }
 
-  :global(.js) .is-overlay:not([data-scrolled]) .header-surface,
-  :global(.js) .is-overlay:not([data-scrolled]) :global(.logo-dark) {
+  :global(.js:not([data-mobile-menu-open])) .is-overlay:not([data-scrolled]) .header-surface,
+  :global(.js:not([data-mobile-menu-open])) .is-overlay:not([data-scrolled]) :global(.logo-dark) {
     opacity: 0;
   }
 
-  :global(.js) .is-overlay:not([data-scrolled]) :global(.logo-light) {
+  :global(.js:not([data-mobile-menu-open])) .is-overlay:not([data-scrolled]) :global(.logo-light) {
     opacity: 1;
   }
 
-  :global(.js) .is-overlay:not([data-scrolled]) .header-ink {
+  :global(.js:not([data-mobile-menu-open])) .is-overlay:not([data-scrolled]) .header-ink {
     color: white;
   }
 
-  :global(.js) .is-overlay:not([data-scrolled]) :global(.header-cta) {
+  :global(.js:not([data-mobile-menu-open])) .is-overlay:not([data-scrolled]) :global(.header-cta) {
     border-color: rgb(255 255 255 / 0.5);
     color: white;
   }
 
-  :global(.js) .is-overlay:not([data-scrolled]) :global(.header-cta):hover {
+  :global(.js:not([data-mobile-menu-open])) .is-overlay:not([data-scrolled]) :global(.header-cta):hover {
     background: white;
     color: var(--brand-slate);
   }

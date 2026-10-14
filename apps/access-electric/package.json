@@ -20,6 +20,7 @@
     "@eisbachcode/emdash-plugin-analytics": "catalog:",
     "@emdash-cms/cloudflare": "catalog:",
     "@jakebodea/cloudflare-kit": "workspace:*",
+    "@jakebodea/site-ui": "workspace:*",
     "@lucide/astro": "catalog:",
     "astro": "catalog:",
     "class-variance-authority": "catalog:",
