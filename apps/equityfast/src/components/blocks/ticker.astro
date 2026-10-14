@@ -13,13 +13,13 @@ type Props = BlockComponentProps<PageContentTickerBlock>;
 const { value } = Astro.props;
 ---
 
-<div class="overflow-hidden border-y border-white/10 bg-navy-deep py-3.5 text-white">
+<div class="overflow-hidden border-y border-white/8 bg-navy-deep py-4 text-white">
   <div class="flex w-max animate-ticker motion-reduce:w-full motion-reduce:flex-wrap motion-reduce:justify-center">
     {[false, true].map((copy) => (
       <ul class:list={["flex shrink-0 items-center", copy && "motion-reduce:hidden"]} aria-hidden={copy ? "true" : undefined}>
         {value.items.map((item) => (
-          <li class="flex items-center gap-3 px-6 text-xs font-semibold tracking-label whitespace-nowrap text-white/85 uppercase">
-            <span class="size-1.5 rounded-full bg-gold" aria-hidden="true"></span>{item.text}
+          <li class="flex items-center gap-8 pr-8 text-sm whitespace-nowrap text-white/65">
+            {item.text}<span class="text-gold/70" aria-hidden="true">✦</span>
           </li>
         ))}
       </ul>

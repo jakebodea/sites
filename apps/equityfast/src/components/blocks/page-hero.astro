@@ -1,5 +1,6 @@
 ---
 /** Page opener (the page's h1): eyebrow, two-tone headline, intro, optional application button, over a photo. */
+import ArrowRight from "@lucide/astro/icons/arrow-right";
 import { Image } from "emdash/ui";
 import type { BlockComponentProps } from "emdash/ui";
 
@@ -13,18 +14,16 @@ type Props = BlockComponentProps<PageContentPageHeroBlock>;
 const { value } = Astro.props;
 ---
 
-<section class="relative isolate flex min-h-[min(78svh,760px)] items-end overflow-hidden bg-navy-deep text-white">
+<section class="relative isolate flex min-h-[min(70svh,680px)] items-end overflow-hidden bg-navy-deep text-white">
   {value.image && (
-    <Image image={value.image} alt="" priority sizes="100vw" class="absolute inset-0 -z-20 size-full! object-cover" />
+    <Image image={value.image} alt="" priority sizes="100vw" class="absolute inset-0 -z-30 size-full! object-cover opacity-60" />
   )}
-  <div class="absolute inset-0 -z-10 bg-linear-to-b from-navy/55 via-navy/75 to-navy-deep" aria-hidden="true"></div>
-  <div class="container-page pt-32 pb-16 sm:pb-20 lg:pb-24">
-    {value.eyebrow && (
-      <p class="eyebrow text-gold">{value.eyebrow}</p>
-      <div class="mt-5 h-px w-24 bg-gold/70" aria-hidden="true"></div>
-    )}
-    <Headline as="h1" text={value.headline} accent={value.headline_accent} tone="dark" class="mt-6 text-[clamp(2.75rem,8vw,5.5rem)]! leading-[0.98]! text-white [&>span]:italic" />
-    {value.intro && <p class="mt-7 max-w-xl text-lg leading-relaxed text-white/85 sm:text-xl">{value.intro}</p>}
-    {value.apply_label && <ButtonLink href={applyHref(Astro.currentLocale)} data-apply variant="accent" size="hero" class="mt-9">{value.apply_label}</ButtonLink>}
+  <div class="absolute inset-0 -z-20 bg-linear-to-b from-navy-deep/40 via-navy-deep/75 to-navy-deep" aria-hidden="true"></div>
+  <div class="glow-navy absolute inset-0 -z-10" aria-hidden="true"></div>
+  <div class="container-page pt-36 pb-16 sm:pb-20 lg:pb-24">
+    {value.eyebrow && <p class="eyebrow text-gold">{value.eyebrow}</p>}
+    <Headline as="h1" text={value.headline} accent={value.headline_accent} tone="dark" size="hero" class="mt-6 max-w-4xl text-white" />
+    {value.intro && <p class="mt-8 max-w-xl text-lg leading-relaxed text-white/75 sm:text-xl">{value.intro}</p>}
+    {value.apply_label && <ButtonLink href={applyHref(Astro.currentLocale)} data-apply variant="accent" size="hero" class="mt-10">{value.apply_label}<ArrowRight class="size-4" aria-hidden="true" /></ButtonLink>}
   </div>
 </section>

@@ -1,5 +1,6 @@
 ---
-/** Program guidelines on navy: headline, text, and a link beside a grid of label/value facts. */
+/** Program guidelines: headline, text, and a link beside a spec sheet of label/value facts. */
+import ArrowRight from "@lucide/astro/icons/arrow-right";
 import { sanitizeHref } from "emdash";
 import type { BlockComponentProps } from "emdash/ui";
 
@@ -11,28 +12,28 @@ type Props = BlockComponentProps<PageContentGuidelinesBlock>;
 const { value } = Astro.props;
 ---
 
-<section class="bg-navy-deep py-20 text-white sm:py-24">
-  <div class="container-page grid *:min-w-0 gap-12 lg:grid-cols-[1fr_1.25fr] lg:gap-16">
-    <div>
-      {value.eyebrow && <p class="eyebrow text-gold">{value.eyebrow}</p>}
-      <Headline text={value.headline} accent={value.headline_accent} tone="dark" class="mt-4 text-white [&>span]:italic" />
-      {value.body && <p class="mt-6 max-w-lg text-lg leading-relaxed text-white/80">{value.body}</p>}
+<section class="bg-paper py-24 sm:py-32">
+  <div class="container-page grid *:min-w-0 gap-14 lg:grid-cols-[1fr_1.35fr] lg:gap-20">
+    <div class="lg:sticky lg:top-32 lg:self-start">
+      {value.eyebrow && <p class="eyebrow text-sky-ink">{value.eyebrow}</p>}
+      <Headline text={value.headline} accent={value.headline_accent} class="mt-5" />
+      {value.body && <p class="mt-7 max-w-md text-lg leading-relaxed text-slate-blue">{value.body}</p>}
       {value.link_label && value.link_url && (
-        <a href={sanitizeHref(value.link_url)} class="mt-8 inline-flex items-center gap-2 border-b border-gold pb-1 text-xs font-semibold tracking-label text-gold uppercase hover:text-white">
-          {value.link_label} <span aria-hidden="true">→</span>
+        <a href={sanitizeHref(value.link_url)} class="group mt-9 inline-flex items-center gap-2 font-medium text-navy underline decoration-gold decoration-2 underline-offset-8 hover:decoration-navy">
+          {value.link_label}<ArrowRight class="size-4 transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
         </a>
       )}
     </div>
     <div>
-      <dl class="grid grid-cols-2 sm:grid-cols-3">
+      <dl class="grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-border bg-border shadow-sm sm:grid-cols-3">
         {value.items.map((item) => (
-          <div class="border-b border-white/10 px-3 py-6 hyphens-auto sm:border-l sm:px-5 sm:first:border-l-0 sm:[&:nth-child(3n+1)]:border-l-0">
-            <dt class="text-[11px] font-semibold tracking-label text-sky uppercase">{item.label}</dt>
-            <dd class="mt-2 text-lg leading-snug font-semibold">{item.value}</dd>
+          <div class="bg-white px-5 py-6 hyphens-auto last:odd:col-span-2 sm:px-6 sm:py-7 sm:last:odd:col-span-1">
+            <dt class="text-sm text-slate-blue">{item.label}</dt>
+            <dd class="mt-2 text-lg leading-snug font-medium text-navy">{item.value}</dd>
           </div>
         ))}
       </dl>
-      {value.footnote && <p class="mt-6 text-sm leading-relaxed text-white/60">{value.footnote}</p>}
+      {value.footnote && <p class="mt-6 text-sm leading-relaxed text-slate-blue">{value.footnote}</p>}
     </div>
   </div>
 </section>

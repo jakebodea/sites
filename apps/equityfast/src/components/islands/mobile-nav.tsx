@@ -82,7 +82,7 @@ const MobileNav = ({
               href={item.url}
               aria-current={currentPath === item.url ? "page" : undefined}
               onClick={close}
-              className="hover:bg-muted aria-[current=page]:bg-mist aria-[current=page]:text-navy tracking-label flex min-h-12 items-center rounded-sm px-3 text-sm font-semibold uppercase"
+              className="hover:bg-muted aria-[current=page]:bg-mist text-navy font-display flex min-h-12 items-center rounded-xl px-3 text-2xl"
             >
               {item.label}
             </a>
@@ -91,7 +91,7 @@ const MobileNav = ({
             href={switchHref}
             hrefLang={switchLocale}
             lang={switchLocale}
-            className="text-sky-ink hover:bg-muted flex min-h-12 items-center rounded-sm px-3 text-sm font-semibold"
+            className="text-sky-ink hover:bg-muted mt-2 flex min-h-12 items-center rounded-xl px-3 text-sm font-medium"
           >
             {strings.switchTo}
           </a>

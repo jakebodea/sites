@@ -1,5 +1,6 @@
 ---
 /** A grid of cards linking to other pages; the whole card is the link. */
+import ArrowRight from "@lucide/astro/icons/arrow-right";
 import { sanitizeHref } from "emdash";
 import type { BlockComponentProps } from "emdash/ui";
 
@@ -10,20 +11,23 @@ type Props = BlockComponentProps<PageContentLinkCardsBlock>;
 const { value } = Astro.props;
 ---
 
-<section class="py-20 sm:py-24">
+<section class="bg-paper py-24 sm:py-32">
   <div class="container-page">
-    <h2 class="headline-section">{value.headline}</h2>
-    <ul class="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+    <h2 class="headline-section max-w-2xl">{value.headline}</h2>
+    <ul class="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
       {value.items.map((item) => (
-        <li class="group relative flex flex-col border border-border bg-white p-8 transition-shadow hover:shadow-lg focus-within:shadow-lg">
-          {item.eyebrow && <p class="eyebrow text-sky-ink">{item.eyebrow}</p>}
-          <h3 class="mt-4 text-2xl">
-            {item.url ? <a href={sanitizeHref(item.url)} class="after:absolute after:inset-0 focus-visible:outline-none">{item.title}</a> : item.title}
+        <li class="group relative flex flex-col rounded-2xl border border-border bg-white p-7 shadow-xs transition duration-300 focus-within:-translate-y-1 focus-within:shadow-xl hover:-translate-y-1 hover:shadow-xl">
+          {item.eyebrow && <p class="text-sm text-sky-ink">{item.eyebrow}</p>}
+          <h3 class="mt-3 font-display text-3xl font-normal tracking-normal">
+            {item.url ? <a href={sanitizeHref(item.url)} class="after:absolute after:inset-0 after:rounded-2xl focus-visible:outline-none">{item.title}</a> : item.title}
           </h3>
           <p class="mt-4 flex-1 leading-relaxed text-slate-blue">{item.body}</p>
           {item.url && item.link_label && (
-            <p class="mt-8 text-xs font-semibold tracking-label text-navy uppercase" aria-hidden="true">
-              {item.link_label} <span class="inline-block transition-transform group-hover:translate-x-1">→</span>
+            <p class="mt-10 flex items-center justify-between text-sm font-medium text-navy" aria-hidden="true">
+              {item.link_label}
+              <span class="flex size-9 items-center justify-center rounded-full border border-border group-hover:border-navy group-hover:bg-navy group-hover:text-white">
+                <ArrowRight class="size-4" />
+              </span>
             </p>
           )}
         </li>

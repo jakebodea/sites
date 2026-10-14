@@ -65,6 +65,14 @@ export default defineConfig({
       styles: ["normal", "italic"],
       weights: [400, 500, 600, 700],
     },
+    {
+      cssVariable: "--font-serif",
+      fallbacks: ["ui-serif", "Georgia", "serif"],
+      name: "Instrument Serif",
+      provider: fontProviders.google(),
+      styles: ["normal", "italic"],
+      weights: [400],
+    },
   ],
   /**
    * English at `/`, Spanish under `/es/`. EmDash reads this config: each locale

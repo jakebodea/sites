@@ -21,13 +21,13 @@ const projects = value.projects.map((project) => ({
 }));
 ---
 
-<section class="py-20 sm:py-24">
+<section class="py-24 sm:py-32">
   <div class="container-page">
     <div class="max-w-3xl">
       <Headline text={value.headline} accent={value.headline_accent} inline />
-      {value.intro && <p class="mt-5 text-lg leading-relaxed text-slate-blue">{value.intro}</p>}
+      {value.intro && <p class="mt-7 text-lg leading-relaxed text-slate-blue">{value.intro}</p>}
     </div>
-    <div class="mt-10">
+    <div class="mt-14">
       <RenovationPlanner client:visible projects={projects} strings={t.planner} disclaimer={value.disclaimer ?? undefined} applyHref={applyHref(Astro.currentLocale)} />
     </div>
   </div>

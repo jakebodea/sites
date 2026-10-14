@@ -1,7 +1,7 @@
 ---
 /**
  * A block headline in the site's two-tone style: the first line in the
- * surrounding color, the accent line in sky blue. Search engines and screen
+ * surrounding color, the accent line in italic sky. Search engines and screen
  * readers read it as one heading.
  */
 interface Props {
@@ -12,17 +12,19 @@ interface Props {
   inline?: boolean;
   /** Sky on navy, the darker sky ink on white. */
   tone?: "light" | "dark";
+  /** Section scale, or the larger page-opening scale. */
+  size?: "section" | "hero";
   class?: string;
 }
 
-const { accent, as: Tag = "h2", class: className, inline = false, text, tone = "light" } = Astro.props;
+const { accent, as: Tag = "h2", class: className, inline = false, size = "section", text, tone = "light" } = Astro.props;
 ---
 
-<Tag class:list={["headline-section", className]}>
+<Tag class:list={[size === "hero" ? "headline-hero" : "headline-section", className]}>
   {text}{accent && (
     <>
       {inline ? " " : <br />}
-      <span class:list={[tone === "dark" ? "text-sky" : "text-sky-ink"]}>{accent}</span>
+      <span class:list={["italic", tone === "dark" ? "text-sky" : "text-sky-ink"]}>{accent}</span>
     </>
   )}
 </Tag>

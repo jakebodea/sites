@@ -99,7 +99,7 @@ function FieldContent({ className, ...props }: React.ComponentProps<"div">) {
 // Site addition: `large` is the application form's bold navy label.
 const fieldLabelSizes = {
   default: "",
-  large: "text-navy text-base font-bold",
+  large: "text-navy text-base font-medium",
 } as const;
 
 function FieldLabel({
@@ -184,7 +184,7 @@ function FieldSeparator({
 // Site addition: `banner` is a tinted box for an error about the whole form.
 const fieldErrorVariants = {
   default: "",
-  banner: "bg-destructive/10 rounded-sm px-4 py-3 font-semibold",
+  banner: "bg-destructive/8 rounded-xl px-4 py-3 font-medium",
 } as const;
 
 function FieldError({

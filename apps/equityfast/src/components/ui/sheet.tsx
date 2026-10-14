@@ -128,7 +128,7 @@ function SheetTitle({
       data-slot="sheet-title"
       className={cn(
         brand
-          ? "text-navy tracking-label text-lg font-semibold uppercase"
+          ? "text-navy font-display text-3xl"
           : "text-foreground text-base font-medium",
         className
       )}
