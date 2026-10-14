@@ -1,0 +1,44 @@
+---
+/**
+ * Questions that open in place (native `<details>`: no JavaScript, and the
+ * answers stay in the HTML for search), plus their FAQPage JSON-LD.
+ */
+import ChevronDown from "@lucide/astro/icons/chevron-down";
+import type { BlockComponentProps } from "emdash/ui";
+
+import type { PageContentFaqBlock } from "../../../emdash-env";
+
+type Props = BlockComponentProps<PageContentFaqBlock>;
+
+const { value } = Astro.props;
+const jsonLd = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: value.items.map((item) => ({
+    "@type": "Question",
+    acceptedAnswer: { "@type": "Answer", text: item.answer },
+    name: item.question,
+  })),
+});
+---
+
+<section class="py-20 sm:py-24">
+  <div class="container-page">
+    {value.eyebrow && <p class="eyebrow text-sky-ink">{value.eyebrow}</p>}
+    <h2 class="headline-section mt-4">{value.headline}</h2>
+    <div class="mt-10 border-t border-border">
+      {value.items.map((item, index) => (
+        <details class="group border-b border-border" open={index === 0}>
+          <summary class="flex cursor-pointer list-none items-center justify-between gap-6 py-7 text-left text-xl font-semibold text-navy marker:hidden [&::-webkit-details-marker]:hidden">
+            {item.question}
+            <span class="flex size-9 shrink-0 items-center justify-center rounded-full border border-border transition-colors group-open:border-gold group-open:bg-gold">
+              <ChevronDown class="size-4 transition-transform group-open:rotate-180" aria-hidden="true" />
+            </span>
+          </summary>
+          <p class="max-w-3xl pb-8 text-lg leading-relaxed text-slate-blue">{item.answer}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+  <script type="application/ld+json" set:html={jsonLd} />
+</section>

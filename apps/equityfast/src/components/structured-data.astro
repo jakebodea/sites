@@ -1,0 +1,58 @@
+---
+/**
+ * FinancialService (the lender) and the HELOC product as JSON-LD on every
+ * page. EmDashHead adds the WebSite graph; this adds the business. Facts
+ * come from site.config.ts; unknown ones are omitted rather than guessed.
+ */
+import type { Locale } from "@/i18n/locales";
+import { LANGUAGE_TAG } from "@/i18n/locales";
+import { site } from "../../site.config";
+
+interface Props {
+  origin: string;
+  locale: Locale;
+}
+
+const { locale, origin } = Astro.props;
+const { business } = site;
+const lender = `${origin}/#lender`;
+const data = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@id": lender,
+      "@type": "FinancialService",
+      address: {
+        "@type": "PostalAddress",
+        addressCountry: "US",
+        addressLocality: business.address.city,
+        addressRegion: business.address.region,
+        postalCode: business.address.postalCode,
+        streetAddress: business.address.street,
+      },
+      alternateName: site.name,
+      areaServed: { "@type": "Country", name: "United States" },
+      email: business.email,
+      identifier: { "@type": "PropertyValue", name: "NMLS", value: business.nmls },
+      image: `${origin}/og-default.png`,
+      knowsLanguage: ["en", "es"],
+      logo: `${origin}/brand/equityfast.png`,
+      name: business.legalName,
+      sameAs: [business.instagram],
+      url: origin,
+    },
+    {
+      "@type": "FinancialProduct",
+      description:
+        locale === "es"
+          ? "Línea de crédito sobre la equidad de su vivienda de $5,000 a $1,000,000, sin avalúo en muchos préstamos elegibles menores a $400,000."
+          : "Home equity line of credit from $5,000 to $1,000,000 with no appraisal required on many eligible loans under $400,000.",
+      inLanguage: LANGUAGE_TAG[locale],
+      name: "EquityFast HELOC",
+      provider: { "@id": lender },
+    },
+  ],
+};
+---
+
+<script type="application/ld+json" set:html={JSON.stringify(data)} />

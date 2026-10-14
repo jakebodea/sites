@@ -1,0 +1,11 @@
+---
+import HomeRoute from "@/components/routes/home-route.astro";
+import { loadHome } from "@/lib/routes";
+
+const data = await loadHome(Astro);
+if (!data) {
+  return Astro.rewrite("/404");
+}
+---
+
+<HomeRoute {...data} />

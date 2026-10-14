@@ -1,0 +1,23 @@
+---
+/** A CMS page view, shared by `/<slug>` and `/es/<slug>`. */
+import PageBlocks from "@/components/blocks/page-blocks.astro";
+import Base from "@/layouts/base.astro";
+import type { PageData } from "@/lib/routes";
+
+type Props = PageData;
+
+const { alternates, crumbs, page, seo } = Astro.props;
+---
+
+<Base
+  title={seo.title}
+  description={seo.description}
+  image={seo.ogImage}
+  canonical={seo.canonical}
+  robots={seo.robots}
+  alternates={alternates}
+  crumbs={crumbs}
+  content={{ collection: "pages", id: page.data.id, slug: page.id }}
+>
+  <div {...page.edit.content}><PageBlocks value={page.data.content} /></div>
+</Base>

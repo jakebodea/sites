@@ -1,0 +1,28 @@
+---
+/**
+ * A block headline in the site's two-tone style: the first line in the
+ * surrounding color, the accent line in sky blue. Search engines and screen
+ * readers read it as one heading.
+ */
+interface Props {
+  as?: "h1" | "h2" | "h3";
+  text: string;
+  accent?: string | null | undefined;
+  /** Put the accent on its own line (the default) or run it on after the text. */
+  inline?: boolean;
+  /** Sky on navy, the darker sky ink on white. */
+  tone?: "light" | "dark";
+  class?: string;
+}
+
+const { accent, as: Tag = "h2", class: className, inline = false, text, tone = "light" } = Astro.props;
+---
+
+<Tag class:list={["headline-section", className]}>
+  {text}{accent && (
+    <>
+      {inline ? " " : <br />}
+      <span class:list={[tone === "dark" ? "text-sky" : "text-sky-ink"]}>{accent}</span>
+    </>
+  )}
+</Tag>

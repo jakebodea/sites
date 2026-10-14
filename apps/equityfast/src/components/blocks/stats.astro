@@ -1,0 +1,24 @@
+---
+/** A row of big gold numbers with small labels, on navy. */
+import type { BlockComponentProps } from "emdash/ui";
+
+import type { PageContentStatsBlock } from "../../../emdash-env";
+
+type Props = BlockComponentProps<PageContentStatsBlock>;
+
+const { value } = Astro.props;
+---
+
+<section class="bg-navy-deep py-14 text-white sm:py-16">
+  <div class="container-page">
+    {value.headline && <h2 class="sr-only">{value.headline}</h2>}
+    <dl class="grid grid-cols-2 gap-x-6 gap-y-10 lg:grid-cols-4">
+      {value.items.map((item) => (
+        <div class="flex flex-col-reverse gap-2">
+          <dt class="text-xs font-semibold tracking-label text-white/70 uppercase">{item.label}</dt>
+          <dd class="text-[clamp(2.25rem,4vw,3rem)] leading-none font-semibold text-gold lg:whitespace-nowrap">{item.value}</dd>
+        </div>
+      ))}
+    </dl>
+  </div>
+</section>

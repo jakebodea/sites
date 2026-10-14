@@ -1,0 +1,21 @@
+{
+  "action": "apply",
+  "body": {
+    "amount": "$75,000",
+    "consent": true,
+    "email": "smoke@example.com",
+    "firstName": "Smoke",
+    "forSale": "No",
+    "lastName": "Test",
+    "locale": "en",
+    "occupancy": "Primary residence",
+    "ownership": "Sole owner",
+    "phone": "(714) 555-0123",
+    "propertyAddress": {
+      "city": "Santa Ana",
+      "state": "CA",
+      "street": "3750 S Susan Street",
+      "zip": "92704"
+    }
+  }
+}

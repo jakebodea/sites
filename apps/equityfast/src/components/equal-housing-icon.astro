@@ -1,0 +1,14 @@
+---
+/** Equal Housing Opportunity mark: a house outline around an equals sign. */
+interface Props {
+  class?: string;
+  label: string;
+}
+
+const { class: className, label } = Astro.props;
+---
+
+<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round" class={className} role="img" aria-label={label}>
+  <path d="M6 22 24 7l18 15v19H6Z" />
+  <path d="M16 25h16M16 32h16" stroke-linecap="square" />
+</svg>

@@ -1,0 +1,49 @@
+---
+/**
+ * Home opener: the wordmark (the page's h1, read as the CMS headline), the
+ * tagline pill, intro, two buttons, and the quick equity estimate, over a
+ * photo under a navy wash.
+ */
+import { sanitizeHref } from "emdash";
+import { Image } from "emdash/ui";
+import type { BlockComponentProps } from "emdash/ui";
+
+import ButtonLink from "@/components/button-link.astro";
+import EquityEstimator from "@/components/islands/equity-estimator";
+import { toLocale } from "@/i18n/locales";
+import { ui } from "@/i18n/ui";
+import { applyHref } from "@/lib/apply";
+import type { PageContentHomeHeroBlock } from "../../../emdash-env";
+
+type Props = BlockComponentProps<PageContentHomeHeroBlock>;
+
+const { value } = Astro.props;
+const t = ui(toLocale(Astro.currentLocale));
+const apply = applyHref(Astro.currentLocale);
+---
+
+<section class="relative isolate overflow-hidden bg-navy-deep text-white">
+  {value.image && (
+    <Image image={value.image} alt="" priority sizes="100vw" class="absolute inset-0 -z-20 size-full! object-cover" />
+  )}
+  <div class="absolute inset-0 -z-10 bg-linear-to-b from-navy-deep/85 via-navy/80 to-navy-deep/95 lg:bg-linear-to-r lg:from-navy-deep/90 lg:via-navy/75 lg:to-navy-deep/60" aria-hidden="true"></div>
+  <div class="container-page grid *:min-w-0 items-center gap-12 py-16 sm:py-20 lg:min-h-[calc(100svh-72px-49px)] lg:grid-cols-[1.25fr_1fr] lg:py-24">
+    <div class="min-w-0 text-center lg:text-left">
+      <h1 class="text-white">
+        <span class="sr-only">{value.headline}</span>
+        <img src="/brand/equityfast.webp" alt="" width="1200" height="172" class="mx-auto h-auto w-full max-w-[520px] lg:mx-0" />
+      </h1>
+      <p class="mt-6 inline-flex rounded-full bg-gold px-5 py-2 text-[clamp(0.85rem,2.4vw,1.35rem)] sm:px-6 font-semibold tracking-[0.06em] text-navy uppercase">{value.tagline}</p>
+      {value.intro && <p class="mx-auto mt-7 max-w-xl text-lg leading-relaxed text-white/90 sm:text-xl lg:mx-0">{value.intro}</p>}
+      <div class="mt-9 flex flex-col justify-center gap-3 sm:flex-row lg:justify-start">
+        {value.apply_label && <ButtonLink href={apply} data-apply variant="accent" size="hero">{value.apply_label}</ButtonLink>}
+        {value.secondary_cta_label && value.secondary_cta_url && (
+          <ButtonLink href={sanitizeHref(value.secondary_cta_url)} variant="outline-inverse" size="hero">{value.secondary_cta_label}</ButtonLink>
+        )}
+      </div>
+    </div>
+    {value.show_estimator !== false && (
+      <div class="min-w-0"><EquityEstimator client:visible strings={t.estimator} applyHref={apply} /></div>
+    )}
+  </div>
+</section>

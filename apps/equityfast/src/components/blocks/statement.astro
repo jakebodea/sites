@@ -1,0 +1,20 @@
+---
+/** A large centered statement: two-tone headline, a big lead sentence, and a short paragraph. */
+import type { BlockComponentProps } from "emdash/ui";
+
+import type { PageContentStatementBlock } from "../../../emdash-env";
+
+type Props = BlockComponentProps<PageContentStatementBlock>;
+
+const { value } = Astro.props;
+---
+
+<section class="py-20 text-center sm:py-28">
+  <div class="container-page max-w-5xl">
+    <h2 class="text-[clamp(2.5rem,6.5vw,4.5rem)] leading-none tracking-[0.04em] uppercase">
+      {value.headline}{value.headline_accent && <> <span class="text-sky-ink">{value.headline_accent}</span></>}
+    </h2>
+    {value.lead && <p class="mx-auto mt-8 max-w-4xl text-[clamp(1.5rem,3.4vw,2.6rem)] leading-tight text-navy">{value.lead}</p>}
+    {value.body && <p class="mx-auto mt-8 max-w-2xl text-base leading-relaxed text-slate-blue">{value.body}</p>}
+  </div>
+</section>
