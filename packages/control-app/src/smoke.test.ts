@@ -16,20 +16,36 @@ const siteDirectory = (fixture?: string): string => {
 
 describe(smokeForm, () => {
   it("submits the shared contact form when the site ships no fixture", () => {
-    expect(smokeForm(siteDirectory()).action).toBe("contact");
+    expect(smokeForm(siteDirectory())).toMatchObject({
+      action: "contact",
+      page: "/contact",
+    });
   });
 
-  it("uses the action and body a site declares", () => {
+  it("uses the action, body, and page a site declares", () => {
     const form = smokeForm(
-      siteDirectory('{ "action": "apply", "body": { "amount": "$75,000" } }')
+      siteDirectory(
+        '{ "action": "apply", "body": { "amount": "$75,000" }, "page": "/apply" }'
+      )
     );
     expect(form).toStrictEqual({
       action: "apply",
       body: { amount: "$75,000" },
+      page: "/apply",
     });
   });
 
   it("rejects a fixture without an action", () => {
-    expect(() => smokeForm(siteDirectory('{ "body": {} }'))).toThrow("action");
+    expect(() =>
+      smokeForm(siteDirectory('{ "body": {}, "page": "/apply" }'))
+    ).toThrow("action");
+  });
+
+  it("rejects a page that is not a site path", () => {
+    expect(() =>
+      smokeForm(
+        siteDirectory('{ "action": "apply", "body": {}, "page": "apply" }')
+      )
+    ).toThrow("page");
   });
 });

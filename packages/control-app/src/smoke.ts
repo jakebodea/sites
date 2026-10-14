@@ -29,10 +29,16 @@ export interface SmokeOptions {
   readonly form?: SmokeForm;
 }
 
-/** An Astro action and a valid body for it (the Turnstile test token is added). */
+const SITE_PATH = /^\//u;
+
+/**
+ * An Astro action, a valid body for it (the Turnstile test token is added),
+ * and the page the form lives on (CI audits it with Lighthouse).
+ */
 const SmokeForm = Schema.Struct({
   action: Schema.String,
   body: Schema.Record(Schema.String, Schema.Json),
+  page: Schema.String.check(Schema.isPattern(SITE_PATH)),
 });
 export type SmokeForm = typeof SmokeForm.Type;
 
@@ -46,6 +52,7 @@ const CONTACT_FORM: SmokeForm = {
     message: "Automated smoke test from control-app. Please ignore.",
     name: "Smoke Test",
   },
+  page: "/contact",
 };
 
 /** The site's own form fixture from `<site>/smoke.form.json`, else the contact form. */
