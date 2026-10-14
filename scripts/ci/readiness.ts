@@ -1,6 +1,8 @@
 import { setTimeout } from "node:timers/promises";
 
-const defaults = { attempts: 30, intervalMs: 5000, timeoutMs: 5000 };
+// A fresh CMS stage's first request can take ~15 s (pr-28 on 2026-10-14). A shorter
+// per-request timeout aborts it every time, so the stage never warms and never answers.
+const defaults = { attempts: 30, intervalMs: 5000, timeoutMs: 30_000 };
 
 export const waitForDeployment = async (
   origin: string,
