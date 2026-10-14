@@ -15,7 +15,7 @@
     {
       "slug": "home_hero",
       "label": "Home hero",
-      "description": "Wordmark, tagline, intro, buttons, and the quick equity estimate over a photo.",
+      "description": "Headline, intro, buttons, and the quick equity estimate over a photo.",
       "category": "Sections",
       "currentVersion": 1,
       "versions": [
@@ -25,12 +25,6 @@
             {
               "slug": "headline",
               "label": "Headline (read by search engines and screen readers)",
-              "type": "string",
-              "required": true
-            },
-            {
-              "slug": "tagline",
-              "label": "Tagline pill",
               "type": "string",
               "required": true
             },
@@ -82,11 +76,6 @@
         {
           "version": 1,
           "fields": [
-            {
-              "slug": "eyebrow",
-              "label": "Eyebrow",
-              "type": "string"
-            },
             {
               "slug": "headline",
               "label": "Headline",
@@ -159,11 +148,6 @@
         {
           "version": 1,
           "fields": [
-            {
-              "slug": "eyebrow",
-              "label": "Eyebrow",
-              "type": "string"
-            },
             {
               "slug": "headline",
               "label": "Headline",
@@ -315,11 +299,6 @@
           "version": 1,
           "fields": [
             {
-              "slug": "eyebrow",
-              "label": "Eyebrow",
-              "type": "string"
-            },
-            {
               "slug": "headline",
               "label": "Headline",
               "type": "string",
@@ -394,11 +373,6 @@
                 "maxItems": 4,
                 "subFields": [
                   {
-                    "slug": "eyebrow",
-                    "label": "Eyebrow",
-                    "type": "string"
-                  },
-                  {
                     "slug": "title",
                     "label": "Title",
                     "type": "string",
@@ -440,11 +414,6 @@
         {
           "version": 1,
           "fields": [
-            {
-              "slug": "eyebrow",
-              "label": "Eyebrow",
-              "type": "string"
-            },
             {
               "slug": "headline",
               "label": "Headline",
@@ -514,11 +483,6 @@
           "version": 1,
           "fields": [
             {
-              "slug": "eyebrow",
-              "label": "Eyebrow",
-              "type": "string"
-            },
-            {
               "slug": "headline",
               "label": "Headline",
               "type": "string",
@@ -582,11 +546,6 @@
         {
           "version": 1,
           "fields": [
-            {
-              "slug": "eyebrow",
-              "label": "Eyebrow",
-              "type": "string"
-            },
             {
               "slug": "headline",
               "label": "Headline",
@@ -660,11 +619,6 @@
         {
           "version": 1,
           "fields": [
-            {
-              "slug": "eyebrow",
-              "label": "Eyebrow",
-              "type": "string"
-            },
             {
               "slug": "headline",
               "label": "Headline",
@@ -753,11 +707,6 @@
         {
           "version": 1,
           "fields": [
-            {
-              "slug": "eyebrow",
-              "label": "Eyebrow",
-              "type": "string"
-            },
             {
               "slug": "headline",
               "label": "Headline",
@@ -1378,7 +1327,6 @@
               "_version": 1,
               "_key": "hero",
               "headline": "Get EquityFast: home equity, reimagined",
-              "tagline": "Your Equity. Your Terms.",
               "intro": "Skip the paperwork, and skip the appraisal on loans under $400K.* Get a competitive-rate HELOC with instant, tech-verified income and terms you control.",
               "apply_label": "Start My Request",
               "secondary_cta_label": "Run the Calculator",
@@ -1427,7 +1375,6 @@
               "_type": "guidelines",
               "_version": 1,
               "_key": "guidelines",
-              "eyebrow": "Two ways to tap your equity",
               "headline": "HELOC or HELOAN.",
               "headline_accent": "You have options.",
               "body": "Take a revolving line you can draw from again and again, or a fixed lump sum with a set payment. One EquityFast application matches you to whichever fits. Here are the guidelines both programs share.",
@@ -1540,28 +1487,24 @@
               "headline": "Explore before you commit",
               "items": [
                 {
-                  "eyebrow": "Process",
                   "title": "Application Process",
                   "body": "The four steps from first question to available funds, plus what makes EquityFast faster.",
                   "url": "/process",
                   "link_label": "Open"
                 },
                 {
-                  "eyebrow": "Tool",
                   "title": "Equity Calculator",
                   "body": "Estimate your available line, then plan which projects return the most equity per dollar.",
                   "url": "/calculator",
                   "link_label": "Open"
                 },
                 {
-                  "eyebrow": "Learn",
                   "title": "HELOC Info & FAQ",
                   "body": "How a HELOC works, EquityFast vs. a traditional HELOC, and answers to common questions.",
                   "url": "/heloc",
                   "link_label": "Open"
                 },
                 {
-                  "eyebrow": "Company",
                   "title": "About EquityFast",
                   "body": "The AI-powered platform built for homeowners overlooked by legacy lenders.",
                   "url": "/about",
@@ -1596,7 +1539,6 @@
               "_version": 1,
               "_key": "hero",
               "headline": "Obtenga EquityFast: la equidad de su vivienda, reinventada",
-              "tagline": "Su Equidad. Sus Términos.",
               "intro": "Olvídese del papeleo y del avalúo en préstamos menores a $400K.* Obtenga un HELOC con tasa competitiva, ingresos verificados al instante con tecnología y términos que usted controla.",
               "apply_label": "Iniciar Mi Solicitud",
               "secondary_cta_label": "Usar la Calculadora",
@@ -1645,7 +1587,6 @@
               "_type": "guidelines",
               "_version": 1,
               "_key": "guidelines",
-              "eyebrow": "Dos formas de usar su plusvalía",
               "headline": "¿HELOC o HELOAN?",
               "headline_accent": "Usted tiene opciones.",
               "body": "Elija una línea revolvente de la que puede disponer una y otra vez, o una suma fija con un pago establecido. Una sola solicitud de EquityFast lo conecta con la opción que mejor le convenga; estas son las pautas que comparten ambos programas.",
@@ -1758,28 +1699,24 @@
               "headline": "Explore antes de decidir",
               "items": [
                 {
-                  "eyebrow": "Proceso",
                   "title": "Proceso de Solicitud",
                   "body": "Los cuatro pasos desde la primera pregunta hasta los fondos disponibles, y por qué EquityFast es más rápido.",
                   "url": "/es/proceso",
                   "link_label": "Abrir"
                 },
                 {
-                  "eyebrow": "Herramienta",
                   "title": "Calculadora de Equidad",
                   "body": "Estime su línea disponible y planifique qué proyectos devuelven más equidad por dólar.",
                   "url": "/es/calculadora",
                   "link_label": "Abrir"
                 },
                 {
-                  "eyebrow": "Aprenda",
                   "title": "Información HELOC y Preguntas",
                   "body": "Cómo funciona un HELOC, EquityFast frente a un HELOC tradicional y respuestas a preguntas comunes.",
                   "url": "/es/heloc",
                   "link_label": "Abrir"
                 },
                 {
-                  "eyebrow": "Compañía",
                   "title": "Sobre EquityFast",
                   "body": "La plataforma con inteligencia artificial creada para propietarios ignorados por los prestamistas tradicionales.",
                   "url": "/es/nosotros",
@@ -1816,7 +1753,6 @@
               "_type": "page_hero",
               "_version": 1,
               "_key": "hero",
-              "eyebrow": "Interactive tool",
               "headline": "Renovation",
               "headline_accent": "Planner.",
               "intro": "Pick the projects you're considering, set a budget for each, and see the equity they could add, using national average ROI plus three years of home appreciation.",
@@ -1915,7 +1851,6 @@
               "_type": "page_hero",
               "_version": 1,
               "_key": "hero",
-              "eyebrow": "Homeowner guide",
               "headline": "What is a",
               "headline_accent": "HELOC?",
               "intro": "Everything worth knowing before you draw: how the line works, how EquityFast differs from a legacy HELOC, and straight answers to the questions homeowners ask most.",
@@ -1931,7 +1866,6 @@
               "_type": "numbered_cards",
               "_version": 1,
               "_key": "fundamentals",
-              "eyebrow": "The fundamentals",
               "headline": "How the line actually works",
               "tone": "light",
               "items": [
@@ -1953,7 +1887,6 @@
               "_type": "programs",
               "_version": 1,
               "_key": "programs",
-              "eyebrow": "Choose the fit, not the compromise",
               "headline": "HELOC or HELOAN.",
               "headline_accent": "You have options.",
               "body": "One application matches you to the right program (from small, targeted lines to jumbo lines of credit) with the credit flexibility to fit more borrowers.",
@@ -1976,7 +1909,6 @@
               "_type": "guidelines",
               "_version": 1,
               "_key": "guidelines",
-              "eyebrow": "What both programs share",
               "headline": "Combined guidelines",
               "headline_accent": "at a glance",
               "body": "The outer edges of what EquityFast can do. Your final terms depend on the program, occupancy, lien position, and your borrower profile.",
@@ -2024,7 +1956,6 @@
               "_type": "comparison",
               "_version": 1,
               "_key": "compare",
-              "eyebrow": "Side by side",
               "headline": "EquityFast vs. a traditional HELOC",
               "feature_label": "Feature",
               "ours_label": "EquityFast",
@@ -2061,7 +1992,6 @@
               "_type": "faq",
               "_version": 1,
               "_key": "faq",
-              "eyebrow": "Questions",
               "headline": "Answers homeowners ask for most",
               "items": [
                 {
@@ -2117,7 +2047,6 @@
               "_type": "page_hero",
               "_version": 1,
               "_key": "hero",
-              "eyebrow": "Application process",
               "headline": "From question one",
               "headline_accent": "to funds available.",
               "intro": "EquityFast replaces the paperwork pile with a modern underwriting stack. Here is exactly what happens, and when.",
@@ -2134,7 +2063,6 @@
               "_type": "numbered_cards",
               "_version": 1,
               "_key": "steps",
-              "eyebrow": "The process",
               "headline": "Four steps.",
               "headline_accent": "No paperwork pile.",
               "tone": "navy",
@@ -2186,7 +2114,6 @@
               "_type": "image_cards",
               "_version": 1,
               "_key": "faster",
-              "eyebrow": "Why it moves faster",
               "headline": "Built to move",
               "headline_accent": "at your speed.",
               "items": [
@@ -2253,7 +2180,6 @@
               "_type": "page_hero",
               "_version": 1,
               "_key": "hero",
-              "eyebrow": "About EquityFast",
               "headline": "The future of home",
               "headline_accent": "equity access.",
               "image": {
@@ -2292,7 +2218,6 @@
               "_type": "checklist",
               "_version": 1,
               "_key": "mission",
-              "eyebrow": "About EquityFast | Our Mission",
               "headline": "Smarter.",
               "headline_accent": "Faster. Yours.",
               "body": "EquityFast was founded to revolutionize the home equity process by merging cutting-edge AI with the power of your home's equity. We saw a slow, outdated system that left homeowners waiting too long for the funds they needed, so we built something better. No lengthy applications. No endless paperwork. No pushy sales calls. Just quick, transparent, stress-free access to the equity you've built, on your schedule. Welcome to the future of home equity.",
@@ -2342,7 +2267,6 @@
               "_type": "page_hero",
               "_version": 1,
               "_key": "hero",
-              "eyebrow": "Legal",
               "headline": "Privacy Policy",
               "intro": "How we collect, use, and protect the information you share with EquityFast.",
               "image": {
@@ -2545,7 +2469,6 @@
               "_type": "page_hero",
               "_version": 1,
               "_key": "hero",
-              "eyebrow": "Herramienta interactiva",
               "headline": "Planificador",
               "headline_accent": "de Renovación.",
               "intro": "Elija los proyectos que está considerando, defina un presupuesto para cada uno y vea la equidad que podrían agregar, usando el ROI promedio nacional más tres años de apreciación.",
@@ -2645,7 +2568,6 @@
               "_type": "page_hero",
               "_version": 1,
               "_key": "hero",
-              "eyebrow": "Guía para propietarios",
               "headline": "¿Qué es un",
               "headline_accent": "HELOC?",
               "intro": "Todo lo que conviene saber antes de retirar: cómo funciona la línea, en qué se diferencia EquityFast de un HELOC tradicional y respuestas claras a las preguntas más frecuentes.",
@@ -2661,7 +2583,6 @@
               "_type": "numbered_cards",
               "_version": 1,
               "_key": "fundamentals",
-              "eyebrow": "Lo fundamental",
               "headline": "Cómo funciona realmente la línea",
               "tone": "light",
               "items": [
@@ -2683,7 +2604,6 @@
               "_type": "programs",
               "_version": 1,
               "_key": "programs",
-              "eyebrow": "Elija lo que le queda, no lo que le toca",
               "headline": "¿HELOC o HELOAN?",
               "headline_accent": "Usted tiene opciones.",
               "body": "Una sola solicitud lo conecta con el programa adecuado, desde líneas pequeñas y específicas hasta líneas de crédito jumbo, con la flexibilidad crediticia para más prestatarios.",
@@ -2706,7 +2626,6 @@
               "_type": "guidelines",
               "_version": 1,
               "_key": "guidelines",
-              "eyebrow": "Lo que comparten ambos programas",
               "headline": "Pautas combinadas",
               "headline_accent": "de un vistazo",
               "body": "Los límites máximos de lo que EquityFast puede hacer. Sus términos finales dependen del programa, la ocupación, la posición del gravamen y su perfil como prestatario.",
@@ -2754,7 +2673,6 @@
               "_type": "comparison",
               "_version": 1,
               "_key": "compare",
-              "eyebrow": "Lado a lado",
               "headline": "EquityFast frente a un HELOC tradicional",
               "feature_label": "Característica",
               "ours_label": "EquityFast",
@@ -2791,7 +2709,6 @@
               "_type": "faq",
               "_version": 1,
               "_key": "faq",
-              "eyebrow": "Preguntas",
               "headline": "Las respuestas más buscadas por propietarios",
               "items": [
                 {
@@ -2848,7 +2765,6 @@
               "_type": "page_hero",
               "_version": 1,
               "_key": "hero",
-              "eyebrow": "Proceso de solicitud",
               "headline": "De la primera pregunta",
               "headline_accent": "a los fondos disponibles.",
               "intro": "EquityFast reemplaza la montaña de papeleo con una plataforma moderna de evaluación. Esto es exactamente lo que pasa, y cuándo.",
@@ -2865,7 +2781,6 @@
               "_type": "numbered_cards",
               "_version": 1,
               "_key": "steps",
-              "eyebrow": "El proceso",
               "headline": "Cuatro pasos.",
               "headline_accent": "Sin montañas de papeleo.",
               "tone": "navy",
@@ -2917,7 +2832,6 @@
               "_type": "image_cards",
               "_version": 1,
               "_key": "faster",
-              "eyebrow": "Por qué avanza más rápido",
               "headline": "Diseñado para avanzar",
               "headline_accent": "a su ritmo.",
               "items": [
@@ -2985,7 +2899,6 @@
               "_type": "page_hero",
               "_version": 1,
               "_key": "hero",
-              "eyebrow": "Sobre EquityFast",
               "headline": "El futuro del acceso",
               "headline_accent": "a la equidad.",
               "image": {
@@ -3024,7 +2937,6 @@
               "_type": "checklist",
               "_version": 1,
               "_key": "mission",
-              "eyebrow": "Sobre EquityFast | Nuestra Misión",
               "headline": "Más inteligente.",
               "headline_accent": "Más rápido. Hecho para usted.",
               "body": "EquityFast nació para revolucionar el proceso de equidad de vivienda combinando inteligencia artificial de punta con el poder de la equidad de su casa. Vimos un sistema lento y anticuado que dejaba a los propietarios esperando demasiado por los fondos que necesitaban, así que creamos algo mejor. Sin solicitudes interminables. Sin montañas de papeleo. Sin llamadas de venta insistentes. Solo acceso rápido, transparente y sin estrés a la equidad que usted ha construido, en su horario. Bienvenido al futuro de la equidad de vivienda.",
@@ -3075,7 +2987,6 @@
               "_type": "page_hero",
               "_version": 1,
               "_key": "hero",
-              "eyebrow": "Legal",
               "headline": "Política de Privacidad",
               "intro": "Cómo recopilamos, usamos y protegemos la información que comparte con EquityFast.",
               "image": {

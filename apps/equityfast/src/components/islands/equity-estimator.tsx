@@ -92,8 +92,7 @@ const EquityEstimator = ({ applyHref, strings }: EquityEstimatorProps) => {
 
   return (
     <div className="border border-white/15 bg-white/8 p-6 text-white shadow-2xl backdrop-blur-md sm:p-8">
-      <p className="eyebrow text-gold">{strings.eyebrow}</p>
-      <p className="tracking-label mt-4 text-xs font-semibold text-white/75 uppercase">
+      <p className="tracking-label text-xs font-semibold text-white/75 uppercase">
         {strings.line}
       </p>
       <output

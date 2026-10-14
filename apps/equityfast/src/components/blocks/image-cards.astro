@@ -14,15 +14,14 @@ const { value } = Astro.props;
 
 <section class="bg-navy-deep py-20 text-white sm:py-24">
   <div class="container-page">
-    {value.eyebrow && <p class="eyebrow text-gold">{value.eyebrow}</p>}
-    <Headline text={value.headline} accent={value.headline_accent} inline tone="dark" class="mt-4 text-white" />
+    <Headline text={value.headline} accent={value.headline_accent} inline tone="dark" class="text-white" />
     <ul class="mt-12 grid gap-8 md:grid-cols-3">
       {value.items.map((item) => (
         <li class="flex flex-col border border-white/12 bg-navy">
           <div class="relative aspect-[4/2.2] overflow-hidden">
             {item.image && <Image image={item.image} sizes="(min-width: 768px) 33vw, 100vw" class="size-full! object-cover" />}
             <div class="absolute inset-0 bg-linear-to-t from-navy-deep/90 via-transparent to-transparent" aria-hidden="true"></div>
-            {item.kicker && <p class="absolute bottom-3 left-5 text-xs font-semibold tracking-label text-gold uppercase">{item.kicker}</p>}
+            {item.kicker && <p class="absolute bottom-3 left-5 text-sm font-semibold text-gold">{item.kicker}</p>}
           </div>
           <div class="flex-1 p-7">
             <h3 class="text-2xl text-white">{item.title}</h3>

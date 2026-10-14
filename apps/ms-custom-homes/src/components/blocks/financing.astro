@@ -33,7 +33,6 @@ const external = isExternal(href);
     </svg>
     <div class="grid gap-10 px-8 py-16 sm:px-14 sm:py-20 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] lg:px-20 lg:py-24">
       <div>
-        {value.eyebrow && <p class="label-caps mb-6 flex items-center gap-4 text-champagne before:h-px before:w-10 before:bg-champagne before:content-['']">{value.eyebrow}</p>}
         <h2 class="text-4xl text-white sm:text-5xl lg:text-6xl">{value.headline}</h2>
         {value.body && <p class="mt-6 max-w-lg text-lg leading-relaxed text-white/80">{value.body}</p>}
         <ButtonLink

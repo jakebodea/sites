@@ -69,7 +69,6 @@ const ApplyDialog = ({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent variant="application" closeLabel={strings.close}>
-        <p className="text-sky-ink eyebrow">{strings.applyEyebrow}</p>
         <DialogDescription className="sr-only">
           {strings.applyIntro}
         </DialogDescription>
@@ -84,9 +83,7 @@ const ApplyDialog = ({
             setOpen(false);
           }}
           renderTitle={(title) => (
-            <DialogTitle variant="application" className="mt-2">
-              {title}
-            </DialogTitle>
+            <DialogTitle variant="application">{title}</DialogTitle>
           )}
         />
       </DialogContent>

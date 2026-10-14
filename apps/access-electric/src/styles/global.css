@@ -105,16 +105,6 @@
   padding-bottom: max(1.25rem, env(safe-area-inset-bottom));
 }
 
-/* Section eyebrow: a short olive rule followed by small caps text. */
-@utility eyebrow {
-  @apply text-navy inline-flex items-center gap-3 text-xs font-semibold tracking-[0.18em] uppercase;
-
-  &::before {
-    content: "";
-    @apply bg-olive h-0.5 w-8;
-  }
-}
-
 /* Long-form copy from the CMS (Portable Text). */
 @utility prose-site {
   @apply text-foreground/85 max-w-prose space-y-5 text-lg leading-relaxed;

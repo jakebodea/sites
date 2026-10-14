@@ -21,8 +21,7 @@ const number = (index: number) => String(index + 1).padStart(2, "0");
   <section class="bg-linear-to-b from-navy to-navy-deep py-20 text-white sm:py-24">
     <div class="container-page grid *:min-w-0 gap-12 lg:grid-cols-[1fr_1.1fr] lg:gap-16">
       <div class="lg:sticky lg:top-32 lg:self-start">
-        {value.eyebrow && <p class="eyebrow text-gold">{value.eyebrow}</p>}
-        <Headline text={value.headline} accent={value.headline_accent} tone="dark" class="mt-4 text-white" />
+        <Headline text={value.headline} accent={value.headline_accent} tone="dark" class="text-white" />
         {value.body && <p class="mt-6 max-w-lg text-lg text-white/80">{value.body}</p>}
         {value.apply_label && <ButtonLink href={applyHref(Astro.currentLocale)} data-apply variant="accent" size="hero" class="mt-9">{value.apply_label}</ButtonLink>}
       </div>
@@ -40,8 +39,7 @@ const number = (index: number) => String(index + 1).padStart(2, "0");
 ) : (
   <section class="py-20 sm:py-24">
     <div class="container-page">
-      {value.eyebrow && <p class="eyebrow text-sky-ink">{value.eyebrow}</p>}
-      <Headline text={value.headline} accent={value.headline_accent} class="mt-4 max-w-3xl" />
+      <Headline text={value.headline} accent={value.headline_accent} class="max-w-3xl" />
       {value.body && <p class="mt-6 max-w-2xl text-lg text-slate-blue">{value.body}</p>}
       <ol class="mt-12 grid gap-10 md:grid-cols-3">
         {value.items.map((item, index) => (

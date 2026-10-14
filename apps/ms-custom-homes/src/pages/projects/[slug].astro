@@ -53,7 +53,6 @@ const cover = project.data.featured_image;
       <Breadcrumbs class="mb-10" crumbs={[{ label: "Portfolio", path: "/portfolio" }, { label: project.data.title, path: `/projects/${slug}` }]} />
       <div class="grid gap-10 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)] lg:items-end lg:gap-20">
         <div>
-          {project.data.progress === "in_progress" && <p class="eyebrow mb-6">Under construction</p>}
           <h1 class="text-5xl leading-[1.02] sm:text-6xl lg:text-[5.25rem]" {...project.edit.title}>{project.data.title}</h1>
           {project.data.summary && <p class="mt-7 max-w-2xl text-lg leading-relaxed text-muted-foreground sm:text-xl" {...project.edit.summary}>{project.data.summary}</p>}
         </div>
@@ -92,7 +91,6 @@ const cover = project.data.featured_image;
 
     <section class="container-page flex flex-col items-start justify-between gap-8 border-t border-border py-16 sm:flex-row sm:items-center sm:py-20">
       <div>
-        <p class="eyebrow mb-4">Your project</p>
         <p class="font-display text-3xl text-slate sm:text-4xl">Planning something similar?</p>
       </div>
       <ButtonLink href="/contact" variant="default" size="hero">Start a conversation</ButtonLink>

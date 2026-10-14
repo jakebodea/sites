@@ -7,7 +7,6 @@
 import type { Locale } from "./locales.ts";
 
 const en = {
-  applyEyebrow: "EquityFast application",
   applyIntro: "A short set of questions to start your EquityFast request.",
   applyTitle: "Start your EquityFast request",
   close: "Close",
@@ -16,7 +15,6 @@ const en = {
   estimator: {
     below: "Below the $5K minimum line",
     cta: "Get My Real Numbers",
-    eyebrow: "Quick equity estimate",
     homeValue: "Home value",
     line: "Estimated available line",
     mortgageBalance: "Mortgage balance",
@@ -106,7 +104,6 @@ const en = {
     gained: "Estimated equity gained",
     pick: "Pick projects & set budgets",
     pickHelp: "Tap a project to add it; the budget slider opens right below.",
-    plan: "Your plan",
     remove: "Remove from plan",
     reset: "Reset plan",
     selectedSummary: "Budget {budget} · +{gain} equity",
@@ -124,7 +121,6 @@ const en = {
 export type UiStrings = typeof en;
 
 const es: UiStrings = {
-  applyEyebrow: "Solicitud EquityFast",
   applyIntro: "Unas preguntas breves para iniciar su solicitud EquityFast.",
   applyTitle: "Inicie su solicitud EquityFast",
   close: "Cerrar",
@@ -133,7 +129,6 @@ const es: UiStrings = {
   estimator: {
     below: "Por debajo del mínimo de $5K",
     cta: "Ver Mis Números Reales",
-    eyebrow: "Estimación rápida de equidad",
     homeValue: "Valor de la vivienda",
     line: "Línea disponible estimada",
     mortgageBalance: "Saldo hipotecario",
@@ -227,7 +222,6 @@ const es: UiStrings = {
     pick: "Elija proyectos y presupuestos",
     pickHelp:
       "Toque un proyecto para agregarlo; el control de presupuesto se abre debajo.",
-    plan: "Su plan",
     remove: "Quitar del plan",
     reset: "Reiniciar plan",
     selectedSummary: "Presupuesto {budget} · +{gain} de equidad",
