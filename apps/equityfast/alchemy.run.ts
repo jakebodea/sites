@@ -16,7 +16,7 @@ import {
   publishedContentDigest,
 } from "@jakebodea/cloudflare-kit/infra";
 /**
- * Access Electric infrastructure (one Alchemy stack, one stage per environment):
+ * EquityFast infrastructure (one Alchemy stack, one stage per environment):
  *
  *   D1 (EmDash content) + R2 (media) + Images binding + session KV (auto)
  *   + Turnstile widget + every-minute cron (EmDash scheduled publishing)
