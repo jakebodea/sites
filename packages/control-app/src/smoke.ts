@@ -1,8 +1,13 @@
+import { existsSync, readFileSync } from "node:fs";
+import path from "node:path";
+
+import { Schema } from "effect";
+
 import { request } from "./http.ts";
 /**
  * Smoke test against a running stage: every sitemap page renders, unknown
  * paths 404, the CMS admin answers, images on a sample of pages load, and on
- * local dev also the contact action (Turnstile test keys) and the cron
+ * local dev also the lead form's action (Turnstile test keys) and the cron
  * handler. Returns structured checks so agents can attach them to proof.
  */
 import { discoverPaths } from "./sitemap.ts";
@@ -20,7 +25,39 @@ export interface SmokeOptions {
   readonly submit?: boolean;
   /** The site runs EmDash: check its admin, and treat an empty sitemap as setup pending. */
   readonly cms: boolean;
+  /** The lead form submission to exercise; defaults to the shared contact form. */
+  readonly form?: SmokeForm;
 }
+
+/** An Astro action and a valid body for it (the Turnstile test token is added). */
+const SmokeForm = Schema.Struct({
+  action: Schema.String,
+  body: Schema.Record(Schema.String, Schema.Json),
+});
+export type SmokeForm = typeof SmokeForm.Type;
+
+/** File a site ships when its lead form is not the shared `contact` action. */
+export const SMOKE_FORM_FILE = "smoke.form.json";
+
+const CONTACT_FORM: SmokeForm = {
+  action: "contact",
+  body: {
+    email: "smoke@example.com",
+    message: "Automated smoke test from control-app. Please ignore.",
+    name: "Smoke Test",
+  },
+};
+
+/** The site's own form fixture from `<site>/smoke.form.json`, else the contact form. */
+export const smokeForm = (directory: string): SmokeForm => {
+  const file = path.join(directory, SMOKE_FORM_FILE);
+  if (!existsSync(file)) {
+    return CONTACT_FORM;
+  }
+  return Schema.decodeUnknownSync(Schema.fromJsonString(SmokeForm))(
+    readFileSync(file, "utf-8")
+  );
+};
 
 const FIXED_PATHS = ["/"];
 const IMAGE_SAMPLE_PAGES = 4;
@@ -131,12 +168,13 @@ const imageChecks = async (
   return checks;
 };
 
-const contactCheck = async (origin: string): Promise<SmokeCheck> => {
-  const response = await request(`${origin}/_actions/contact`, {
+const formCheck = async (
+  origin: string,
+  form: SmokeForm
+): Promise<SmokeCheck> => {
+  const response = await request(`${origin}/_actions/${form.action}`, {
     body: JSON.stringify({
-      email: "smoke@example.com",
-      message: "Automated smoke test from control-app. Please ignore.",
-      name: "Smoke Test",
+      ...form.body,
       turnstileToken: TURNSTILE_TEST_TOKEN,
     }),
     headers: { "content-type": "application/json" },
@@ -144,7 +182,7 @@ const contactCheck = async (origin: string): Promise<SmokeCheck> => {
   });
   const body = await response.text();
   return check(
-    "contact action",
+    `${form.action} action`,
     response.ok,
     `HTTP ${response.status} ${body.slice(0, 160)}`
   );
@@ -194,7 +232,9 @@ export const smoke = async (options: SmokeOptions): Promise<SmokeCheck[]> => {
   checks.push(...(await imageChecks(origin, paths)));
   if (options.local) {
     checks.push(
-      ...(options.submit === false ? [] : [await contactCheck(origin)]),
+      ...(options.submit === false
+        ? []
+        : [await formCheck(origin, options.form ?? CONTACT_FORM)]),
       await cronCheck(origin)
     );
   }

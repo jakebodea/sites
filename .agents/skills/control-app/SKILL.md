@@ -34,7 +34,7 @@ Vite's dependency cache is kept across restarts; `start` clears it only to recov
 
 ```bash
 bun run app -- smoke --no-submit                       # read-only form checks; skip submission
-bun run app -- smoke                                   # ~4 s: pages, 404, admin, images, contact action, cron
+bun run app -- smoke                                   # ~4 s: pages, 404, admin, images, lead form action (`smoke.form.json` overrides the contact form), cron
 bun run app -- seo                                     # ~2 s: technical SEO audit of every page
 bun run app -- screenshot / /about /contact            # 1280 + 375 full-page PNGs (lazy images loaded)
 bun run app -- screenshot /_emdash/admin --auth        # signed in as the dev admin

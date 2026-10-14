@@ -27,7 +27,7 @@ Current choices: [docs/stack.md](docs/stack.md). Why each one-way choice was mad
 bun run app -- start        # alchemy dev for this worktree (own stage + port), warmed up (~15 s)
 bun run app -- restart      # after server/island edits (~15 s)
 bun run app -- reset        # fresh seeded data from a snapshot + CMS sign-in (~16 s)
-bun run app -- smoke        # every sitemap page, 404, admin, images, contact action, cron
+bun run app -- smoke        # every sitemap page, 404, admin, images, lead form action, cron
 bun run app -- screenshot / /contact      # full-page PNGs at 1280 and 375
 bun run app -- seo          # technical SEO audit of every page (see .agents/skills/seo)
 bun run ci                  # lint (zero warnings) + typecheck + tests, cached by Turborepo
