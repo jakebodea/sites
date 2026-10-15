@@ -82,5 +82,10 @@ const page = createPublicPageContext({
     <SiteFooter title={chrome.title} tagline={chrome.tagline} items={chrome.footer} />
     <WebAnalyticsBeacon />
     <EmDashBodyEnd page={page} />
+    <script>
+      import { mountSeamlessEdges } from "@jakebodea/site-ui/seamless-edges";
+
+      mountSeamlessEdges();
+    </script>
   </body>
 </html>

@@ -1,11 +1,13 @@
 {
   "name": "@jakebodea/site-ui",
   "private": true,
-  "description": "Shared React islands every marketing site uses, styled per site through slot classes and CSS variables.",
+  "description": "Shared client UI every marketing site uses: React islands styled per site through slot classes and CSS variables, and the seamless mobile Safari edges.",
   "type": "module",
   "exports": {
     "./mobile-menu": "./src/mobile-menu.tsx",
-    "./mobile-menu.css": "./src/mobile-menu.css"
+    "./mobile-menu.css": "./src/mobile-menu.css",
+    "./seamless-edges": "./src/seamless-edges.ts",
+    "./seamless-edges.css": "./src/seamless-edges.css"
   },
   "scripts": {
     "test": "vitest run",

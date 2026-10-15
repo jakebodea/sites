@@ -89,6 +89,11 @@ const page = createPublicPageContext({
     <WebAnalyticsBeacon />
     <EmDashBodyEnd page={page} />
     <script>
+      import { mountSeamlessEdges } from "@jakebodea/site-ui/seamless-edges";
+
+      mountSeamlessEdges();
+    </script>
+    <script>
       import "@/scripts/reveal";
     </script>
   </body>

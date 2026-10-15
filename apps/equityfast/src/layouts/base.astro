@@ -99,5 +99,10 @@ const breadcrumbs = crumbs === undefined ? undefined : JSON.stringify(breadcrumb
     <ApplyDialog client:idle locale={locale} strings={t} turnstileSiteKey={env.TURNSTILE_SITE_KEY} />
     <WebAnalyticsBeacon />
     <EmDashBodyEnd page={page} />
+    <script>
+      import { mountSeamlessEdges } from "@jakebodea/site-ui/seamless-edges";
+
+      mountSeamlessEdges();
+    </script>
   </body>
 </html>
