@@ -44,19 +44,21 @@ export const logPath = (site: SiteContext) =>
 
 // oxlint-disable-next-line no-control-regex -- matches the ESC byte of ANSI color codes on purpose.
 const ANSI_COLOR = /\u001B\[[0-9;]*m/gu;
-/** A warm boot settles in about 15 s; a cold one re-optimizes for up to ~3 min before it wedges. */
-const READY_TIMEOUT_MS = 240_000;
+/** Boots settle in ~10 s warm and ~15 s cold; anything near this is stuck. */
+const READY_TIMEOUT_MS = 120_000;
 /**
- * A cold boot (empty Vite cache) re-optimizes dependencies mid-boot and always
- * wedges: Vite closes an environment, Astro's fonts plugin clears its font data
- * on that close (`FontFamilyNotFound` on every page), and workerd's runner keeps
- * a second React copy ("Invalid hook call"). Neither recovers without a restart,
- * but by then the optimizer has written the cache, so the restart boots warm.
+ * A dependency the SSR optimizer discovers at runtime re-optimizes mid-boot and
+ * can wedge the server for good: Vite closes an environment, Astro's fonts
+ * plugin clears its font data on that close (`FontFamilyNotFound` on every
+ * page), and workerd's runner keeps a second React copy ("Invalid hook call").
+ * `ssrPrebundle` in cloudflare-kit prevents it; a restart recovers, on the
+ * cache the wedged boot already wrote.
  */
 const WEDGED = /FontFamilyNotFound|Invalid hook call|reading 'useState'/u;
 /** Restarts after a wedged boot, each on the cache the previous boot wrote. */
 const WEDGE_RESTARTS = 2;
-const POLL_MS = 1000;
+/** The first render after boot takes ~7 s; later rounds take ~20 ms, so poll tightly. */
+const POLL_MS = 250;
 /** Vite optimizes dependencies on the first requests; a few clean responses in a row mean it settled. */
 const WARM_STREAK = 3;
 const warmPaths = (site: SiteContext): string[] =>
@@ -258,7 +260,7 @@ export const start = async (site: SiteContext): Promise<DevState> => {
     restart += 1
   ) {
     process.stderr.write(
-      "Dev server wedged after Vite re-optimized mid-boot; restarting on the cache it wrote\n"
+      "Dev server wedged after Vite re-optimized mid-boot (a dependency missing from ssrPrebundle?); restarting on the cache it wrote\n"
     );
     await stop(site);
     state = spawnServer(site);
@@ -286,8 +288,8 @@ export const wipeLocalState = async (site: SiteContext): Promise<void> => {
  */
 const seedKey = (site: SiteContext): string => {
   const hash = createHash("sha256");
-  // Older snapshots contain a dev-bypass admin rather than a verified native owner.
-  hash.update("native-owner-content-v1");
+  // Older snapshots hold a dev-bypass admin, or secrets under the encryption key from remote dev state.
+  hash.update("native-owner-content-v1+local-dev-state");
   const seed = path.join(site.directory, "seed");
   hash.update(readFileSync(path.join(seed, "seed.json")));
   const media = path.join(seed, "media");

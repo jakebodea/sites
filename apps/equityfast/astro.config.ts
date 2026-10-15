@@ -6,6 +6,7 @@ import { fileURLToPath } from "node:url";
 import { distilledCloudflare } from "@alchemy.run/frontend-frameworks/astro/cloudflare";
 import react from "@astrojs/react";
 import { d1, r2 } from "@emdash-cms/cloudflare";
+import { ssrPrebundle } from "@jakebodea/cloudflare-kit/astro/ssr-prebundle";
 import {
   adminBranding,
   cmsAdmin,
@@ -144,28 +145,11 @@ export default defineConfig({
         // EmDash lazy-imports its own chunks (`await import("./validation-*.mjs")`); bundled into
         // the deps cache those chunk names drift between optimizer runs, so it loads natively.
         exclude: ["emdash"],
-        // CommonJS deps EmDash renders with: workerd's dev module runner can't evaluate CJS,
-        // so they are pre-bundled to ESM (the stock Cloudflare adapter does this implicitly).
-        include: [
-          "emdash > sanitize-html",
-          "emdash > @emdash-cms/admin > @lingui/core",
-          // EmDash's MCP route (called in-process by the CMS assistant) imports CJS content-type/ajv.
-          "emdash > @modelcontextprotocol/sdk/server/mcp.js",
-          "emdash > @modelcontextprotocol/sdk/server/webStandardStreamableHttp.js",
-          // CMS assistant (cloudflare-kit admin plugin): pre-bundled so nothing is discovered at runtime.
-          "@jakebodea/cloudflare-kit > @modelcontextprotocol/sdk/client/index.js",
-          "@jakebodea/cloudflare-kit > @modelcontextprotocol/sdk/client/streamableHttp.js",
-          "@jakebodea/cloudflare-kit > @tanstack/ai",
-          "@jakebodea/cloudflare-kit > @tanstack/ai/testing",
-          "@jakebodea/cloudflare-kit > @tanstack/ai-cloudflare",
-          // Server-side Effect code: one pre-bundled chunk each instead of hundreds of modules.
-          "effect",
-          "effect/http",
-          "effect/observability",
-        ],
+        // Everything the dev optimizer would otherwise discover at runtime (see the helper).
+        include: ssrPrebundle(fileURLToPath(new URL("src", import.meta.url))),
         // A late re-optimization reloads only some modules in workerd's runner, leaving two
-        // React copies ("Invalid hook call") or stale chunks. Pre-bundle the list above (plus what
-        // the Astro/React/EmDash integrations add) and never discover more at runtime.
+        // React copies ("Invalid hook call") or stale chunks. This does not stop Vite discovering
+        // imports at runtime; only a complete include list does.
         noDiscovery: true,
       },
     },
