@@ -15,3 +15,9 @@ declare module "virtual:cms-admin-config" {
 }
 
 declare module "*.css" {}
+
+declare module "*.css?inline" {
+  /** The stylesheet, compiled, as a string. */
+  const css: string;
+  export default css;
+}
