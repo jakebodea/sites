@@ -6,6 +6,7 @@ import { listSites } from "@jakebodea/control-app/site";
 import { Schema } from "effect";
 
 import { seedStage } from "../../packages/control-app/src/seed.ts";
+import { smokeForm } from "../../packages/control-app/src/smoke.ts";
 import { controlCheck } from "./control-check.ts";
 import { lighthouse } from "./lighthouse.ts";
 import { LOCAL_CMS_BOOTSTRAP_TOKEN, localWorker } from "./local-worker.ts";
@@ -85,7 +86,11 @@ if (!prepare) {
         failed = true;
         continue;
       }
-      await lighthouse(origin, path.join(output, site, "lighthouse"));
+      await lighthouse(
+        origin,
+        smokeForm(directory).page,
+        path.join(output, site, "lighthouse")
+      );
     } catch (error) {
       failed = true;
       const detail = String(error);

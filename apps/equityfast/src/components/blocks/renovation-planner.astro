@@ -1,0 +1,34 @@
+---
+/** The interactive renovation ROI planner: copy from the CMS, interaction in the island. */
+import type { BlockComponentProps } from "emdash/ui";
+
+import Headline from "@/components/headline.astro";
+import RenovationPlanner from "@/components/islands/renovation-planner";
+import { toLocale } from "@/i18n/locales";
+import { ui } from "@/i18n/ui";
+import { applyHref } from "@/lib/apply";
+import type { PageContentRenovationPlannerBlock } from "../../../emdash-env";
+
+type Props = BlockComponentProps<PageContentRenovationPlannerBlock>;
+
+const { value } = Astro.props;
+const t = ui(toLocale(Astro.currentLocale));
+const projects = value.projects.map((project) => ({
+  blurb: project.blurb,
+  name: project.name,
+  roiPercent: project.roi_percent,
+  typicalBudget: project.typical_budget,
+}));
+---
+
+<section class="py-20 sm:py-24">
+  <div class="container-page">
+    <div class="max-w-3xl">
+      <Headline text={value.headline} accent={value.headline_accent} inline />
+      {value.intro && <p class="mt-5 text-lg leading-relaxed text-slate-blue">{value.intro}</p>}
+    </div>
+    <div class="mt-10">
+      <RenovationPlanner client:visible projects={projects} strings={t.planner} disclaimer={value.disclaimer ?? undefined} applyHref={applyHref(Astro.currentLocale)} />
+    </div>
+  </div>
+</section>

@@ -1,0 +1,38 @@
+---
+/** Cards with a photo, a small gold label, a title, and paragraphs, on navy. */
+import { Image } from "emdash/ui";
+import type { BlockComponentProps } from "emdash/ui";
+
+import Headline from "@/components/headline.astro";
+import { paragraphs } from "@/lib/content";
+import type { PageContentImageCardsBlock } from "../../../emdash-env";
+
+type Props = BlockComponentProps<PageContentImageCardsBlock>;
+
+const { value } = Astro.props;
+---
+
+<section class="bg-navy-deep py-20 text-white sm:py-24">
+  <div class="container-page">
+    {value.eyebrow && <p class="eyebrow text-gold">{value.eyebrow}</p>}
+    <Headline text={value.headline} accent={value.headline_accent} inline tone="dark" class="mt-4 text-white" />
+    <ul class="mt-12 grid gap-8 md:grid-cols-3">
+      {value.items.map((item) => (
+        <li class="flex flex-col border border-white/12 bg-navy">
+          <div class="relative aspect-[4/2.2] overflow-hidden">
+            {item.image && <Image image={item.image} sizes="(min-width: 768px) 33vw, 100vw" class="size-full! object-cover" />}
+            <div class="absolute inset-0 bg-linear-to-t from-navy-deep/90 via-transparent to-transparent" aria-hidden="true"></div>
+            {item.kicker && <p class="absolute bottom-3 left-5 text-xs font-semibold tracking-label text-gold uppercase">{item.kicker}</p>}
+          </div>
+          <div class="flex-1 p-7">
+            <h3 class="text-2xl text-white">{item.title}</h3>
+            <div class="mt-4 mb-5 h-px w-16 bg-gold" aria-hidden="true"></div>
+            <div class="space-y-3 leading-relaxed text-white/80">
+              {paragraphs(item.body).map((paragraph) => <p>{paragraph}</p>)}
+            </div>
+          </div>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>

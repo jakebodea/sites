@@ -1,0 +1,58 @@
+---
+/**
+ * Numbered points (01, 02, ...). Light: a three-up grid under the headline.
+ * Navy: the headline and button stay beside a column of step cards.
+ */
+import type { BlockComponentProps } from "emdash/ui";
+
+import ButtonLink from "@/components/button-link.astro";
+import Headline from "@/components/headline.astro";
+import { applyHref } from "@/lib/apply";
+import type { PageContentNumberedCardsBlock } from "../../../emdash-env";
+
+type Props = BlockComponentProps<PageContentNumberedCardsBlock>;
+
+const { value } = Astro.props;
+const navy = value.tone === "navy";
+const number = (index: number) => String(index + 1).padStart(2, "0");
+---
+
+{navy ? (
+  <section class="bg-linear-to-b from-navy to-navy-deep py-20 text-white sm:py-24">
+    <div class="container-page grid *:min-w-0 gap-12 lg:grid-cols-[1fr_1.1fr] lg:gap-16">
+      <div class="lg:sticky lg:top-32 lg:self-start">
+        {value.eyebrow && <p class="eyebrow text-gold">{value.eyebrow}</p>}
+        <Headline text={value.headline} accent={value.headline_accent} tone="dark" class="mt-4 text-white" />
+        {value.body && <p class="mt-6 max-w-lg text-lg text-white/80">{value.body}</p>}
+        {value.apply_label && <ButtonLink href={applyHref(Astro.currentLocale)} data-apply variant="accent" size="hero" class="mt-9">{value.apply_label}</ButtonLink>}
+      </div>
+      <ol class="space-y-5">
+        {value.items.map((item, index) => (
+          <li class="border border-gold/40 bg-white/8 p-8">
+            <p class="text-3xl font-semibold text-gold" aria-hidden="true">{number(index)}</p>
+            <h3 class="mt-3 text-2xl text-white">{item.title}</h3>
+            <p class="mt-2 text-lg text-white/80">{item.body}</p>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+) : (
+  <section class="py-20 sm:py-24">
+    <div class="container-page">
+      {value.eyebrow && <p class="eyebrow text-sky-ink">{value.eyebrow}</p>}
+      <Headline text={value.headline} accent={value.headline_accent} class="mt-4 max-w-3xl" />
+      {value.body && <p class="mt-6 max-w-2xl text-lg text-slate-blue">{value.body}</p>}
+      <ol class="mt-12 grid gap-10 md:grid-cols-3">
+        {value.items.map((item, index) => (
+          <li class="border-t-2 border-navy pt-6">
+            <p class="text-sm font-semibold tracking-label text-sky-ink" aria-hidden="true">{number(index)}</p>
+            <h3 class="mt-3 text-2xl">{item.title}</h3>
+            <p class="mt-3 leading-relaxed text-slate-blue">{item.body}</p>
+          </li>
+        ))}
+      </ol>
+      {value.apply_label && <ButtonLink href={applyHref(Astro.currentLocale)} data-apply variant="accent" size="hero" class="mt-12">{value.apply_label}</ButtonLink>}
+    </div>
+  </section>
+)}

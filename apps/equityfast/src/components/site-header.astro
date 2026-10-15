@@ -1,0 +1,79 @@
+---
+/**
+ * Navy header over every page's dark hero: wordmark, "Powered by" lender
+ * logo, the locale's CMS menu, Instagram, language switch, and the
+ * application CTA (a real link to the apply page; the dialog island
+ * intercepts it when JavaScript runs).
+ */
+import { APPLY_PATH, localePath } from "@/i18n/locales";
+import type { Locale } from "@/i18n/locales";
+import { ui } from "@/i18n/ui";
+import type { Alternates, NavItem } from "@/lib/content";
+import { site } from "../../site.config";
+import ButtonLink from "./button-link.astro";
+import InstagramIcon from "./instagram-icon.astro";
+import MobileNav from "./islands/mobile-nav";
+
+interface Props {
+  locale: Locale;
+  items: readonly NavItem[];
+  alternates: Alternates;
+}
+
+const { alternates, items, locale } = Astro.props;
+const t = ui(locale);
+const current = Astro.url.pathname.replace(/\/$/u, "") || "/";
+const home = localePath(locale, "/");
+const isActive = (url: string) => (url === home ? current === home : current === url || current.startsWith(`${url}/`));
+const other: Locale = locale === "en" ? "es" : "en";
+const switchHref = alternates[other] ?? localePath(other, "/");
+---
+
+<header class="sticky top-0 z-40 border-b border-white/10 bg-navy-deep/95 text-white backdrop-blur supports-backdrop-filter:bg-navy-deep/85">
+  <div class="mx-auto flex h-16 w-full max-w-[1440px] items-center gap-4 px-5 sm:px-8 lg:h-[72px] lg:px-10">
+    <a href={home} class="flex shrink-0 items-center" aria-label={`${site.name}, ${locale === "es" ? "inicio" : "home"}`}>
+      <img src="/brand/equityfast.webp" alt="EquityFast" width="1200" height="172" class="h-6 w-auto sm:h-7" />
+    </a>
+    <div class="hidden items-center gap-2 border-l border-white/20 pl-4 xl:flex">
+      <span class="text-[9px] leading-tight font-semibold whitespace-nowrap tracking-label text-white/60 uppercase">{t.poweredBy}</span>
+      <img src="/brand/emc.webp" alt={site.business.legalName} width="640" height="145" loading="lazy" class="h-5 w-auto brightness-0 invert" />
+    </div>
+    <nav aria-label={t.mainNav} class="ml-auto hidden items-center gap-1 xl:flex">
+      {
+        items.map((item) => (
+          <a
+            href={item.url}
+            aria-current={isActive(item.url) ? "page" : undefined}
+            class="relative px-3 py-2 text-xs font-semibold tracking-label text-white/70 uppercase transition-colors hover:text-white aria-[current=page]:text-white aria-[current=page]:after:absolute aria-[current=page]:after:inset-x-3 aria-[current=page]:after:-bottom-0.5 aria-[current=page]:after:h-0.5 aria-[current=page]:after:bg-gold"
+          >
+            {item.label}
+          </a>
+        ))
+      }
+    </nav>
+    <div class="ml-auto flex items-center gap-1 xl:ml-2">
+      <a href={site.business.instagram} rel="noopener me" target="_blank" class="hidden size-10 items-center justify-center text-white/80 hover:text-white sm:flex" aria-label="Instagram @equityfast">
+        <InstagramIcon class="size-5" />
+      </a>
+      <a
+        href={switchHref}
+        hreflang={other}
+        lang={other}
+        class="flex h-9 items-center border border-white/25 px-2.5 text-xs font-semibold tracking-label text-white/85 uppercase hover:border-white/60 hover:text-white"
+      >
+        <span class="sr-only">{t.switchTo}</span>
+        <span aria-hidden="true">{other}</span>
+      </a>
+      <ButtonLink href={APPLY_PATH[locale]} data-apply variant="accent" size="cta" class="ml-2 hidden sm:inline-flex">{t.startNow}</ButtonLink>
+      <MobileNav
+        client:media="(max-width: 1279px)"
+        items={[...items]}
+        currentPath={current}
+        applyHref={APPLY_PATH[locale]}
+        switchHref={switchHref}
+        switchLocale={other}
+        strings={{ close: t.close, menu: t.menu, mainNav: t.mainNav, startNow: t.startNow, switchTo: t.switchTo }}
+      />
+    </div>
+  </div>
+</header>

@@ -1,0 +1,3294 @@
+{
+  "$schema": "https://emdashcms.com/seed.schema.json",
+  "version": "1",
+  "meta": {
+    "name": "EquityFast",
+    "description": "EquityFast HELOC site (E Mortgage Capital): bilingual pages built from sections, a renovation planner, and an application inbox.",
+    "author": "Jake Bodea"
+  },
+  "settings": {
+    "title": "EquityFast",
+    "tagline": "Your Equity. Your Terms.",
+    "timezone": "America/Los_Angeles"
+  },
+  "blockTypes": [
+    {
+      "slug": "home_hero",
+      "label": "Home hero",
+      "description": "Wordmark, tagline, intro, buttons, and the quick equity estimate over a photo.",
+      "category": "Sections",
+      "currentVersion": 1,
+      "versions": [
+        {
+          "version": 1,
+          "fields": [
+            {
+              "slug": "headline",
+              "label": "Headline (read by search engines and screen readers)",
+              "type": "string",
+              "required": true
+            },
+            {
+              "slug": "tagline",
+              "label": "Tagline pill",
+              "type": "string",
+              "required": true
+            },
+            {
+              "slug": "intro",
+              "label": "Intro",
+              "type": "text"
+            },
+            {
+              "slug": "apply_label",
+              "label": "Application button label (opens the application)",
+              "type": "string"
+            },
+            {
+              "slug": "secondary_cta_label",
+              "label": "Second button label",
+              "type": "string"
+            },
+            {
+              "slug": "secondary_cta_url",
+              "label": "Second button link",
+              "type": "string",
+              "validation": {
+                "pattern": "^(?:$|(?:https?://|mailto:|tel:|/(?!/)|#).+)$"
+              }
+            },
+            {
+              "slug": "image",
+              "label": "Background photo",
+              "type": "image"
+            },
+            {
+              "slug": "show_estimator",
+              "label": "Show the quick equity estimate",
+              "type": "boolean",
+              "defaultValue": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "page_hero",
+      "label": "Page hero",
+      "description": "Full-height page opener: eyebrow, two-line headline, intro, optional button, over a photo.",
+      "category": "Sections",
+      "currentVersion": 1,
+      "versions": [
+        {
+          "version": 1,
+          "fields": [
+            {
+              "slug": "eyebrow",
+              "label": "Eyebrow",
+              "type": "string"
+            },
+            {
+              "slug": "headline",
+              "label": "Headline",
+              "type": "string",
+              "required": true
+            },
+            {
+              "slug": "headline_accent",
+              "label": "Headline, second line (blue)",
+              "type": "string"
+            },
+            {
+              "slug": "intro",
+              "label": "Intro",
+              "type": "text"
+            },
+            {
+              "slug": "apply_label",
+              "label": "Application button label (opens the application)",
+              "type": "string"
+            },
+            {
+              "slug": "image",
+              "label": "Background photo",
+              "type": "image"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "ticker",
+      "label": "Feature ticker",
+      "description": "A scrolling strip of short selling points.",
+      "category": "Sections",
+      "currentVersion": 1,
+      "versions": [
+        {
+          "version": 1,
+          "fields": [
+            {
+              "slug": "items",
+              "label": "Points",
+              "type": "repeater",
+              "required": true,
+              "validation": {
+                "minItems": 1,
+                "maxItems": 12,
+                "subFields": [
+                  {
+                    "slug": "text",
+                    "label": "Text",
+                    "type": "string",
+                    "required": true
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "guidelines",
+      "label": "Program guidelines",
+      "description": "Headline and text beside a grid of label/value guidelines, on navy.",
+      "category": "Sections",
+      "currentVersion": 1,
+      "versions": [
+        {
+          "version": 1,
+          "fields": [
+            {
+              "slug": "eyebrow",
+              "label": "Eyebrow",
+              "type": "string"
+            },
+            {
+              "slug": "headline",
+              "label": "Headline",
+              "type": "string",
+              "required": true
+            },
+            {
+              "slug": "headline_accent",
+              "label": "Headline, second line (blue)",
+              "type": "string"
+            },
+            {
+              "slug": "body",
+              "label": "Text",
+              "type": "text"
+            },
+            {
+              "slug": "link_label",
+              "label": "Link label",
+              "type": "string"
+            },
+            {
+              "slug": "link_url",
+              "label": "Link",
+              "type": "string",
+              "validation": {
+                "pattern": "^(?:$|(?:https?://|mailto:|tel:|/(?!/)|#).+)$"
+              }
+            },
+            {
+              "slug": "items",
+              "label": "Guidelines",
+              "type": "repeater",
+              "required": true,
+              "validation": {
+                "minItems": 1,
+                "maxItems": 12,
+                "subFields": [
+                  {
+                    "slug": "label",
+                    "label": "Label",
+                    "type": "string",
+                    "required": true
+                  },
+                  {
+                    "slug": "value",
+                    "label": "Value",
+                    "type": "string",
+                    "required": true
+                  }
+                ]
+              }
+            },
+            {
+              "slug": "footnote",
+              "label": "Footnote",
+              "type": "text"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "statement",
+      "label": "Statement",
+      "description": "A large centered statement with a short paragraph.",
+      "category": "Sections",
+      "currentVersion": 1,
+      "versions": [
+        {
+          "version": 1,
+          "fields": [
+            {
+              "slug": "headline",
+              "label": "Headline",
+              "type": "string",
+              "required": true
+            },
+            {
+              "slug": "headline_accent",
+              "label": "Headline, second half (blue)",
+              "type": "string"
+            },
+            {
+              "slug": "lead",
+              "label": "Large text",
+              "type": "text"
+            },
+            {
+              "slug": "body",
+              "label": "Small text",
+              "type": "text"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "stats",
+      "label": "Stats",
+      "description": "A row of big numbers with labels, on navy.",
+      "category": "Sections",
+      "currentVersion": 1,
+      "versions": [
+        {
+          "version": 1,
+          "fields": [
+            {
+              "slug": "headline",
+              "label": "Heading (screen readers only)",
+              "type": "string"
+            },
+            {
+              "slug": "items",
+              "label": "Stats",
+              "type": "repeater",
+              "required": true,
+              "validation": {
+                "minItems": 1,
+                "maxItems": 4,
+                "subFields": [
+                  {
+                    "slug": "value",
+                    "label": "Value",
+                    "type": "string",
+                    "required": true
+                  },
+                  {
+                    "slug": "label",
+                    "label": "Label",
+                    "type": "string",
+                    "required": true
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "checklist",
+      "label": "Checklist",
+      "description": "Headline and text beside a list of checked benefits.",
+      "category": "Sections",
+      "currentVersion": 1,
+      "versions": [
+        {
+          "version": 1,
+          "fields": [
+            {
+              "slug": "eyebrow",
+              "label": "Eyebrow",
+              "type": "string"
+            },
+            {
+              "slug": "headline",
+              "label": "Headline",
+              "type": "string",
+              "required": true
+            },
+            {
+              "slug": "headline_accent",
+              "label": "Headline, second line (blue)",
+              "type": "string"
+            },
+            {
+              "slug": "body",
+              "label": "Text",
+              "type": "text"
+            },
+            {
+              "slug": "apply_label",
+              "label": "Application button label (opens the application)",
+              "type": "string"
+            },
+            {
+              "slug": "items",
+              "label": "Benefits",
+              "type": "repeater",
+              "required": true,
+              "validation": {
+                "minItems": 1,
+                "maxItems": 6,
+                "subFields": [
+                  {
+                    "slug": "title",
+                    "label": "Title",
+                    "type": "string",
+                    "required": true
+                  },
+                  {
+                    "slug": "body",
+                    "label": "Description",
+                    "type": "text",
+                    "required": true
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "link_cards",
+      "label": "Link cards",
+      "description": "A grid of cards linking to other pages.",
+      "category": "Sections",
+      "currentVersion": 1,
+      "versions": [
+        {
+          "version": 1,
+          "fields": [
+            {
+              "slug": "headline",
+              "label": "Headline",
+              "type": "string",
+              "required": true
+            },
+            {
+              "slug": "items",
+              "label": "Cards",
+              "type": "repeater",
+              "required": true,
+              "validation": {
+                "minItems": 1,
+                "maxItems": 4,
+                "subFields": [
+                  {
+                    "slug": "eyebrow",
+                    "label": "Eyebrow",
+                    "type": "string"
+                  },
+                  {
+                    "slug": "title",
+                    "label": "Title",
+                    "type": "string",
+                    "required": true
+                  },
+                  {
+                    "slug": "body",
+                    "label": "Description",
+                    "type": "text",
+                    "required": true
+                  },
+                  {
+                    "slug": "url",
+                    "label": "Link",
+                    "type": "string",
+                    "validation": {
+                      "pattern": "^(?:$|(?:https?://|mailto:|tel:|/(?!/)|#).+)$"
+                    }
+                  },
+                  {
+                    "slug": "link_label",
+                    "label": "Link label",
+                    "type": "string"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "numbered_cards",
+      "label": "Numbered cards",
+      "description": "Numbered points (01, 02, ...) under a headline.",
+      "category": "Sections",
+      "currentVersion": 1,
+      "versions": [
+        {
+          "version": 1,
+          "fields": [
+            {
+              "slug": "eyebrow",
+              "label": "Eyebrow",
+              "type": "string"
+            },
+            {
+              "slug": "headline",
+              "label": "Headline",
+              "type": "string",
+              "required": true
+            },
+            {
+              "slug": "headline_accent",
+              "label": "Headline, second line (blue)",
+              "type": "string"
+            },
+            {
+              "slug": "body",
+              "label": "Text",
+              "type": "text"
+            },
+            {
+              "slug": "apply_label",
+              "label": "Application button label (opens the application)",
+              "type": "string"
+            },
+            {
+              "slug": "tone",
+              "label": "Background",
+              "type": "select",
+              "validation": {
+                "options": ["light", "navy"]
+              },
+              "defaultValue": "light"
+            },
+            {
+              "slug": "items",
+              "label": "Points",
+              "type": "repeater",
+              "required": true,
+              "validation": {
+                "minItems": 1,
+                "maxItems": 6,
+                "subFields": [
+                  {
+                    "slug": "title",
+                    "label": "Title",
+                    "type": "string",
+                    "required": true
+                  },
+                  {
+                    "slug": "body",
+                    "label": "Description",
+                    "type": "text",
+                    "required": true
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "programs",
+      "label": "Programs",
+      "description": "Side-by-side program cards with feature lists.",
+      "category": "Sections",
+      "currentVersion": 1,
+      "versions": [
+        {
+          "version": 1,
+          "fields": [
+            {
+              "slug": "eyebrow",
+              "label": "Eyebrow",
+              "type": "string"
+            },
+            {
+              "slug": "headline",
+              "label": "Headline",
+              "type": "string",
+              "required": true
+            },
+            {
+              "slug": "headline_accent",
+              "label": "Headline, second line (blue)",
+              "type": "string"
+            },
+            {
+              "slug": "body",
+              "label": "Text",
+              "type": "text"
+            },
+            {
+              "slug": "items",
+              "label": "Programs",
+              "type": "repeater",
+              "required": true,
+              "validation": {
+                "minItems": 1,
+                "maxItems": 3,
+                "subFields": [
+                  {
+                    "slug": "badge",
+                    "label": "Badge",
+                    "type": "string"
+                  },
+                  {
+                    "slug": "title",
+                    "label": "Name",
+                    "type": "string",
+                    "required": true
+                  },
+                  {
+                    "slug": "body",
+                    "label": "Description",
+                    "type": "text"
+                  },
+                  {
+                    "slug": "features",
+                    "label": "Features (one per line)",
+                    "type": "text",
+                    "required": true
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "comparison",
+      "label": "Comparison table",
+      "description": "A feature-by-feature table comparing two options.",
+      "category": "Sections",
+      "currentVersion": 1,
+      "versions": [
+        {
+          "version": 1,
+          "fields": [
+            {
+              "slug": "eyebrow",
+              "label": "Eyebrow",
+              "type": "string"
+            },
+            {
+              "slug": "headline",
+              "label": "Headline",
+              "type": "string",
+              "required": true
+            },
+            {
+              "slug": "headline_accent",
+              "label": "Headline, second line (blue)",
+              "type": "string"
+            },
+            {
+              "slug": "feature_label",
+              "label": "First column heading",
+              "type": "string",
+              "required": true
+            },
+            {
+              "slug": "ours_label",
+              "label": "Our column heading",
+              "type": "string",
+              "required": true
+            },
+            {
+              "slug": "theirs_label",
+              "label": "Their column heading",
+              "type": "string",
+              "required": true
+            },
+            {
+              "slug": "rows",
+              "label": "Rows",
+              "type": "repeater",
+              "required": true,
+              "validation": {
+                "minItems": 1,
+                "maxItems": 12,
+                "subFields": [
+                  {
+                    "slug": "feature",
+                    "label": "Feature",
+                    "type": "string",
+                    "required": true
+                  },
+                  {
+                    "slug": "ours",
+                    "label": "Ours",
+                    "type": "string",
+                    "required": true
+                  },
+                  {
+                    "slug": "theirs",
+                    "label": "Theirs",
+                    "type": "string",
+                    "required": true
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "faq",
+      "label": "Questions",
+      "description": "Questions and answers that open in place.",
+      "category": "Sections",
+      "currentVersion": 1,
+      "versions": [
+        {
+          "version": 1,
+          "fields": [
+            {
+              "slug": "eyebrow",
+              "label": "Eyebrow",
+              "type": "string"
+            },
+            {
+              "slug": "headline",
+              "label": "Headline",
+              "type": "string",
+              "required": true
+            },
+            {
+              "slug": "items",
+              "label": "Questions",
+              "type": "repeater",
+              "required": true,
+              "validation": {
+                "minItems": 1,
+                "maxItems": 16,
+                "subFields": [
+                  {
+                    "slug": "question",
+                    "label": "Question",
+                    "type": "string",
+                    "required": true
+                  },
+                  {
+                    "slug": "answer",
+                    "label": "Answer",
+                    "type": "text",
+                    "required": true
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "timeline",
+      "label": "Timeline",
+      "description": "A vertical timeline of short stages.",
+      "category": "Sections",
+      "currentVersion": 1,
+      "versions": [
+        {
+          "version": 1,
+          "fields": [
+            {
+              "slug": "headline",
+              "label": "Headline",
+              "type": "string",
+              "required": true
+            },
+            {
+              "slug": "items",
+              "label": "Stages",
+              "type": "repeater",
+              "required": true,
+              "validation": {
+                "minItems": 1,
+                "maxItems": 8,
+                "subFields": [
+                  {
+                    "slug": "label",
+                    "label": "When",
+                    "type": "string",
+                    "required": true
+                  },
+                  {
+                    "slug": "body",
+                    "label": "What happens",
+                    "type": "text",
+                    "required": true
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "image_cards",
+      "label": "Photo cards",
+      "description": "Cards with a photo, a small label, a title, and text, on navy.",
+      "category": "Sections",
+      "currentVersion": 1,
+      "versions": [
+        {
+          "version": 1,
+          "fields": [
+            {
+              "slug": "eyebrow",
+              "label": "Eyebrow",
+              "type": "string"
+            },
+            {
+              "slug": "headline",
+              "label": "Headline",
+              "type": "string",
+              "required": true
+            },
+            {
+              "slug": "headline_accent",
+              "label": "Headline, second line (blue)",
+              "type": "string"
+            },
+            {
+              "slug": "items",
+              "label": "Cards",
+              "type": "repeater",
+              "required": true,
+              "validation": {
+                "minItems": 1,
+                "maxItems": 3,
+                "subFields": [
+                  {
+                    "slug": "image",
+                    "label": "Photo",
+                    "type": "image"
+                  },
+                  {
+                    "slug": "kicker",
+                    "label": "Small label",
+                    "type": "string"
+                  },
+                  {
+                    "slug": "title",
+                    "label": "Title",
+                    "type": "string",
+                    "required": true
+                  },
+                  {
+                    "slug": "body",
+                    "label": "Text (blank line between paragraphs)",
+                    "type": "text",
+                    "required": true
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "renovation_planner",
+      "label": "Renovation planner",
+      "description": "The interactive project ROI planner.",
+      "category": "Sections",
+      "currentVersion": 1,
+      "versions": [
+        {
+          "version": 1,
+          "fields": [
+            {
+              "slug": "headline",
+              "label": "Headline",
+              "type": "string",
+              "required": true
+            },
+            {
+              "slug": "headline_accent",
+              "label": "Headline, second half (blue)",
+              "type": "string"
+            },
+            {
+              "slug": "intro",
+              "label": "Intro",
+              "type": "text"
+            },
+            {
+              "slug": "projects",
+              "label": "Projects",
+              "type": "repeater",
+              "required": true,
+              "validation": {
+                "minItems": 1,
+                "maxItems": 16,
+                "subFields": [
+                  {
+                    "slug": "name",
+                    "label": "Project",
+                    "type": "string",
+                    "required": true
+                  },
+                  {
+                    "slug": "blurb",
+                    "label": "Short description",
+                    "type": "string",
+                    "required": true
+                  },
+                  {
+                    "slug": "roi_percent",
+                    "label": "Return (% of cost, e.g. 327)",
+                    "type": "integer",
+                    "required": true
+                  },
+                  {
+                    "slug": "typical_budget",
+                    "label": "Typical budget ($)",
+                    "type": "integer",
+                    "required": true
+                  }
+                ]
+              }
+            },
+            {
+              "slug": "disclaimer",
+              "label": "Disclaimer",
+              "type": "text"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "cta_band",
+      "label": "Call to action",
+      "description": "A closing band with a headline and buttons.",
+      "category": "Sections",
+      "currentVersion": 1,
+      "versions": [
+        {
+          "version": 1,
+          "fields": [
+            {
+              "slug": "headline",
+              "label": "Headline",
+              "type": "string",
+              "required": true
+            },
+            {
+              "slug": "body",
+              "label": "Text",
+              "type": "text"
+            },
+            {
+              "slug": "apply_label",
+              "label": "Application button label (opens the application)",
+              "type": "string"
+            },
+            {
+              "slug": "secondary_cta_label",
+              "label": "Second button label",
+              "type": "string"
+            },
+            {
+              "slug": "secondary_cta_url",
+              "label": "Second button link",
+              "type": "string",
+              "validation": {
+                "pattern": "^(?:$|(?:https?://|mailto:|tel:|/(?!/)|#).+)$"
+              }
+            },
+            {
+              "slug": "layout",
+              "label": "Layout",
+              "type": "select",
+              "validation": {
+                "options": ["centered", "split", "boxed"]
+              },
+              "defaultValue": "centered"
+            },
+            {
+              "slug": "show_social",
+              "label": "Show the Instagram link",
+              "type": "boolean",
+              "defaultValue": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "rich_text",
+      "label": "Text",
+      "description": "Headings and paragraphs (legal pages, long copy).",
+      "category": "Sections",
+      "currentVersion": 1,
+      "versions": [
+        {
+          "version": 1,
+          "fields": [
+            {
+              "slug": "headline",
+              "label": "Headline",
+              "type": "string"
+            },
+            {
+              "slug": "body",
+              "label": "Text",
+              "type": "portableText",
+              "required": true
+            },
+            {
+              "slug": "footnote",
+              "label": "Footnote",
+              "type": "text"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "collections": [
+    {
+      "slug": "home",
+      "label": "Home page",
+      "labelSingular": "Home page",
+      "icon": "house",
+      "sortOrder": 0,
+      "supports": ["drafts", "revisions", "preview", "scheduling", "seo"],
+      "urlPattern": "/",
+      "fields": [
+        {
+          "slug": "title",
+          "label": "Title",
+          "type": "string",
+          "required": true,
+          "searchable": true
+        },
+        {
+          "slug": "intro",
+          "label": "Intro (used as the search description when SEO is empty)",
+          "type": "text"
+        },
+        {
+          "slug": "content",
+          "label": "Sections",
+          "type": "blocks",
+          "validation": {
+            "allowedTypes": [
+              "home_hero",
+              "page_hero",
+              "ticker",
+              "guidelines",
+              "statement",
+              "stats",
+              "checklist",
+              "link_cards",
+              "numbered_cards",
+              "programs",
+              "comparison",
+              "faq",
+              "timeline",
+              "image_cards",
+              "renovation_planner",
+              "cta_band",
+              "rich_text"
+            ],
+            "maxItems": 20
+          }
+        }
+      ]
+    },
+    {
+      "slug": "pages",
+      "label": "Pages",
+      "labelSingular": "Page",
+      "icon": "file-text",
+      "sortOrder": 1,
+      "supports": ["drafts", "revisions", "preview", "scheduling", "seo"],
+      "urlPattern": "/{slug}",
+      "fields": [
+        {
+          "slug": "title",
+          "label": "Title",
+          "type": "string",
+          "required": true,
+          "searchable": true
+        },
+        {
+          "slug": "intro",
+          "label": "Intro (used as the search description when SEO is empty)",
+          "type": "text"
+        },
+        {
+          "slug": "content",
+          "label": "Sections",
+          "type": "blocks",
+          "validation": {
+            "allowedTypes": [
+              "home_hero",
+              "page_hero",
+              "ticker",
+              "guidelines",
+              "statement",
+              "stats",
+              "checklist",
+              "link_cards",
+              "numbered_cards",
+              "programs",
+              "comparison",
+              "faq",
+              "timeline",
+              "image_cards",
+              "renovation_planner",
+              "cta_band",
+              "rich_text"
+            ],
+            "maxItems": 20
+          }
+        }
+      ]
+    },
+    {
+      "slug": "site_text",
+      "label": "Site text",
+      "labelSingular": "Site text",
+      "icon": "text-aa",
+      "sortOrder": 2,
+      "description": "Footer disclosures shown on every page, one entry per language.",
+      "routable": false,
+      "supports": ["revisions"],
+      "admin": {
+        "quickCreate": false
+      },
+      "fields": [
+        {
+          "slug": "title",
+          "label": "Name",
+          "type": "string",
+          "required": true
+        },
+        {
+          "slug": "disclosure",
+          "label": "Footer disclosure (blank line between paragraphs)",
+          "type": "text",
+          "required": true
+        }
+      ]
+    },
+    {
+      "slug": "leads",
+      "label": "Applications",
+      "labelSingular": "Application",
+      "icon": "envelope-simple",
+      "sortOrder": 3,
+      "description": "Application submissions. Visitors never see these.",
+      "routable": false,
+      "supports": [],
+      "admin": {
+        "listColumns": ["amount", "email", "phone"],
+        "quickCreate": false
+      },
+      "fields": [
+        {
+          "slug": "title",
+          "label": "Name",
+          "type": "string",
+          "required": true
+        },
+        {
+          "slug": "email",
+          "label": "Email",
+          "type": "string",
+          "required": true
+        },
+        {
+          "slug": "phone",
+          "label": "Phone",
+          "type": "string"
+        },
+        {
+          "slug": "amount",
+          "label": "Amount seeking",
+          "type": "string"
+        },
+        {
+          "slug": "message",
+          "label": "Application",
+          "type": "text",
+          "required": true
+        },
+        {
+          "slug": "source_path",
+          "label": "Submitted from",
+          "type": "string"
+        }
+      ]
+    }
+  ],
+  "menus": [
+    {
+      "id": "menu:primary:en",
+      "name": "primary",
+      "label": "Main navigation",
+      "locale": "en",
+      "items": [
+        {
+          "id": "item:primary:home:en",
+          "type": "custom",
+          "label": "Home",
+          "url": "/",
+          "locale": "en"
+        },
+        {
+          "id": "item:primary:calculator:en",
+          "type": "custom",
+          "label": "Calculator",
+          "url": "/calculator",
+          "locale": "en"
+        },
+        {
+          "id": "item:primary:heloc:en",
+          "type": "custom",
+          "label": "Info",
+          "url": "/heloc",
+          "locale": "en"
+        },
+        {
+          "id": "item:primary:process:en",
+          "type": "custom",
+          "label": "Process",
+          "url": "/process",
+          "locale": "en"
+        },
+        {
+          "id": "item:primary:about:en",
+          "type": "custom",
+          "label": "About Us",
+          "url": "/about",
+          "locale": "en"
+        }
+      ]
+    },
+    {
+      "id": "menu:footer:en",
+      "name": "footer",
+      "label": "Footer links",
+      "locale": "en",
+      "items": [
+        {
+          "id": "item:footer:home:en",
+          "type": "custom",
+          "label": "Home",
+          "url": "/",
+          "locale": "en"
+        },
+        {
+          "id": "item:footer:calculator:en",
+          "type": "custom",
+          "label": "Calculator",
+          "url": "/calculator",
+          "locale": "en"
+        },
+        {
+          "id": "item:footer:heloc:en",
+          "type": "custom",
+          "label": "Info",
+          "url": "/heloc",
+          "locale": "en"
+        },
+        {
+          "id": "item:footer:process:en",
+          "type": "custom",
+          "label": "Process",
+          "url": "/process",
+          "locale": "en"
+        },
+        {
+          "id": "item:footer:about:en",
+          "type": "custom",
+          "label": "About Us",
+          "url": "/about",
+          "locale": "en"
+        },
+        {
+          "id": "item:footer:privacy:en",
+          "type": "custom",
+          "label": "Privacy Policy",
+          "url": "/privacy",
+          "locale": "en"
+        }
+      ]
+    },
+    {
+      "id": "menu:primary:es",
+      "name": "primary",
+      "label": "Main navigation",
+      "locale": "es",
+      "items": [
+        {
+          "id": "item:primary:home:es",
+          "type": "custom",
+          "label": "Inicio",
+          "url": "/es",
+          "locale": "es",
+          "translationOf": "item:primary:home:en"
+        },
+        {
+          "id": "item:primary:calculator:es",
+          "type": "custom",
+          "label": "Calculadora",
+          "url": "/es/calculadora",
+          "locale": "es",
+          "translationOf": "item:primary:calculator:en"
+        },
+        {
+          "id": "item:primary:heloc:es",
+          "type": "custom",
+          "label": "Información",
+          "url": "/es/heloc",
+          "locale": "es",
+          "translationOf": "item:primary:heloc:en"
+        },
+        {
+          "id": "item:primary:process:es",
+          "type": "custom",
+          "label": "Proceso",
+          "url": "/es/proceso",
+          "locale": "es",
+          "translationOf": "item:primary:process:en"
+        },
+        {
+          "id": "item:primary:about:es",
+          "type": "custom",
+          "label": "Nosotros",
+          "url": "/es/nosotros",
+          "locale": "es",
+          "translationOf": "item:primary:about:en"
+        }
+      ],
+      "translationOf": "menu:primary:en"
+    },
+    {
+      "id": "menu:footer:es",
+      "name": "footer",
+      "label": "Footer links",
+      "locale": "es",
+      "items": [
+        {
+          "id": "item:footer:home:es",
+          "type": "custom",
+          "label": "Inicio",
+          "url": "/es",
+          "locale": "es",
+          "translationOf": "item:footer:home:en"
+        },
+        {
+          "id": "item:footer:calculator:es",
+          "type": "custom",
+          "label": "Calculadora",
+          "url": "/es/calculadora",
+          "locale": "es",
+          "translationOf": "item:footer:calculator:en"
+        },
+        {
+          "id": "item:footer:heloc:es",
+          "type": "custom",
+          "label": "Información",
+          "url": "/es/heloc",
+          "locale": "es",
+          "translationOf": "item:footer:heloc:en"
+        },
+        {
+          "id": "item:footer:process:es",
+          "type": "custom",
+          "label": "Proceso",
+          "url": "/es/proceso",
+          "locale": "es",
+          "translationOf": "item:footer:process:en"
+        },
+        {
+          "id": "item:footer:about:es",
+          "type": "custom",
+          "label": "Nosotros",
+          "url": "/es/nosotros",
+          "locale": "es",
+          "translationOf": "item:footer:about:en"
+        },
+        {
+          "id": "item:footer:privacy:es",
+          "type": "custom",
+          "label": "Política de Privacidad",
+          "url": "/es/privacidad",
+          "locale": "es",
+          "translationOf": "item:footer:privacy:en"
+        }
+      ],
+      "translationOf": "menu:footer:en"
+    }
+  ],
+  "redirects": [
+    {
+      "source": "/equity-fast-about",
+      "destination": "/about",
+      "type": 308,
+      "enabled": true,
+      "groupName": "Previous site"
+    },
+    {
+      "source": "/home",
+      "destination": "/",
+      "type": 308,
+      "enabled": true,
+      "groupName": "Site structure"
+    }
+  ],
+  "content": {
+    "home": [
+      {
+        "id": "home",
+        "slug": "home",
+        "status": "published",
+        "locale": "en",
+        "data": {
+          "title": "Home",
+          "intro": "EquityFast, powered by E Mortgage Capital: HELOCs from $5K to $1M, no appraisal on eligible loans under $400K, FICO 620+, approvals in as little as 30 minutes.",
+          "content": [
+            {
+              "_type": "home_hero",
+              "_version": 1,
+              "_key": "hero",
+              "headline": "Get EquityFast: home equity, reimagined",
+              "tagline": "Your Equity. Your Terms.",
+              "intro": "Skip the paperwork, and skip the appraisal on loans under $400K.* Get a competitive-rate HELOC with instant, tech-verified income and terms you control.",
+              "apply_label": "Start My Request",
+              "secondary_cta_label": "Run the Calculator",
+              "secondary_cta_url": "/calculator",
+              "image": {
+                "$media": {
+                  "url": "/_seed/media/estate-hero-X6IKSjTQ.jpg",
+                  "alt": "A two-story craftsman home lit up at dusk",
+                  "filename": "home-hero.jpg"
+                }
+              },
+              "show_estimator": true
+            },
+            {
+              "_type": "ticker",
+              "_version": 1,
+              "_key": "ticker",
+              "items": [
+                {
+                  "text": "No tax returns"
+                },
+                {
+                  "text": "No W2s"
+                },
+                {
+                  "text": "No paystubs"
+                },
+                {
+                  "text": "No appraisal under $400K*"
+                },
+                {
+                  "text": "Soft credit check"
+                },
+                {
+                  "text": "Draw only what you need"
+                },
+                {
+                  "text": "FICO 620+"
+                },
+                {
+                  "text": "Fixed-rate draw options"
+                }
+              ]
+            },
+            {
+              "_type": "guidelines",
+              "_version": 1,
+              "_key": "guidelines",
+              "eyebrow": "Two ways to tap your equity",
+              "headline": "HELOC or HELOAN.",
+              "headline_accent": "You have options.",
+              "body": "Take a revolving line you can draw from again and again, or a fixed lump sum with a set payment. One EquityFast application matches you to whichever fits. Here are the guidelines both programs share.",
+              "link_label": "Compare the programs",
+              "link_url": "/heloc",
+              "items": [
+                {
+                  "label": "Loan / line amount",
+                  "value": "$5,000 to $1,000,000"
+                },
+                {
+                  "label": "Credit score (FICO®)",
+                  "value": "As low as 600*"
+                },
+                {
+                  "label": "Max CLTV",
+                  "value": "Up to 90%*"
+                },
+                {
+                  "label": "Max DTI",
+                  "value": "Up to 55%*"
+                },
+                {
+                  "label": "Occupancy",
+                  "value": "Owner & non-owner"
+                },
+                {
+                  "label": "Lien position",
+                  "value": "1st & 2nd"
+                },
+                {
+                  "label": "Eligible property types",
+                  "value": "SFR, condo, PUD, townhome, 2-4 unit"
+                },
+                {
+                  "label": "Terms available",
+                  "value": "5, 10, 15, 20 & 30 yr"
+                },
+                {
+                  "label": "Funding speed",
+                  "value": "As few as 5 days*"
+                }
+              ],
+              "footnote": "*Program availability, line amount, credit score, CLTV, DTI, lien position, and property-type eligibility vary by program, occupancy, state, and borrower profile; not all combinations shown are available together."
+            },
+            {
+              "_type": "statement",
+              "_version": 1,
+              "_key": "statement",
+              "headline": "Your Equity.",
+              "headline_accent": "Your Terms.",
+              "lead": "Fund renovations, consolidate high-interest debt, support family, or build a safety net, and pay interest only on what you actually draw.",
+              "body": "Consolidate high-interest debt, fund renovations without the need of an appraisal*, support family, invest in another property, or build a safety net. More importantly, pay interest only on what you actually draw."
+            },
+            {
+              "_type": "stats",
+              "_version": 1,
+              "_key": "glance",
+              "headline": "EquityFast at a glance",
+              "items": [
+                {
+                  "value": "$1M",
+                  "label": "Maximum line"
+                },
+                {
+                  "value": "30 min",
+                  "label": "Approvals in as little as*"
+                },
+                {
+                  "value": "620+",
+                  "label": "FICO® accepted"
+                },
+                {
+                  "value": "$0",
+                  "label": "Appraisal under $400K*"
+                }
+              ]
+            },
+            {
+              "_type": "checklist",
+              "_version": 1,
+              "_key": "why",
+              "headline": "Why homeowners",
+              "headline_accent": "choose EquityFast.",
+              "body": "A modern underwriting stack replaces the paperwork pile, so eligible homeowners get answers in minutes instead of weeks.",
+              "apply_label": "See What I Qualify For",
+              "items": [
+                {
+                  "title": "Renovate Without an Appraisal",
+                  "body": "Faster access to funds, no traditional appraisal required on eligible loans."
+                },
+                {
+                  "title": "Consolidate High-interest Debt, FICO® From 620+",
+                  "body": "One manageable draw across a wide range of credit profiles."
+                },
+                {
+                  "title": "Approvals in as Little as 30 Minutes*",
+                  "body": "Unlock your equity faster and move forward without the usual delays."
+                },
+                {
+                  "title": "No Documentation Required",
+                  "body": "No taxes, W2s, or paystubs: our tech verifies income fast, without the paperwork pile."
+                }
+              ]
+            },
+            {
+              "_type": "link_cards",
+              "_version": 1,
+              "_key": "explore",
+              "headline": "Explore before you commit",
+              "items": [
+                {
+                  "eyebrow": "Process",
+                  "title": "Application Process",
+                  "body": "The four steps from first question to available funds, plus what makes EquityFast faster.",
+                  "url": "/process",
+                  "link_label": "Open"
+                },
+                {
+                  "eyebrow": "Tool",
+                  "title": "Equity Calculator",
+                  "body": "Estimate your available line, then plan which projects return the most equity per dollar.",
+                  "url": "/calculator",
+                  "link_label": "Open"
+                },
+                {
+                  "eyebrow": "Learn",
+                  "title": "HELOC Info & FAQ",
+                  "body": "How a HELOC works, EquityFast vs. a traditional HELOC, and answers to common questions.",
+                  "url": "/heloc",
+                  "link_label": "Open"
+                },
+                {
+                  "eyebrow": "Company",
+                  "title": "About EquityFast",
+                  "body": "The AI-powered platform built for homeowners overlooked by legacy lenders.",
+                  "url": "/about",
+                  "link_label": "Open"
+                }
+              ]
+            },
+            {
+              "_type": "cta_band",
+              "_version": 1,
+              "_key": "cta",
+              "headline": "Ready to get Your Equity on Your Terms?",
+              "body": "Answer a few quick questions. Soft credit check only: it won't affect your score.",
+              "apply_label": "Start My Request",
+              "layout": "centered",
+              "show_social": true
+            }
+          ]
+        }
+      },
+      {
+        "id": "home-es",
+        "slug": "home",
+        "status": "published",
+        "locale": "es",
+        "data": {
+          "title": "Inicio",
+          "intro": "EquityFast, con la tecnología de E Mortgage Capital: HELOC de $5K a $1M, sin avalúo en préstamos elegibles menores a $400K, FICO 620+ y aprobaciones en tan solo 30 minutos.",
+          "content": [
+            {
+              "_type": "home_hero",
+              "_version": 1,
+              "_key": "hero",
+              "headline": "Obtenga EquityFast: la equidad de su vivienda, reinventada",
+              "tagline": "Su Equidad. Sus Términos.",
+              "intro": "Olvídese del papeleo y del avalúo en préstamos menores a $400K.* Obtenga un HELOC con tasa competitiva, ingresos verificados al instante con tecnología y términos que usted controla.",
+              "apply_label": "Iniciar Mi Solicitud",
+              "secondary_cta_label": "Usar la Calculadora",
+              "secondary_cta_url": "/es/calculadora",
+              "image": {
+                "$media": {
+                  "url": "/_seed/media/estate-hero-X6IKSjTQ.jpg",
+                  "alt": "Una casa estilo craftsman de dos pisos iluminada al atardecer",
+                  "filename": "home-hero.jpg"
+                }
+              },
+              "show_estimator": true
+            },
+            {
+              "_type": "ticker",
+              "_version": 1,
+              "_key": "ticker",
+              "items": [
+                {
+                  "text": "Sin declaraciones de impuestos"
+                },
+                {
+                  "text": "Sin formularios W2"
+                },
+                {
+                  "text": "Sin talones de pago"
+                },
+                {
+                  "text": "Sin avalúo bajo $400K*"
+                },
+                {
+                  "text": "Consulta de crédito suave"
+                },
+                {
+                  "text": "Retire solo lo que necesite"
+                },
+                {
+                  "text": "FICO 620+"
+                },
+                {
+                  "text": "Opciones de retiro a tasa fija"
+                }
+              ]
+            },
+            {
+              "_type": "guidelines",
+              "_version": 1,
+              "_key": "guidelines",
+              "eyebrow": "Dos formas de usar su plusvalía",
+              "headline": "¿HELOC o HELOAN?",
+              "headline_accent": "Usted tiene opciones.",
+              "body": "Elija una línea revolvente de la que puede disponer una y otra vez, o una suma fija con un pago establecido. Una sola solicitud de EquityFast lo conecta con la opción que mejor le convenga; estas son las pautas que comparten ambos programas.",
+              "link_label": "Compare los programas",
+              "link_url": "/es/heloc",
+              "items": [
+                {
+                  "label": "Monto del préstamo / línea",
+                  "value": "$5,000 a $1,000,000"
+                },
+                {
+                  "label": "Puntaje de crédito (FICO®)",
+                  "value": "Desde 600*"
+                },
+                {
+                  "label": "CLTV máximo",
+                  "value": "Hasta 90%*"
+                },
+                {
+                  "label": "DTI máximo",
+                  "value": "Hasta 55%*"
+                },
+                {
+                  "label": "Ocupación",
+                  "value": "Ocupada y no ocupada por el propietario"
+                },
+                {
+                  "label": "Posición del gravamen",
+                  "value": "1.ª y 2.ª"
+                },
+                {
+                  "label": "Tipos de propiedad elegibles",
+                  "value": "Unifamiliar, condominio, PUD, townhome, 2-4 unidades"
+                },
+                {
+                  "label": "Plazos disponibles",
+                  "value": "5, 10, 15, 20 y 30 años"
+                },
+                {
+                  "label": "Velocidad de financiamiento",
+                  "value": "En tan solo 5 días*"
+                }
+              ],
+              "footnote": "*La disponibilidad del programa, el monto de la línea, el puntaje de crédito, el CLTV, el DTI, la posición del gravamen y los tipos de propiedad elegibles varían según el programa, la ocupación, el estado y el perfil del prestatario; no todas las combinaciones mostradas están disponibles en conjunto."
+            },
+            {
+              "_type": "statement",
+              "_version": 1,
+              "_key": "statement",
+              "headline": "Su Equidad.",
+              "headline_accent": "Sus Términos.",
+              "lead": "Financie renovaciones, consolide deudas de alto interés, apoye a su familia o cree un fondo de reserva, y pague intereses solo sobre lo que realmente retire.",
+              "body": "Consolide deudas con intereses altos, financie renovaciones sin necesidad de avalúo*, apoye a su familia, invierta en otra propiedad o cree un fondo de reserva, y lo más importante, pague intereses solo sobre lo que realmente retire."
+            },
+            {
+              "_type": "stats",
+              "_version": 1,
+              "_key": "glance",
+              "headline": "EquityFast de un vistazo",
+              "items": [
+                {
+                  "value": "$1M",
+                  "label": "Línea máxima"
+                },
+                {
+                  "value": "30 min",
+                  "label": "Aprobaciones en tan solo*"
+                },
+                {
+                  "value": "620+",
+                  "label": "FICO® aceptado"
+                },
+                {
+                  "value": "$0",
+                  "label": "Avalúo bajo $400K*"
+                }
+              ]
+            },
+            {
+              "_type": "checklist",
+              "_version": 1,
+              "_key": "why",
+              "headline": "Por qué los propietarios",
+              "headline_accent": "eligen EquityFast.",
+              "body": "Una plataforma moderna de evaluación reemplaza la montaña de papeleo, para que los propietarios elegibles reciban respuestas en minutos y no en semanas.",
+              "apply_label": "Ver Para Cuánto Califico",
+              "items": [
+                {
+                  "title": "Renueve Sin Avalúo",
+                  "body": "Acceso más rápido a los fondos, sin avalúo tradicional en préstamos elegibles."
+                },
+                {
+                  "title": "Consolide Deudas de Alto Interés, FICO® desde 620+",
+                  "body": "Un solo retiro manejable para una amplia gama de perfiles de crédito."
+                },
+                {
+                  "title": "Aprobaciones en Tan Solo 30 Minutos*",
+                  "body": "Libere su equidad más rápido y avance sin las demoras de siempre."
+                },
+                {
+                  "title": "Sin Documentación Requerida",
+                  "body": "Sin impuestos, W2 ni talones de pago: nuestra tecnología verifica el ingreso rápido, sin papeleo."
+                }
+              ]
+            },
+            {
+              "_type": "link_cards",
+              "_version": 1,
+              "_key": "explore",
+              "headline": "Explore antes de decidir",
+              "items": [
+                {
+                  "eyebrow": "Proceso",
+                  "title": "Proceso de Solicitud",
+                  "body": "Los cuatro pasos desde la primera pregunta hasta los fondos disponibles, y por qué EquityFast es más rápido.",
+                  "url": "/es/proceso",
+                  "link_label": "Abrir"
+                },
+                {
+                  "eyebrow": "Herramienta",
+                  "title": "Calculadora de Equidad",
+                  "body": "Estime su línea disponible y planifique qué proyectos devuelven más equidad por dólar.",
+                  "url": "/es/calculadora",
+                  "link_label": "Abrir"
+                },
+                {
+                  "eyebrow": "Aprenda",
+                  "title": "Información HELOC y Preguntas",
+                  "body": "Cómo funciona un HELOC, EquityFast frente a un HELOC tradicional y respuestas a preguntas comunes.",
+                  "url": "/es/heloc",
+                  "link_label": "Abrir"
+                },
+                {
+                  "eyebrow": "Compañía",
+                  "title": "Sobre EquityFast",
+                  "body": "La plataforma con inteligencia artificial creada para propietarios ignorados por los prestamistas tradicionales.",
+                  "url": "/es/nosotros",
+                  "link_label": "Abrir"
+                }
+              ]
+            },
+            {
+              "_type": "cta_band",
+              "_version": 1,
+              "_key": "cta",
+              "headline": "¿Listo para obtener Su Equidad en Sus Términos?",
+              "body": "Responda unas preguntas rápidas. Solo consulta de crédito suave: no afecta su puntaje.",
+              "apply_label": "Iniciar Mi Solicitud",
+              "layout": "centered",
+              "show_social": true
+            }
+          ]
+        },
+        "translationOf": "home"
+      }
+    ],
+    "pages": [
+      {
+        "id": "page-calculator",
+        "slug": "calculator",
+        "status": "published",
+        "locale": "en",
+        "data": {
+          "title": "Home Equity Calculator",
+          "intro": "Estimate your available HELOC line, then plan which renovation projects return the most equity per dollar.",
+          "content": [
+            {
+              "_type": "page_hero",
+              "_version": 1,
+              "_key": "hero",
+              "eyebrow": "Interactive tool",
+              "headline": "Renovation",
+              "headline_accent": "Planner.",
+              "intro": "Pick the projects you're considering, set a budget for each, and see the equity they could add, using national average ROI plus three years of home appreciation.",
+              "image": {
+                "$media": {
+                  "url": "/_seed/media/calculator-hero-C9VXZbVq.jpg",
+                  "alt": "A renovated home exterior",
+                  "filename": "calculator-hero.jpg"
+                }
+              }
+            },
+            {
+              "_type": "renovation_planner",
+              "_version": 1,
+              "_key": "planner",
+              "headline": "Which projects actually",
+              "headline_accent": "pay you back?",
+              "intro": "Tap the projects you're considering. We preload a typical budget; slide to match yours and watch the estimated equity gain update. Figures use national average ROI plus three years of home appreciation.",
+              "projects": [
+                {
+                  "name": "Garage Door Replacement",
+                  "blurb": "Highest return per dollar in the set.",
+                  "roi_percent": 327,
+                  "typical_budget": 4500
+                },
+                {
+                  "name": "Steel Entry Door",
+                  "blurb": "Small spend, outsized curb appeal.",
+                  "roi_percent": 264,
+                  "typical_budget": 2400
+                },
+                {
+                  "name": "Exterior Stonework",
+                  "blurb": "Facade upgrade with strong resale lift.",
+                  "roi_percent": 254,
+                  "typical_budget": 11000
+                },
+                {
+                  "name": "Hardwood Floor Refinish",
+                  "blurb": "Cheapest way to modernize interiors.",
+                  "roi_percent": 180,
+                  "typical_budget": 5000
+                },
+                {
+                  "name": "Minor Kitchen Remodel",
+                  "blurb": "Cabinet fronts, counters, appliances.",
+                  "roi_percent": 138,
+                  "typical_budget": 27000
+                },
+                {
+                  "name": "Bathroom Remodel",
+                  "blurb": "Full refresh of a primary bath.",
+                  "roi_percent": 120,
+                  "typical_budget": 25000
+                },
+                {
+                  "name": "Backup Power Generator",
+                  "blurb": "Value plus resilience in storm markets.",
+                  "roi_percent": 116,
+                  "typical_budget": 15000
+                },
+                {
+                  "name": "Deck / Outdoor Living",
+                  "blurb": "Adds usable square footage outdoors.",
+                  "roi_percent": 115,
+                  "typical_budget": 18000
+                },
+                {
+                  "name": "Roof",
+                  "blurb": "New roof protects the home and reassures buyers.",
+                  "roi_percent": 109,
+                  "typical_budget": 30000
+                },
+                {
+                  "name": "Window Replacement",
+                  "blurb": "Efficiency gains plus resale credit.",
+                  "roi_percent": 106,
+                  "typical_budget": 22000
+                }
+              ],
+              "disclaimer": "Estimates only, based on national average cost-vs-value data plus 3-year appreciation. Actual results vary by market and condition."
+            }
+          ]
+        }
+      },
+      {
+        "id": "page-heloc",
+        "slug": "heloc",
+        "status": "published",
+        "locale": "en",
+        "data": {
+          "title": "What Is a HELOC? Answers & Comparison",
+          "intro": "How a HELOC works, EquityFast's Prime and Access lines compared with a traditional HELOC, and answers to the questions homeowners ask most.",
+          "content": [
+            {
+              "_type": "page_hero",
+              "_version": 1,
+              "_key": "hero",
+              "eyebrow": "Homeowner guide",
+              "headline": "What is a",
+              "headline_accent": "HELOC?",
+              "intro": "Everything worth knowing before you draw: how the line works, how EquityFast differs from a legacy HELOC, and straight answers to the questions homeowners ask most.",
+              "image": {
+                "$media": {
+                  "url": "/_seed/media/info-hero-Clqmc_9J.jpg",
+                  "alt": "A single-story home under tall trees",
+                  "filename": "info-hero.jpg"
+                }
+              }
+            },
+            {
+              "_type": "numbered_cards",
+              "_version": 1,
+              "_key": "fundamentals",
+              "eyebrow": "The fundamentals",
+              "headline": "How the line actually works",
+              "tone": "light",
+              "items": [
+                {
+                  "title": "A revolving line, not a lump sum",
+                  "body": "Your limit is set by your available equity. Draw what you need, repay, and draw again: like a credit card, but secured by your home and typically at a much lower rate."
+                },
+                {
+                  "title": "Interest only on what you draw",
+                  "body": "Leave the line untouched and you carry no balance. That makes a HELOC a flexible standby reserve as well as a funding tool."
+                },
+                {
+                  "title": "Equity you already earned",
+                  "body": "Every mortgage payment and every point of appreciation builds equity. A HELOC turns that stored value into usable funds without selling or refinancing your first mortgage."
+                }
+              ]
+            },
+            {
+              "_type": "programs",
+              "_version": 1,
+              "_key": "programs",
+              "eyebrow": "Choose the fit, not the compromise",
+              "headline": "HELOC or HELOAN.",
+              "headline_accent": "You have options.",
+              "body": "One application matches you to the right program (from small, targeted lines to jumbo lines of credit) with the credit flexibility to fit more borrowers.",
+              "items": [
+                {
+                  "badge": "Prime line",
+                  "title": "EquityFast Prime Line",
+                  "body": "Built for strong-credit homeowners who want the largest lines and the simplest structure.",
+                  "features": "Line amounts $5,000 to $1,000,000\nFICO® 620+ (680+ for non-owner-occupied)\nCLTV up to 89%\nFixed rate · no interest-only period\n5, 10, 15 & 30-year terms available\nNo full appraisal required up to $400,000*"
+                },
+                {
+                  "badge": "Access line",
+                  "title": "EquityFast Access Line",
+                  "body": "Designed for borrowers whose credit or property doesn't fit a standard box.",
+                  "features": "Line amounts $25,000 to $750,000\nFICO® as low as 600\nCLTV up to 90%\n1st & 2nd lien positions available\nSFR, condo, PUD, townhome & 2-4 unit\nRemote e-Notary closing available"
+                }
+              ]
+            },
+            {
+              "_type": "guidelines",
+              "_version": 1,
+              "_key": "guidelines",
+              "eyebrow": "What both programs share",
+              "headline": "Combined guidelines",
+              "headline_accent": "at a glance",
+              "body": "The outer edges of what EquityFast can do. Your final terms depend on the program, occupancy, lien position, and your borrower profile.",
+              "items": [
+                {
+                  "label": "Loan / line amount",
+                  "value": "$5,000 to $1,000,000"
+                },
+                {
+                  "label": "Credit score (FICO®)",
+                  "value": "As low as 600*"
+                },
+                {
+                  "label": "Max CLTV",
+                  "value": "Up to 90%*"
+                },
+                {
+                  "label": "Max DTI",
+                  "value": "Up to 55%*"
+                },
+                {
+                  "label": "Occupancy",
+                  "value": "Owner & non-owner"
+                },
+                {
+                  "label": "Lien position",
+                  "value": "1st & 2nd"
+                },
+                {
+                  "label": "Eligible property types",
+                  "value": "SFR, condo, PUD, townhome, 2-4 unit"
+                },
+                {
+                  "label": "Terms available",
+                  "value": "5, 10, 15, 20 & 30 yr"
+                },
+                {
+                  "label": "Funding speed",
+                  "value": "As few as 5 days*"
+                }
+              ],
+              "footnote": "*A minimum FICO® of 600 and maximum CLTV of 90% are available only on select program, lien-position, and occupancy combinations; most borrowers will qualify under different terms. Funding timelines are not guaranteed. Not all applicants or properties will qualify. Rates, terms, and program availability are subject to change without notice."
+            },
+            {
+              "_type": "comparison",
+              "_version": 1,
+              "_key": "compare",
+              "eyebrow": "Side by side",
+              "headline": "EquityFast vs. a traditional HELOC",
+              "feature_label": "Feature",
+              "ours_label": "EquityFast",
+              "theirs_label": "Traditional HELOC",
+              "rows": [
+                {
+                  "feature": "Appraisal",
+                  "ours": "Not required on many loans under $400K*",
+                  "theirs": "Usually required"
+                },
+                {
+                  "feature": "Documentation",
+                  "ours": "Tech-verified income, no W2s or paystubs",
+                  "theirs": "Taxes, W2s, paystubs"
+                },
+                {
+                  "feature": "Approval time",
+                  "ours": "As little as 30 minutes*",
+                  "theirs": "Days to weeks"
+                },
+                {
+                  "feature": "Credit floor",
+                  "ours": "FICO® from 620+",
+                  "theirs": "Often 700+"
+                },
+                {
+                  "feature": "Loan range",
+                  "ours": "$5,000 to $1,000,000",
+                  "theirs": "Varies, often capped lower"
+                }
+              ]
+            },
+            {
+              "_type": "faq",
+              "_version": 1,
+              "_key": "faq",
+              "eyebrow": "Questions",
+              "headline": "Answers homeowners ask for most",
+              "items": [
+                {
+                  "question": "What exactly is a HELOC?",
+                  "answer": "A HELOC is a revolving line of credit secured by your home. You draw what you need up to your limit, repay it, and draw again. You pay interest only on the amount actually drawn."
+                },
+                {
+                  "question": "Can I renovate my home without going through a full appraisal process?",
+                  "answer": "Yes. With this program you can access your home's equity without a traditional appraisal on many eligible loans under $400,000, which removes delays and paperwork and gets funds to you faster."
+                },
+                {
+                  "question": "Can I use my equity to consolidate debt even if my credit isn't perfect?",
+                  "answer": "Often, yes. Borrowers with FICO® scores starting around 620 may still qualify. Rolling high-interest balances into one draw can simplify your finances and reduce your monthly obligations."
+                },
+                {
+                  "question": "Can I use my home equity to help my children buy their first home?",
+                  "answer": "Yes. Equity can fund a down payment or family support without liquidating savings or investments, a strategic way to help without disrupting your long-term plans."
+                },
+                {
+                  "question": "What if I just want access to funds without using them right away?",
+                  "answer": "That's one of the best uses of a HELOC. Establish the line now and draw only if you need it, keeping a financial safety net in place for emergencies or opportunities."
+                },
+                {
+                  "question": "How fast can this actually move?",
+                  "answer": "Approval can happen in as little as thirty minutes, subject to verification of income, employment, and property condition. Funding in as few as five business days applies in eligible circumstances.*"
+                }
+              ]
+            },
+            {
+              "_type": "cta_band",
+              "_version": 1,
+              "_key": "cta",
+              "headline": "Ready to see your line?",
+              "body": "Run the numbers, then start your request.",
+              "apply_label": "Start Now",
+              "secondary_cta_label": "Open Calculator",
+              "secondary_cta_url": "/calculator",
+              "layout": "split"
+            }
+          ]
+        }
+      },
+      {
+        "id": "page-process",
+        "slug": "process",
+        "status": "published",
+        "locale": "en",
+        "data": {
+          "title": "Application Process",
+          "intro": "The EquityFast HELOC in 4 steps: share the basics, a soft credit review, terms in as little as 30 minutes, then draw your funds.",
+          "content": [
+            {
+              "_type": "page_hero",
+              "_version": 1,
+              "_key": "hero",
+              "eyebrow": "Application process",
+              "headline": "From question one",
+              "headline_accent": "to funds available.",
+              "intro": "EquityFast replaces the paperwork pile with a modern underwriting stack. Here is exactly what happens, and when.",
+              "apply_label": "Start My Request",
+              "image": {
+                "$media": {
+                  "url": "/_seed/media/process-hero-CWuZMHda.jpg",
+                  "alt": "A home at twilight",
+                  "filename": "process-hero.jpg"
+                }
+              }
+            },
+            {
+              "_type": "numbered_cards",
+              "_version": 1,
+              "_key": "steps",
+              "eyebrow": "The process",
+              "headline": "Four steps.",
+              "headline_accent": "No paperwork pile.",
+              "tone": "navy",
+              "apply_label": "Start My Request",
+              "items": [
+                {
+                  "title": "Share the basics",
+                  "body": "A short set of questions. No documents to upload."
+                },
+                {
+                  "title": "Soft credit review",
+                  "body": "We check your options without touching your score."
+                },
+                {
+                  "title": "See your terms",
+                  "body": "Approvals in as little as 30 minutes.*"
+                },
+                {
+                  "title": "Draw your funds",
+                  "body": "Pay interest only on the amount you actually use."
+                }
+              ]
+            },
+            {
+              "_type": "timeline",
+              "_version": 1,
+              "_key": "timeline",
+              "headline": "What the timeline looks like",
+              "items": [
+                {
+                  "label": "Today",
+                  "body": "You answer a short set of questions: no documents, no uploads."
+                },
+                {
+                  "label": "Minutes later",
+                  "body": "A soft credit review runs. Eligible files can see terms in 30 minutes.*"
+                },
+                {
+                  "label": "Same week",
+                  "body": "Sign electronically. Many loans under $400K skip the appraisal.*"
+                },
+                {
+                  "label": "Ongoing",
+                  "body": "Draw what you need, when you need it. Interest only on what you use."
+                }
+              ]
+            },
+            {
+              "_type": "image_cards",
+              "_version": 1,
+              "_key": "faster",
+              "eyebrow": "Why it moves faster",
+              "headline": "Built to move",
+              "headline_accent": "at your speed.",
+              "items": [
+                {
+                  "image": {
+                    "$media": {
+                      "url": "/_seed/media/step-one-CWpqiiKr.jpg",
+                      "alt": "A homeowner on her phone on the front steps",
+                      "filename": "step-one.jpg"
+                    }
+                  },
+                  "kicker": "01 · Step one",
+                  "title": "Fast Pre-Qualification",
+                  "body": "Get started with a quick EquityFast prequalification to explore how much equity may be available to you and what options could fit your goals.\n\nA simple review gives you clarity before moving into a full application."
+                },
+                {
+                  "image": {
+                    "$media": {
+                      "url": "/_seed/media/step-two-D0nso8eP.jpg",
+                      "alt": "A blue bungalow with a tidy front yard",
+                      "filename": "step-two.jpg"
+                    }
+                  },
+                  "kicker": "02 · Step two",
+                  "title": "Streamlined Process",
+                  "body": "EquityFast is built to make the process easier and more efficient for eligible borrowers.\n\nFor many eligible loans under $400,000, an appraisal may not be required, reducing steps and simplifying the path forward."
+                },
+                {
+                  "image": {
+                    "$media": {
+                      "url": "/_seed/media/step-three-DOFDFTEo.jpg",
+                      "alt": "A home's back deck lit at night",
+                      "filename": "step-three.jpg"
+                    }
+                  },
+                  "kicker": "03 · Step three",
+                  "title": "Flexible Loan Amounts",
+                  "body": "Loan amounts typically range from $5,000 to $1,000,000, giving eligible homeowners significant financing flexibility.\n\nAvailable amounts are subject to state limits, property value, lien position, credit profile, and verified income."
+                }
+              ]
+            },
+            {
+              "_type": "cta_band",
+              "_version": 1,
+              "_key": "cta",
+              "headline": "Ready when you are.",
+              "body": "Soft credit check only: starting won't affect your score.",
+              "apply_label": "Begin My Application",
+              "layout": "centered"
+            }
+          ]
+        }
+      },
+      {
+        "id": "page-about",
+        "slug": "about",
+        "status": "published",
+        "locale": "en",
+        "data": {
+          "title": "About EquityFast",
+          "intro": "EquityFast merges AI-powered underwriting with your home's equity: no lengthy applications, no endless paperwork, no pushy sales calls.",
+          "content": [
+            {
+              "_type": "page_hero",
+              "_version": 1,
+              "_key": "hero",
+              "eyebrow": "About EquityFast",
+              "headline": "The future of home",
+              "headline_accent": "equity access.",
+              "image": {
+                "$media": {
+                  "url": "/_seed/media/estate-hero-X6IKSjTQ.jpg",
+                  "alt": "A two-story craftsman home lit up at dusk",
+                  "filename": "home-hero.jpg"
+                }
+              }
+            },
+            {
+              "_type": "stats",
+              "_version": 1,
+              "_key": "stats",
+              "headline": "EquityFast at a glance",
+              "items": [
+                {
+                  "value": "$5K-$1M",
+                  "label": "Line amounts"
+                },
+                {
+                  "value": "30 min",
+                  "label": "Approval decisions*"
+                },
+                {
+                  "value": "620+",
+                  "label": "FICO® considered"
+                },
+                {
+                  "value": "No appraisal",
+                  "label": "Many loans under $400K*"
+                }
+              ]
+            },
+            {
+              "_type": "checklist",
+              "_version": 1,
+              "_key": "mission",
+              "eyebrow": "About EquityFast | Our Mission",
+              "headline": "Smarter.",
+              "headline_accent": "Faster. Yours.",
+              "body": "EquityFast was founded to revolutionize the home equity process by merging cutting-edge AI with the power of your home's equity. We saw a slow, outdated system that left homeowners waiting too long for the funds they needed, so we built something better. No lengthy applications. No endless paperwork. No pushy sales calls. Just quick, transparent, stress-free access to the equity you've built, on your schedule. Welcome to the future of home equity.",
+              "items": [
+                {
+                  "title": "AI-Powered Platform",
+                  "body": "Cutting-edge technology that unlocks your home's equity faster and more efficiently than ever before."
+                },
+                {
+                  "title": "No Awkward Phone Calls",
+                  "body": "Skip the loan officer conversations and pushy sales pitches. Apply entirely on your own terms."
+                },
+                {
+                  "title": "From the Comfort of Home",
+                  "body": "Access your equity on your schedule: no office visits, no in-person meetings, no delays."
+                },
+                {
+                  "title": "Built for the Underserved",
+                  "body": "Proudly serving homeowners overlooked by legacy lenders, because your equity should work for you, not against you."
+                }
+              ]
+            },
+            {
+              "_type": "cta_band",
+              "_version": 1,
+              "_key": "cta",
+              "headline": "See what your equity can do",
+              "body": "Soft credit check only. Approvals in as little as 30 minutes.*",
+              "apply_label": "Start Now",
+              "secondary_cta_label": "Open Calculator",
+              "secondary_cta_url": "/calculator",
+              "layout": "boxed"
+            }
+          ]
+        }
+      },
+      {
+        "id": "page-privacy",
+        "slug": "privacy",
+        "status": "published",
+        "locale": "en",
+        "data": {
+          "title": "Privacy Policy",
+          "intro": "How EquityFast and E Mortgage Capital, Inc. collect, use, and protect the information you share when you start a HELOC request.",
+          "content": [
+            {
+              "_type": "page_hero",
+              "_version": 1,
+              "_key": "hero",
+              "eyebrow": "Legal",
+              "headline": "Privacy Policy",
+              "intro": "How we collect, use, and protect the information you share with EquityFast.",
+              "image": {
+                "$media": {
+                  "url": "/_seed/media/info-hero-Clqmc_9J.jpg",
+                  "alt": "A single-story home under tall trees",
+                  "filename": "info-hero.jpg"
+                }
+              }
+            },
+            {
+              "_type": "rich_text",
+              "_version": 1,
+              "_key": "policy",
+              "body": [
+                {
+                  "_type": "block",
+                  "style": "h2",
+                  "_key": "p0",
+                  "children": [
+                    {
+                      "_type": "span",
+                      "_key": "p0s",
+                      "text": "Information we collect"
+                    }
+                  ]
+                },
+                {
+                  "_type": "block",
+                  "style": "normal",
+                  "_key": "p1",
+                  "children": [
+                    {
+                      "_type": "span",
+                      "_key": "p1s",
+                      "text": "When you start a request we collect the details you enter: name, contact information, property address, estimated home value, mortgage balance, ownership and occupancy details, and your stated use of funds. We also collect basic technical data such as browser type, device, and pages viewed."
+                    }
+                  ]
+                },
+                {
+                  "_type": "block",
+                  "style": "h2",
+                  "_key": "p2",
+                  "children": [
+                    {
+                      "_type": "span",
+                      "_key": "p2s",
+                      "text": "How we use your information"
+                    }
+                  ]
+                },
+                {
+                  "_type": "block",
+                  "style": "normal",
+                  "_key": "p3",
+                  "children": [
+                    {
+                      "_type": "span",
+                      "_key": "p3s",
+                      "text": "We use your information to evaluate eligibility for a home equity line of credit, to contact you about your request, to verify identity and property details, and to improve our products and service. We may perform a soft credit review, which does not affect your credit score."
+                    }
+                  ]
+                },
+                {
+                  "_type": "block",
+                  "style": "h2",
+                  "_key": "p4",
+                  "children": [
+                    {
+                      "_type": "span",
+                      "_key": "p4s",
+                      "text": "Sharing"
+                    }
+                  ]
+                },
+                {
+                  "_type": "block",
+                  "style": "normal",
+                  "_key": "p5",
+                  "children": [
+                    {
+                      "_type": "span",
+                      "_key": "p5s",
+                      "text": "We share information with E Mortgage Capital, Inc. and the service providers, investors, credit bureaus, and verification vendors necessary to process your request. We do not sell your personal information. We may disclose information when required by law or to prevent fraud."
+                    }
+                  ]
+                },
+                {
+                  "_type": "block",
+                  "style": "h2",
+                  "_key": "p6",
+                  "children": [
+                    {
+                      "_type": "span",
+                      "_key": "p6s",
+                      "text": "Communications"
+                    }
+                  ]
+                },
+                {
+                  "_type": "block",
+                  "style": "normal",
+                  "_key": "p7",
+                  "children": [
+                    {
+                      "_type": "span",
+                      "_key": "p7s",
+                      "text": "By submitting a request you consent to be contacted by phone, text, or email about your inquiry, including by automated means. Message and data rates may apply. You can opt out at any time by replying STOP or contacting us directly."
+                    }
+                  ]
+                },
+                {
+                  "_type": "block",
+                  "style": "h2",
+                  "_key": "p8",
+                  "children": [
+                    {
+                      "_type": "span",
+                      "_key": "p8s",
+                      "text": "Data retention and security"
+                    }
+                  ]
+                },
+                {
+                  "_type": "block",
+                  "style": "normal",
+                  "_key": "p9",
+                  "children": [
+                    {
+                      "_type": "span",
+                      "_key": "p9s",
+                      "text": "We retain application information for as long as needed to serve you and to meet legal, regulatory, and recordkeeping obligations. We use administrative, technical, and physical safeguards designed to protect your information, though no method of transmission is completely secure."
+                    }
+                  ]
+                },
+                {
+                  "_type": "block",
+                  "style": "h2",
+                  "_key": "p10",
+                  "children": [
+                    {
+                      "_type": "span",
+                      "_key": "p10s",
+                      "text": "Your choices"
+                    }
+                  ]
+                },
+                {
+                  "_type": "block",
+                  "style": "normal",
+                  "_key": "p11",
+                  "children": [
+                    {
+                      "_type": "span",
+                      "_key": "p11s",
+                      "text": "You may request access to, correction of, or deletion of your personal information, subject to legal limits. Residents of certain states have additional rights, including the right to know what information is collected and the right to opt out of certain sharing."
+                    }
+                  ]
+                },
+                {
+                  "_type": "block",
+                  "style": "h2",
+                  "_key": "p12",
+                  "children": [
+                    {
+                      "_type": "span",
+                      "_key": "p12s",
+                      "text": "Contact us"
+                    }
+                  ]
+                },
+                {
+                  "_type": "block",
+                  "style": "normal",
+                  "_key": "p13",
+                  "children": [
+                    {
+                      "_type": "span",
+                      "_key": "p13s",
+                      "text": "Questions about this policy or your information can be directed to E Mortgage Capital, Inc., NMLS #1416824. We will respond to verified requests as promptly as applicable law requires."
+                    }
+                  ]
+                }
+              ],
+              "footnote": "*Powered by E Mortgage Capital, Inc. NMLS #1416824. HELOCs from $5,000 to $1,000,000. Appraisal waiver, approval, and funding timelines apply to eligible loans only and are subject to verification of income, employment, and property condition. Equal Housing Opportunity."
+            }
+          ]
+        }
+      },
+      {
+        "id": "page-calculator-es",
+        "slug": "calculadora",
+        "status": "published",
+        "locale": "es",
+        "data": {
+          "title": "Calculadora de Equidad de Vivienda",
+          "intro": "Estime su línea HELOC disponible y planifique qué proyectos de renovación devuelven más equidad por cada dólar.",
+          "content": [
+            {
+              "_type": "page_hero",
+              "_version": 1,
+              "_key": "hero",
+              "eyebrow": "Herramienta interactiva",
+              "headline": "Planificador",
+              "headline_accent": "de Renovación.",
+              "intro": "Elija los proyectos que está considerando, defina un presupuesto para cada uno y vea la equidad que podrían agregar, usando el ROI promedio nacional más tres años de apreciación.",
+              "image": {
+                "$media": {
+                  "url": "/_seed/media/calculator-hero-C9VXZbVq.jpg",
+                  "alt": "El exterior de una casa renovada",
+                  "filename": "calculator-hero.jpg"
+                }
+              }
+            },
+            {
+              "_type": "renovation_planner",
+              "_version": 1,
+              "_key": "planner",
+              "headline": "¿Qué proyectos realmente",
+              "headline_accent": "le devuelven el dinero?",
+              "intro": "Toque los proyectos que considera. Cargamos un presupuesto típico; deslice para ajustarlo y vea cómo cambia la ganancia estimada de equidad. Las cifras usan el ROI promedio nacional más tres años de apreciación.",
+              "projects": [
+                {
+                  "name": "Reemplazo de Puerta de Garaje",
+                  "blurb": "El mayor retorno por dólar de la lista.",
+                  "roi_percent": 327,
+                  "typical_budget": 4500
+                },
+                {
+                  "name": "Puerta de Entrada de Acero",
+                  "blurb": "Poca inversión, gran impacto visual.",
+                  "roi_percent": 264,
+                  "typical_budget": 2400
+                },
+                {
+                  "name": "Piedra Decorativa Exterior",
+                  "blurb": "Mejora de fachada con fuerte impacto en la reventa.",
+                  "roi_percent": 254,
+                  "typical_budget": 11000
+                },
+                {
+                  "name": "Restauración de Pisos de Madera",
+                  "blurb": "La forma más económica de modernizar interiores.",
+                  "roi_percent": 180,
+                  "typical_budget": 5000
+                },
+                {
+                  "name": "Remodelación Menor de Cocina",
+                  "blurb": "Frentes de gabinetes, encimeras y electrodomésticos.",
+                  "roi_percent": 138,
+                  "typical_budget": 27000
+                },
+                {
+                  "name": "Remodelación de Baño",
+                  "blurb": "Renovación completa del baño principal.",
+                  "roi_percent": 120,
+                  "typical_budget": 25000
+                },
+                {
+                  "name": "Generador de Respaldo",
+                  "blurb": "Valor y resiliencia en zonas de tormentas.",
+                  "roi_percent": 116,
+                  "typical_budget": 15000
+                },
+                {
+                  "name": "Terraza / Espacio Exterior",
+                  "blurb": "Agrega metros útiles al aire libre.",
+                  "roi_percent": 115,
+                  "typical_budget": 18000
+                },
+                {
+                  "name": "Techo",
+                  "blurb": "Un techo nuevo protege la casa y da confianza a los compradores.",
+                  "roi_percent": 109,
+                  "typical_budget": 30000
+                },
+                {
+                  "name": "Reemplazo de Ventanas",
+                  "blurb": "Ahorro energético y valor en la reventa.",
+                  "roi_percent": 106,
+                  "typical_budget": 22000
+                }
+              ],
+              "disclaimer": "Solo estimaciones, basadas en datos nacionales de costo vs. valor más 3 años de apreciación. Los resultados varían según el mercado y las condiciones."
+            }
+          ]
+        },
+        "translationOf": "page-calculator"
+      },
+      {
+        "id": "page-heloc-es",
+        "slug": "heloc",
+        "status": "published",
+        "locale": "es",
+        "data": {
+          "title": "¿Qué es un HELOC? Respuestas y comparación",
+          "intro": "Cómo funciona un HELOC, las líneas Prime y Access de EquityFast frente a un HELOC tradicional, y respuestas a las preguntas más frecuentes de los propietarios.",
+          "content": [
+            {
+              "_type": "page_hero",
+              "_version": 1,
+              "_key": "hero",
+              "eyebrow": "Guía para propietarios",
+              "headline": "¿Qué es un",
+              "headline_accent": "HELOC?",
+              "intro": "Todo lo que conviene saber antes de retirar: cómo funciona la línea, en qué se diferencia EquityFast de un HELOC tradicional y respuestas claras a las preguntas más frecuentes.",
+              "image": {
+                "$media": {
+                  "url": "/_seed/media/info-hero-Clqmc_9J.jpg",
+                  "alt": "Una casa de un piso bajo árboles altos",
+                  "filename": "info-hero.jpg"
+                }
+              }
+            },
+            {
+              "_type": "numbered_cards",
+              "_version": 1,
+              "_key": "fundamentals",
+              "eyebrow": "Lo fundamental",
+              "headline": "Cómo funciona realmente la línea",
+              "tone": "light",
+              "items": [
+                {
+                  "title": "Una línea revolvente, no una suma fija",
+                  "body": "Su límite lo define la equidad disponible. Retire lo que necesite, pague y vuelva a retirar: como una tarjeta de crédito, pero garantizada por su casa y normalmente a una tasa mucho menor."
+                },
+                {
+                  "title": "Intereses solo sobre lo que retira",
+                  "body": "Si no toca la línea, no tiene saldo. Eso hace del HELOC una reserva flexible además de una herramienta de financiamiento."
+                },
+                {
+                  "title": "Equidad que usted ya ganó",
+                  "body": "Cada pago hipotecario y cada punto de apreciación construyen equidad. Un HELOC convierte ese valor en fondos utilizables sin vender ni refinanciar su primera hipoteca."
+                }
+              ]
+            },
+            {
+              "_type": "programs",
+              "_version": 1,
+              "_key": "programs",
+              "eyebrow": "Elija lo que le queda, no lo que le toca",
+              "headline": "¿HELOC o HELOAN?",
+              "headline_accent": "Usted tiene opciones.",
+              "body": "Una sola solicitud lo conecta con el programa adecuado, desde líneas pequeñas y específicas hasta líneas de crédito jumbo, con la flexibilidad crediticia para más prestatarios.",
+              "items": [
+                {
+                  "badge": "Línea Prime",
+                  "title": "EquityFast Prime Line",
+                  "body": "Diseñada para propietarios con buen crédito que buscan las líneas más altas y la estructura más simple.",
+                  "features": "Montos de línea de $5,000 a $1,000,000\nFICO® 620+ (680+ si no es ocupada por el propietario)\nCLTV hasta 89%\nTasa fija · sin período de solo intereses\nPlazos disponibles de 5, 10, 15 y 30 años\nSin avalúo completo requerido hasta $400,000*"
+                },
+                {
+                  "badge": "Línea Access",
+                  "title": "EquityFast Access Line",
+                  "body": "Diseñada para prestatarios cuyo crédito o propiedad no encaja en el molde tradicional.",
+                  "features": "Montos de línea de $25,000 a $750,000\nFICO® desde 600\nCLTV hasta 90%\nPosiciones de gravamen 1.ª y 2.ª disponibles\nCasa unifamiliar, condominio, PUD, townhome y de 2 a 4 unidades\nCierre con notario electrónico remoto disponible"
+                }
+              ]
+            },
+            {
+              "_type": "guidelines",
+              "_version": 1,
+              "_key": "guidelines",
+              "eyebrow": "Lo que comparten ambos programas",
+              "headline": "Pautas combinadas",
+              "headline_accent": "de un vistazo",
+              "body": "Los límites máximos de lo que EquityFast puede hacer. Sus términos finales dependen del programa, la ocupación, la posición del gravamen y su perfil como prestatario.",
+              "items": [
+                {
+                  "label": "Monto del préstamo / línea",
+                  "value": "$5,000 a $1,000,000"
+                },
+                {
+                  "label": "Puntaje de crédito (FICO®)",
+                  "value": "Desde 600*"
+                },
+                {
+                  "label": "CLTV máximo",
+                  "value": "Hasta 90%*"
+                },
+                {
+                  "label": "DTI máximo",
+                  "value": "Hasta 55%*"
+                },
+                {
+                  "label": "Ocupación",
+                  "value": "Ocupada y no ocupada por el propietario"
+                },
+                {
+                  "label": "Posición del gravamen",
+                  "value": "1.ª y 2.ª"
+                },
+                {
+                  "label": "Tipos de propiedad elegibles",
+                  "value": "Unifamiliar, condominio, PUD, townhome, 2-4 unidades"
+                },
+                {
+                  "label": "Plazos disponibles",
+                  "value": "5, 10, 15, 20 y 30 años"
+                },
+                {
+                  "label": "Velocidad de financiamiento",
+                  "value": "En tan solo 5 días*"
+                }
+              ],
+              "footnote": "*Un FICO® mínimo de 600 y un CLTV máximo del 90% están disponibles solo en ciertas combinaciones de programa, posición de gravamen y ocupación; la mayoría de los prestatarios calificará bajo términos distintos. Los plazos de financiamiento no están garantizados. No todos los solicitantes o propiedades calificarán. Las tasas, los términos y la disponibilidad de los programas pueden cambiar sin previo aviso."
+            },
+            {
+              "_type": "comparison",
+              "_version": 1,
+              "_key": "compare",
+              "eyebrow": "Lado a lado",
+              "headline": "EquityFast frente a un HELOC tradicional",
+              "feature_label": "Característica",
+              "ours_label": "EquityFast",
+              "theirs_label": "HELOC tradicional",
+              "rows": [
+                {
+                  "feature": "Avalúo",
+                  "ours": "No requerido en muchos préstamos bajo $400K*",
+                  "theirs": "Normalmente requerido"
+                },
+                {
+                  "feature": "Documentación",
+                  "ours": "Ingreso verificado con tecnología, sin W2 ni talones",
+                  "theirs": "Impuestos, W2, talones de pago"
+                },
+                {
+                  "feature": "Tiempo de aprobación",
+                  "ours": "Tan solo 30 minutos*",
+                  "theirs": "De días a semanas"
+                },
+                {
+                  "feature": "Crédito mínimo",
+                  "ours": "FICO® desde 620+",
+                  "theirs": "Frecuentemente 700+"
+                },
+                {
+                  "feature": "Rango del préstamo",
+                  "ours": "$5,000 a $1,000,000",
+                  "theirs": "Varía, con topes más bajos"
+                }
+              ]
+            },
+            {
+              "_type": "faq",
+              "_version": 1,
+              "_key": "faq",
+              "eyebrow": "Preguntas",
+              "headline": "Las respuestas más buscadas por propietarios",
+              "items": [
+                {
+                  "question": "¿Qué es exactamente un HELOC?",
+                  "answer": "Un HELOC es una línea de crédito revolvente garantizada por su casa. Retira lo que necesita hasta su límite, lo paga y vuelve a retirar. Paga intereses solo sobre lo retirado."
+                },
+                {
+                  "question": "¿Puedo renovar mi casa sin pasar por un avalúo completo?",
+                  "answer": "Sí. Con este programa puede acceder a la equidad de su casa sin un avalúo tradicional en muchos préstamos elegibles bajo $400,000, lo que elimina demoras y papeleo y le entrega los fondos más rápido."
+                },
+                {
+                  "question": "¿Puedo usar mi equidad para consolidar deudas aunque mi crédito no sea perfecto?",
+                  "answer": "Con frecuencia, sí. Los solicitantes con puntajes FICO® desde aproximadamente 620 pueden calificar. Consolidar saldos de alto interés en un solo retiro puede simplificar sus finanzas y reducir sus pagos mensuales."
+                },
+                {
+                  "question": "¿Puedo usar la equidad de mi casa para ayudar a mis hijos a comprar su primera vivienda?",
+                  "answer": "Sí. La equidad puede financiar un pago inicial o apoyo familiar sin liquidar ahorros o inversiones, una forma estratégica de ayudar sin alterar sus planes a largo plazo."
+                },
+                {
+                  "question": "¿Y si solo quiero tener acceso a fondos sin usarlos de inmediato?",
+                  "answer": "Ese es uno de los mejores usos de un HELOC. Establezca la línea ahora y retire solo si la necesita, manteniendo una red de seguridad financiera para emergencias u oportunidades."
+                },
+                {
+                  "question": "¿Qué tan rápido puede avanzar esto realmente?",
+                  "answer": "La aprobación puede darse en tan solo treinta minutos, sujeta a verificación de ingresos, empleo y condición de la propiedad. El financiamiento en tan solo cinco días hábiles aplica en circunstancias elegibles.*"
+                }
+              ]
+            },
+            {
+              "_type": "cta_band",
+              "_version": 1,
+              "_key": "cta",
+              "headline": "¿Listo para ver su línea?",
+              "body": "Calcule los números y luego inicie su solicitud.",
+              "apply_label": "Comenzar",
+              "secondary_cta_label": "Abrir Calculadora",
+              "secondary_cta_url": "/es/calculadora",
+              "layout": "split"
+            }
+          ]
+        },
+        "translationOf": "page-heloc"
+      },
+      {
+        "id": "page-process-es",
+        "slug": "proceso",
+        "status": "published",
+        "locale": "es",
+        "data": {
+          "title": "Proceso de Solicitud",
+          "intro": "El HELOC EquityFast en 4 pasos: comparta lo básico, una revisión de crédito suave, términos en tan solo 30 minutos y luego retire sus fondos.",
+          "content": [
+            {
+              "_type": "page_hero",
+              "_version": 1,
+              "_key": "hero",
+              "eyebrow": "Proceso de solicitud",
+              "headline": "De la primera pregunta",
+              "headline_accent": "a los fondos disponibles.",
+              "intro": "EquityFast reemplaza la montaña de papeleo con una plataforma moderna de evaluación. Esto es exactamente lo que pasa, y cuándo.",
+              "apply_label": "Iniciar Mi Solicitud",
+              "image": {
+                "$media": {
+                  "url": "/_seed/media/process-hero-CWuZMHda.jpg",
+                  "alt": "Una casa al anochecer",
+                  "filename": "process-hero.jpg"
+                }
+              }
+            },
+            {
+              "_type": "numbered_cards",
+              "_version": 1,
+              "_key": "steps",
+              "eyebrow": "El proceso",
+              "headline": "Cuatro pasos.",
+              "headline_accent": "Sin montañas de papeleo.",
+              "tone": "navy",
+              "apply_label": "Iniciar Mi Solicitud",
+              "items": [
+                {
+                  "title": "Comparta lo básico",
+                  "body": "Un breve conjunto de preguntas. Sin documentos que subir."
+                },
+                {
+                  "title": "Revisión de crédito suave",
+                  "body": "Revisamos sus opciones sin afectar su puntaje."
+                },
+                {
+                  "title": "Vea sus términos",
+                  "body": "Aprobaciones en tan solo 30 minutos.*"
+                },
+                {
+                  "title": "Retire sus fondos",
+                  "body": "Pague intereses solo sobre el monto que realmente use."
+                }
+              ]
+            },
+            {
+              "_type": "timeline",
+              "_version": 1,
+              "_key": "timeline",
+              "headline": "Así se ve la línea de tiempo",
+              "items": [
+                {
+                  "label": "Hoy",
+                  "body": "Usted responde unas breves preguntas: sin documentos ni cargas de archivos."
+                },
+                {
+                  "label": "Minutos después",
+                  "body": "Se realiza una revisión de crédito suave. Los casos elegibles pueden ver términos en 30 minutos.*"
+                },
+                {
+                  "label": "La misma semana",
+                  "body": "Firme electrónicamente. Muchos préstamos bajo $400K omiten el avalúo.*"
+                },
+                {
+                  "label": "Continuo",
+                  "body": "Retire lo que necesite, cuando lo necesite. Intereses solo sobre lo que use."
+                }
+              ]
+            },
+            {
+              "_type": "image_cards",
+              "_version": 1,
+              "_key": "faster",
+              "eyebrow": "Por qué avanza más rápido",
+              "headline": "Diseñado para avanzar",
+              "headline_accent": "a su ritmo.",
+              "items": [
+                {
+                  "image": {
+                    "$media": {
+                      "url": "/_seed/media/step-one-CWpqiiKr.jpg",
+                      "alt": "Una propietaria con su teléfono en la entrada de su casa",
+                      "filename": "step-one.jpg"
+                    }
+                  },
+                  "kicker": "01 · Paso uno",
+                  "title": "Precalificación Rápida",
+                  "body": "Comience con una precalificación rápida de EquityFast para explorar cuánta equidad podría tener disponible y qué opciones se ajustan a sus metas.\n\nUna revisión sencilla le da claridad antes de pasar a una solicitud completa."
+                },
+                {
+                  "image": {
+                    "$media": {
+                      "url": "/_seed/media/step-two-D0nso8eP.jpg",
+                      "alt": "Una casa azul con un jardín delantero cuidado",
+                      "filename": "step-two.jpg"
+                    }
+                  },
+                  "kicker": "02 · Paso dos",
+                  "title": "Proceso Simplificado",
+                  "body": "EquityFast está diseñado para hacer el proceso más fácil y eficiente para prestatarios elegibles.\n\nPara muchos préstamos elegibles bajo $400,000, puede que no se requiera avalúo, reduciendo pasos y simplificando el camino."
+                },
+                {
+                  "image": {
+                    "$media": {
+                      "url": "/_seed/media/step-three-DOFDFTEo.jpg",
+                      "alt": "La terraza trasera de una casa iluminada de noche",
+                      "filename": "step-three.jpg"
+                    }
+                  },
+                  "kicker": "03 · Paso tres",
+                  "title": "Montos Flexibles",
+                  "body": "Los montos suelen ir de $5,000 a $1,000,000, dando a los propietarios elegibles gran flexibilidad de financiamiento.\n\nLos montos disponibles están sujetos a límites estatales, valor de la propiedad, posición del gravamen, perfil crediticio e ingreso verificado."
+                }
+              ]
+            },
+            {
+              "_type": "cta_band",
+              "_version": 1,
+              "_key": "cta",
+              "headline": "Listos cuando usted lo esté.",
+              "body": "Solo consulta de crédito suave: comenzar no afecta su puntaje.",
+              "apply_label": "Comenzar Mi Solicitud",
+              "layout": "centered"
+            }
+          ]
+        },
+        "translationOf": "page-process"
+      },
+      {
+        "id": "page-about-es",
+        "slug": "nosotros",
+        "status": "published",
+        "locale": "es",
+        "data": {
+          "title": "Sobre EquityFast",
+          "intro": "EquityFast une la evaluación con inteligencia artificial con la equidad de su vivienda: sin solicitudes largas, sin papeleo interminable, sin llamadas de ventas insistentes.",
+          "content": [
+            {
+              "_type": "page_hero",
+              "_version": 1,
+              "_key": "hero",
+              "eyebrow": "Sobre EquityFast",
+              "headline": "El futuro del acceso",
+              "headline_accent": "a la equidad.",
+              "image": {
+                "$media": {
+                  "url": "/_seed/media/estate-hero-X6IKSjTQ.jpg",
+                  "alt": "Una casa estilo craftsman de dos pisos iluminada al atardecer",
+                  "filename": "home-hero.jpg"
+                }
+              }
+            },
+            {
+              "_type": "stats",
+              "_version": 1,
+              "_key": "stats",
+              "headline": "EquityFast de un vistazo",
+              "items": [
+                {
+                  "value": "$5K-$1M",
+                  "label": "Montos de línea"
+                },
+                {
+                  "value": "30 min",
+                  "label": "Decisiones de aprobación*"
+                },
+                {
+                  "value": "620+",
+                  "label": "FICO® considerado"
+                },
+                {
+                  "value": "Sin avalúo",
+                  "label": "Muchos préstamos bajo $400K*"
+                }
+              ]
+            },
+            {
+              "_type": "checklist",
+              "_version": 1,
+              "_key": "mission",
+              "eyebrow": "Sobre EquityFast | Nuestra Misión",
+              "headline": "Más inteligente.",
+              "headline_accent": "Más rápido. Hecho para usted.",
+              "body": "EquityFast nació para revolucionar el proceso de equidad de vivienda combinando inteligencia artificial de punta con el poder de la equidad de su casa. Vimos un sistema lento y anticuado que dejaba a los propietarios esperando demasiado por los fondos que necesitaban, así que creamos algo mejor. Sin solicitudes interminables. Sin montañas de papeleo. Sin llamadas de venta insistentes. Solo acceso rápido, transparente y sin estrés a la equidad que usted ha construido, en su horario. Bienvenido al futuro de la equidad de vivienda.",
+              "items": [
+                {
+                  "title": "Plataforma con Inteligencia Artificial",
+                  "body": "Tecnología de punta que libera la equidad de su casa más rápido y de forma más eficiente que nunca."
+                },
+                {
+                  "title": "Sin Llamadas Incómodas",
+                  "body": "Olvídese de las conversaciones con oficiales de préstamo y las ventas insistentes. Solicite completamente a su manera."
+                },
+                {
+                  "title": "Desde la Comodidad de su Casa",
+                  "body": "Acceda a su equidad en su horario: sin visitas a oficinas, sin reuniones presenciales, sin demoras."
+                },
+                {
+                  "title": "Creado para los Desatendidos",
+                  "body": "Con orgullo servimos a propietarios ignorados por los prestamistas tradicionales, porque su equidad debe trabajar para usted."
+                }
+              ]
+            },
+            {
+              "_type": "cta_band",
+              "_version": 1,
+              "_key": "cta",
+              "headline": "Vea lo que su equidad puede hacer",
+              "body": "Solo consulta de crédito suave. Aprobaciones en tan solo 30 minutos.*",
+              "apply_label": "Comenzar",
+              "secondary_cta_label": "Abrir Calculadora",
+              "secondary_cta_url": "/es/calculadora",
+              "layout": "boxed"
+            }
+          ]
+        },
+        "translationOf": "page-about"
+      },
+      {
+        "id": "page-privacy-es",
+        "slug": "privacidad",
+        "status": "published",
+        "locale": "es",
+        "data": {
+          "title": "Política de Privacidad",
+          "intro": "Cómo EquityFast y E Mortgage Capital, Inc. recopilan, usan y protegen la información que usted comparte al iniciar una solicitud de HELOC.",
+          "content": [
+            {
+              "_type": "page_hero",
+              "_version": 1,
+              "_key": "hero",
+              "eyebrow": "Legal",
+              "headline": "Política de Privacidad",
+              "intro": "Cómo recopilamos, usamos y protegemos la información que comparte con EquityFast.",
+              "image": {
+                "$media": {
+                  "url": "/_seed/media/info-hero-Clqmc_9J.jpg",
+                  "alt": "Una casa de un piso bajo árboles altos",
+                  "filename": "info-hero.jpg"
+                }
+              }
+            },
+            {
+              "_type": "rich_text",
+              "_version": 1,
+              "_key": "policy",
+              "body": [
+                {
+                  "_type": "block",
+                  "style": "h2",
+                  "_key": "p0",
+                  "children": [
+                    {
+                      "_type": "span",
+                      "_key": "p0s",
+                      "text": "Información que recopilamos"
+                    }
+                  ]
+                },
+                {
+                  "_type": "block",
+                  "style": "normal",
+                  "_key": "p1",
+                  "children": [
+                    {
+                      "_type": "span",
+                      "_key": "p1s",
+                      "text": "Cuando inicia una solicitud, recopilamos los datos que ingresa: nombre, información de contacto, dirección de la propiedad, valor estimado de la vivienda, saldo hipotecario, datos de titularidad y ocupación, y el uso que indica para los fondos. También recopilamos datos técnicos básicos como el tipo de navegador, el dispositivo y las páginas visitadas."
+                    }
+                  ]
+                },
+                {
+                  "_type": "block",
+                  "style": "h2",
+                  "_key": "p2",
+                  "children": [
+                    {
+                      "_type": "span",
+                      "_key": "p2s",
+                      "text": "Cómo usamos su información"
+                    }
+                  ]
+                },
+                {
+                  "_type": "block",
+                  "style": "normal",
+                  "_key": "p3",
+                  "children": [
+                    {
+                      "_type": "span",
+                      "_key": "p3s",
+                      "text": "Usamos su información para evaluar su elegibilidad para una línea de crédito sobre la equidad de su vivienda, para contactarle sobre su solicitud, para verificar su identidad y los datos de la propiedad, y para mejorar nuestros productos y servicio. Podemos realizar una revisión de crédito suave, que no afecta su puntaje de crédito."
+                    }
+                  ]
+                },
+                {
+                  "_type": "block",
+                  "style": "h2",
+                  "_key": "p4",
+                  "children": [
+                    {
+                      "_type": "span",
+                      "_key": "p4s",
+                      "text": "Divulgación"
+                    }
+                  ]
+                },
+                {
+                  "_type": "block",
+                  "style": "normal",
+                  "_key": "p5",
+                  "children": [
+                    {
+                      "_type": "span",
+                      "_key": "p5s",
+                      "text": "Compartimos información con E Mortgage Capital, Inc. y con los proveedores de servicios, inversionistas, burós de crédito y proveedores de verificación necesarios para procesar su solicitud. No vendemos su información personal. Podemos divulgar información cuando la ley lo exija o para prevenir fraudes."
+                    }
+                  ]
+                },
+                {
+                  "_type": "block",
+                  "style": "h2",
+                  "_key": "p6",
+                  "children": [
+                    {
+                      "_type": "span",
+                      "_key": "p6s",
+                      "text": "Comunicaciones"
+                    }
+                  ]
+                },
+                {
+                  "_type": "block",
+                  "style": "normal",
+                  "_key": "p7",
+                  "children": [
+                    {
+                      "_type": "span",
+                      "_key": "p7s",
+                      "text": "Al enviar una solicitud, usted acepta ser contactado por teléfono, mensaje de texto o correo electrónico sobre su consulta, incluso por medios automatizados. Pueden aplicarse tarifas de mensajes y datos. Puede darse de baja en cualquier momento respondiendo STOP o contactándonos directamente."
+                    }
+                  ]
+                },
+                {
+                  "_type": "block",
+                  "style": "h2",
+                  "_key": "p8",
+                  "children": [
+                    {
+                      "_type": "span",
+                      "_key": "p8s",
+                      "text": "Conservación y seguridad de los datos"
+                    }
+                  ]
+                },
+                {
+                  "_type": "block",
+                  "style": "normal",
+                  "_key": "p9",
+                  "children": [
+                    {
+                      "_type": "span",
+                      "_key": "p9s",
+                      "text": "Conservamos la información de las solicitudes durante el tiempo necesario para atenderle y para cumplir con obligaciones legales, regulatorias y de registro. Usamos medidas de protección administrativas, técnicas y físicas diseñadas para proteger su información, aunque ningún método de transmisión es completamente seguro."
+                    }
+                  ]
+                },
+                {
+                  "_type": "block",
+                  "style": "h2",
+                  "_key": "p10",
+                  "children": [
+                    {
+                      "_type": "span",
+                      "_key": "p10s",
+                      "text": "Sus opciones"
+                    }
+                  ]
+                },
+                {
+                  "_type": "block",
+                  "style": "normal",
+                  "_key": "p11",
+                  "children": [
+                    {
+                      "_type": "span",
+                      "_key": "p11s",
+                      "text": "Puede solicitar acceso, corrección o eliminación de su información personal, dentro de los límites legales. Los residentes de ciertos estados tienen derechos adicionales, incluido el derecho a saber qué información se recopila y el derecho a excluirse de ciertas divulgaciones."
+                    }
+                  ]
+                },
+                {
+                  "_type": "block",
+                  "style": "h2",
+                  "_key": "p12",
+                  "children": [
+                    {
+                      "_type": "span",
+                      "_key": "p12s",
+                      "text": "Contáctenos"
+                    }
+                  ]
+                },
+                {
+                  "_type": "block",
+                  "style": "normal",
+                  "_key": "p13",
+                  "children": [
+                    {
+                      "_type": "span",
+                      "_key": "p13s",
+                      "text": "Las preguntas sobre esta política o sobre su información pueden dirigirse a E Mortgage Capital, Inc., NMLS #1416824. Responderemos a las solicitudes verificadas con la prontitud que exija la ley aplicable."
+                    }
+                  ]
+                }
+              ],
+              "footnote": "*Con la tecnología de E Mortgage Capital, Inc. NMLS #1416824. HELOC de $5,000 a $1,000,000. La exención de avalúo y los plazos de aprobación y financiamiento aplican solo a préstamos elegibles y están sujetos a la verificación de ingresos, empleo y condición de la propiedad. Igualdad de Oportunidades en la Vivienda."
+            }
+          ]
+        },
+        "translationOf": "page-privacy"
+      }
+    ],
+    "site_text": [
+      {
+        "id": "site-text",
+        "slug": "site",
+        "status": "published",
+        "locale": "en",
+        "data": {
+          "title": "Footer disclosure",
+          "disclosure": "*Approval may be granted in as little as thirty minutes but is subject to verification of income, employment, and property condition which could take longer. Funding in as few as five business days applies in eligible circumstances and may vary greatly based on loan amount, property location, closing requirements, and other factors. A soft credit pull is used to check initial options and does not impact your credit score. If you proceed with a full application, a hard credit inquiry will occur. Loan amounts, rates, fees, and terms vary by applicant and state.\n\n*Actual loan amounts will vary based on your home value and equity at the time of application, as determined by E Mortgage Capital, Inc. using independent data sources and automated valuation models. For eligible loans under $400,000, an appraisal may not be required. Not all applicants or properties will qualify, and certain programs may not be available in all states. This is not a commitment to lend. Borrowers must maintain at least 10% of the line of credit unused for a minimum of 16 weeks.\n\nDebt Consolidation is taking your high interest debt and rolling it into a lower interest mortgage loan. By refinancing your existing mortgage, your total finance charges may be higher over the life of the loan."
+        }
+      },
+      {
+        "id": "site-text-es",
+        "slug": "site",
+        "status": "published",
+        "locale": "es",
+        "data": {
+          "title": "Aviso del pie de página",
+          "disclosure": "*La aprobación puede otorgarse en tan solo treinta minutos, pero está sujeta a la verificación de ingresos, empleo y condición de la propiedad, lo cual podría tardar más. El financiamiento en tan solo cinco días hábiles aplica en circunstancias elegibles y puede variar considerablemente según el monto del préstamo, la ubicación de la propiedad, los requisitos de cierre y otros factores. Se usa una consulta de crédito suave para revisar las opciones iniciales, y no afecta su puntaje de crédito. Si continúa con una solicitud completa, se realizará una consulta de crédito rigurosa. Los montos, tasas, cargos y términos de los préstamos varían según el solicitante y el estado.\n\n*Los montos reales del préstamo variarán según el valor y la equidad de su vivienda al momento de la solicitud, según lo determine E Mortgage Capital, Inc. mediante fuentes de datos independientes y modelos automatizados de valuación. Para préstamos elegibles menores a $400,000, es posible que no se requiera un avalúo. No todos los solicitantes o propiedades calificarán, y ciertos programas podrían no estar disponibles en todos los estados. Esto no es un compromiso de préstamo. Los prestatarios deben mantener sin usar al menos el 10% de la línea de crédito durante un mínimo de 16 semanas.\n\nLa consolidación de deudas consiste en tomar sus deudas de alto interés e incorporarlas a un préstamo hipotecario de menor interés. Al refinanciar su hipoteca actual, sus cargos financieros totales podrían ser mayores durante la vida del préstamo."
+        },
+        "translationOf": "site-text"
+      }
+    ]
+  }
+}

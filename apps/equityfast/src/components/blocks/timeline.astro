@@ -1,0 +1,25 @@
+---
+/** A vertical timeline: gold dots on a thin rule, each stage's label and what happens. */
+import type { BlockComponentProps } from "emdash/ui";
+
+import type { PageContentTimelineBlock } from "../../../emdash-env";
+
+type Props = BlockComponentProps<PageContentTimelineBlock>;
+
+const { value } = Astro.props;
+---
+
+<section class="py-20 sm:py-24">
+  <div class="container-page max-w-5xl">
+    <h2 class="headline-section">{value.headline}</h2>
+    <ol class="mt-12 space-y-10 border-l-2 border-border pl-8">
+      {value.items.map((item) => (
+        <li class="relative">
+          <span class="absolute top-1.5 -left-[39px] size-3 rounded-full bg-gold ring-4 ring-white" aria-hidden="true"></span>
+          <h3 class="text-sm font-semibold tracking-label text-sky-ink uppercase">{item.label}</h3>
+          <p class="mt-2 text-xl text-navy">{item.body}</p>
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>

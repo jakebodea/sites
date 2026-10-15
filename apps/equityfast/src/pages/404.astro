@@ -1,0 +1,27 @@
+---
+import ButtonLink from "@/components/button-link.astro";
+import Base from "@/layouts/base.astro";
+import { APPLY_PATH, toLocale } from "@/i18n/locales";
+
+Astro.response.status = 404;
+// Spanish visitors get Spanish copy when the missing URL is under /es/.
+const locale = toLocale(Astro.url.pathname.startsWith("/es/") ? "es" : Astro.currentLocale);
+const copy =
+  locale === "es"
+    ? { body: "Es posible que se haya movido. Empiece por la página de inicio o inicie su solicitud.", home: "Ir al inicio", homeHref: "/es", start: "Iniciar Mi Solicitud", title: "No encontramos esa página." }
+    : { body: "It may have moved. The home page and the application are good places to start.", home: "Go to the home page", homeHref: "/", start: "Start My Request", title: "We couldn't find that page." };
+---
+
+<Base title={locale === "es" ? "Página no encontrada" : "Page not found"} robots="noindex">
+  <section class="bg-navy-deep text-white">
+    <div class="container-page flex min-h-[60svh] flex-col items-start justify-center gap-6 py-24">
+      <p class="eyebrow text-gold">404</p>
+      <h1 class="headline-section text-white">{copy.title}</h1>
+      <p class="max-w-xl text-lg text-white/80">{copy.body}</p>
+      <div class="flex flex-wrap gap-3">
+        <ButtonLink href={APPLY_PATH[locale]} data-apply variant="accent" size="cta">{copy.start}</ButtonLink>
+        <ButtonLink href={copy.homeHref} variant="outline-inverse" size="cta">{copy.home}</ButtonLink>
+      </div>
+    </div>
+  </section>
+</Base>

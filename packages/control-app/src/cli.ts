@@ -25,7 +25,7 @@ import { auditSeo, isProductionOrigin } from "./seo.ts";
 import { readState, stop, tailLog } from "./server.ts";
 import { resolveSite } from "./site.ts";
 import type { SiteContext } from "./site.ts";
-import { smoke } from "./smoke.ts";
+import { smoke, smokeForm } from "./smoke.ts";
 
 const USAGE = `Usage: bun run app -- <command> [--site <name>] [--url <origin>] [--auth]
 
@@ -40,7 +40,7 @@ const USAGE = `Usage: bun run app -- <command> [--site <name>] [--url <origin>] 
   screenshot <path...>    full-page PNGs at 1280 and 375 (--widths 1280,768)
   snapshot <path>         accessibility tree as YAML
   record <path>           scroll-through video (--width 375)
-  smoke                   pages, 404, admin, images, contact action, cron (--no-submit skips writes)
+  smoke                   pages, 404, admin, images, lead form action, cron (--no-submit skips writes)
   seo                     technical SEO audit: titles, descriptions, canonicals, H1s, alt text,
                           image formats, layout shift, breadcrumbs, orphans, redirects, robots.txt
   seed --url <origin>     seed a fresh stage and verify its owner (CMS_BOOTSTRAP_TOKEN required)
@@ -214,6 +214,7 @@ const commands = {
   smoke: async (site, args, origin) => {
     const checks = await smoke({
       cms: site.cms,
+      form: smokeForm(site.directory),
       local: !args.flags.has("url"),
       origin,
       submit: !args.flags.has("no-submit"),

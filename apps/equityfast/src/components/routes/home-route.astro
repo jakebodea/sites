@@ -1,0 +1,21 @@
+---
+/** The home page view, shared by `/` and `/es`. */
+import PageBlocks from "@/components/blocks/page-blocks.astro";
+import Base from "@/layouts/base.astro";
+import type { HomeData } from "@/lib/routes";
+
+type Props = HomeData;
+
+const { alternates, page, seo } = Astro.props;
+---
+
+<Base
+  description={seo.description}
+  image={seo.ogImage}
+  robots={seo.robots}
+  canonical={seo.canonical}
+  alternates={alternates}
+  content={{ collection: "home", id: page.data.id, slug: page.id }}
+>
+  <div {...page.edit.content}><PageBlocks value={page.data.content} /></div>
+</Base>

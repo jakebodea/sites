@@ -1,0 +1,51 @@
+---
+/** Maps each EmDash block type to its renderer. Add new section types here and in seed/seed.json. */
+import { Blocks, defineBlockComponents } from "emdash/ui";
+
+import type { ContentBlock } from "@/lib/content";
+import type { PageContentBlock } from "../../../emdash-env";
+import Checklist from "./checklist.astro";
+import Comparison from "./comparison.astro";
+import CtaBand from "./cta-band.astro";
+import Faq from "./faq.astro";
+import Guidelines from "./guidelines.astro";
+import HomeHero from "./home-hero.astro";
+import ImageCards from "./image-cards.astro";
+import LinkCards from "./link-cards.astro";
+import NumberedCards from "./numbered-cards.astro";
+import PageHero from "./page-hero.astro";
+import Programs from "./programs.astro";
+import RenovationPlanner from "./renovation-planner.astro";
+import RichText from "./rich-text.astro";
+import Statement from "./statement.astro";
+import Stats from "./stats.astro";
+import Ticker from "./ticker.astro";
+import Timeline from "./timeline.astro";
+
+interface Props {
+  value?: readonly ContentBlock[] | null | undefined;
+}
+
+const { value } = Astro.props;
+const components = defineBlockComponents<PageContentBlock>({
+  checklist: Checklist,
+  comparison: Comparison,
+  cta_band: CtaBand,
+  faq: Faq,
+  guidelines: Guidelines,
+  home_hero: HomeHero,
+  image_cards: ImageCards,
+  link_cards: LinkCards,
+  numbered_cards: NumberedCards,
+  page_hero: PageHero,
+  programs: Programs,
+  renovation_planner: RenovationPlanner,
+  rich_text: RichText,
+  statement: Statement,
+  stats: Stats,
+  ticker: Ticker,
+  timeline: Timeline,
+});
+---
+
+<Blocks value={value as PageContentBlock[] | null | undefined} components={components} />

@@ -5,8 +5,15 @@ import { command } from "./command.ts";
 
 const root = path.resolve(import.meta.dirname, "../..");
 
-/** Keep each site's collection state and failed-budget reports together. */
-export const lighthouse = async (origin: string, directory: string) => {
+/**
+ * Audit the home page and the lead form's page. Keep each site's collection
+ * state and failed-budget reports together.
+ */
+export const lighthouse = async (
+  origin: string,
+  formPage: string,
+  directory: string
+) => {
   mkdirSync(directory, { recursive: true });
   await command(
     path.join(root, "node_modules/.bin/lhci"),
@@ -14,7 +21,7 @@ export const lighthouse = async (origin: string, directory: string) => {
       "autorun",
       `--config=${path.join(root, "lighthouserc.json")}`,
       `--upload.outputDir=${directory}`,
-      ...["/", "/contact"].map((route) => `--collect.url=${origin}${route}`),
+      ...["/", formPage].map((route) => `--collect.url=${origin}${route}`),
     ],
     directory
   );

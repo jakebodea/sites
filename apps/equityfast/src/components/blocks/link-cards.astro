@@ -1,0 +1,33 @@
+---
+/** A grid of cards linking to other pages; the whole card is the link. */
+import { sanitizeHref } from "emdash";
+import type { BlockComponentProps } from "emdash/ui";
+
+import type { PageContentLinkCardsBlock } from "../../../emdash-env";
+
+type Props = BlockComponentProps<PageContentLinkCardsBlock>;
+
+const { value } = Astro.props;
+---
+
+<section class="py-20 sm:py-24">
+  <div class="container-page">
+    <h2 class="headline-section">{value.headline}</h2>
+    <ul class="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+      {value.items.map((item) => (
+        <li class="group relative flex flex-col border border-border bg-white p-8 transition-shadow hover:shadow-lg focus-within:shadow-lg">
+          {item.eyebrow && <p class="eyebrow text-sky-ink">{item.eyebrow}</p>}
+          <h3 class="mt-4 text-2xl">
+            {item.url ? <a href={sanitizeHref(item.url)} class="after:absolute after:inset-0 focus-visible:outline-none">{item.title}</a> : item.title}
+          </h3>
+          <p class="mt-4 flex-1 leading-relaxed text-slate-blue">{item.body}</p>
+          {item.url && item.link_label && (
+            <p class="mt-8 text-xs font-semibold tracking-label text-navy uppercase" aria-hidden="true">
+              {item.link_label} <span class="inline-block transition-transform group-hover:translate-x-1">→</span>
+            </p>
+          )}
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>

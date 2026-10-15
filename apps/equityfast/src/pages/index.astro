@@ -1,0 +1,12 @@
+---
+import HomeRoute from "@/components/routes/home-route.astro";
+import Base from "@/layouts/base.astro";
+import { loadHome } from "@/lib/routes";
+
+// Before a fresh stage is seeded there is no home entry. Serve the empty chrome
+// (200, noindex) rather than a 404: deploy readiness waits for `/` to answer 200
+// before it seeds, and a home page should never be "not found".
+const data = await loadHome(Astro);
+---
+
+{data ? <HomeRoute {...data} /> : <Base robots="noindex" />}

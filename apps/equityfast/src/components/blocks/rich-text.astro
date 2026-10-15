@@ -1,0 +1,19 @@
+---
+/** Long-form copy (the privacy policy): Portable Text with numbered section headings, and a footnote. */
+import { PortableText } from "emdash/ui";
+import type { BlockComponentProps } from "emdash/ui";
+
+import type { PageContentRichTextBlock } from "../../../emdash-env";
+
+type Props = BlockComponentProps<PageContentRichTextBlock>;
+
+const { value } = Astro.props;
+---
+
+<section class="py-16 sm:py-24">
+  <div class="container-page">
+    {value.headline && <h2 class="headline-section mb-10">{value.headline}</h2>}
+    <div class="prose-site"><PortableText value={value.body} /></div>
+    {value.footnote && <p class="mt-14 max-w-3xl border-t border-border pt-6 text-sm leading-relaxed text-slate-blue">{value.footnote}</p>}
+  </div>
+</section>

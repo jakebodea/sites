@@ -1,0 +1,12 @@
+---
+/** Pages edited in the CMS. Astro i18n resolves the locale from the URL. */
+import PageRoute from "@/components/routes/page-route.astro";
+import { loadPage } from "@/lib/routes";
+
+const data = await loadPage(Astro);
+if (!data) {
+  return Astro.rewrite("/404");
+}
+---
+
+<PageRoute {...data} />

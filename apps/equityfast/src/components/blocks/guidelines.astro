@@ -1,0 +1,38 @@
+---
+/** Program guidelines on navy: headline, text, and a link beside a grid of label/value facts. */
+import { sanitizeHref } from "emdash";
+import type { BlockComponentProps } from "emdash/ui";
+
+import Headline from "@/components/headline.astro";
+import type { PageContentGuidelinesBlock } from "../../../emdash-env";
+
+type Props = BlockComponentProps<PageContentGuidelinesBlock>;
+
+const { value } = Astro.props;
+---
+
+<section class="bg-navy-deep py-20 text-white sm:py-24">
+  <div class="container-page grid *:min-w-0 gap-12 lg:grid-cols-[1fr_1.25fr] lg:gap-16">
+    <div>
+      {value.eyebrow && <p class="eyebrow text-gold">{value.eyebrow}</p>}
+      <Headline text={value.headline} accent={value.headline_accent} tone="dark" class="mt-4 text-white [&>span]:italic" />
+      {value.body && <p class="mt-6 max-w-lg text-lg leading-relaxed text-white/80">{value.body}</p>}
+      {value.link_label && value.link_url && (
+        <a href={sanitizeHref(value.link_url)} class="mt-8 inline-flex items-center gap-2 border-b border-gold pb-1 text-xs font-semibold tracking-label text-gold uppercase hover:text-white">
+          {value.link_label} <span aria-hidden="true">→</span>
+        </a>
+      )}
+    </div>
+    <div>
+      <dl class="grid grid-cols-2 sm:grid-cols-3">
+        {value.items.map((item) => (
+          <div class="border-b border-white/10 px-3 py-6 hyphens-auto sm:border-l sm:px-5 sm:first:border-l-0 sm:[&:nth-child(3n+1)]:border-l-0">
+            <dt class="text-[11px] font-semibold tracking-label text-sky uppercase">{item.label}</dt>
+            <dd class="mt-2 text-lg leading-snug font-semibold">{item.value}</dd>
+          </div>
+        ))}
+      </dl>
+      {value.footnote && <p class="mt-6 text-sm leading-relaxed text-white/60">{value.footnote}</p>}
+    </div>
+  </div>
+</section>
