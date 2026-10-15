@@ -28,7 +28,7 @@ Pick the cheapest step that proves your change:
 
 `reset` runs fresh native setup with the selected seed or validated production copy. It replaces only this worktree's emulator; hosted reset is refused. Restart retains selected mode. Production plans recompose against branch schema on reset; ordinary starts reuse the validated local copy and preserve edits. `content refresh` requires the privately configured `PUBLISHED_CONTENT_EXPORT_TOKEN`, fetches only the fixed site origin, preflights, and restores the stopped prior emulator and plan on load failure. No silent seed fallback. Missing selected production plans fail explicitly. Fresh hosted stages use `content prepare` through CI, not local reset. See [ADR 0003](../../../docs/adr/0003-published-production-content.md).
 
-Vite's dependency cache is kept across restarts; `start` clears it only to recover a broken boot. Add `--site <name>` outside a site directory. `reset` signs in after loading content; `login` is explicit after a content refresh. Seed resets reuse a snapshot matched to the seed and dependency versions.
+Vite's dependency cache is kept across restarts and never cleared: an empty cache is what wedges a boot. Add `--site <name>` outside a site directory. `reset` signs in after loading content; `login` is explicit after a content refresh. Seed resets reuse a snapshot matched to the seed and dependency versions.
 
 ## Verify
 
@@ -49,7 +49,7 @@ Read every screenshot you take; check both widths. `brokenImages` and `consoleEr
 
 - Sites without `seed/seed.json` keep their content in code (no EmDash): smoke skips the CMS admin check, `seed` is a no-op, `reset` just wipes local D1/KV and restarts, and `login`/`--auth` do not apply.
 
-- A cold start (no Vite cache) optimizes dependencies on the first requests; `start` waits until three clean rounds pass, retrying once from a clean cache if the boot wedges. A 500 seconds after a manual `alchemy dev` is usually that, not your change.
+- A cold start (no Vite cache, or new dependencies) re-optimizes mid-boot and wedges: `FontFamilyNotFound` or "Invalid hook call" on every page until a restart. `start` spots that in the log, restarts on the cache the wedged boot wrote (~2-3 min total), and otherwise waits for three clean rounds. A 500 after a manual `alchemy dev` is usually that, not your change.
 - Every control-app request has a 20 s deadline (`src/http.ts`): a dev page can answer 200 and never finish streaming. Lint blocks a bare `fetch` in control-app.
 - After editing server or island code, Astro's dev SSR can hot-reload into two React copies ("Invalid hook call", pages 500 or empty). Run `bun run app -- restart`; it is not your bug.
 - Use `bun run app -- …` or `fetch`, not `curl`, against local dev: Alchemy's dev proxy resets curl connections after the headers, so curl shows `200` with an empty body.
