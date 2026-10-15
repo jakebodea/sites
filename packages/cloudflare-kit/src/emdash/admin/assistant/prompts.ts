@@ -29,7 +29,7 @@ const describeEntry = (entry: EntryRef): string => {
 export const PRESET_LABELS: Record<AssistantPreset, string> = {
   "alt-text": "Describe the photos",
   polish: "Polish the wording",
-  seo: "Write search details",
+  seo: "Suggest search details",
   translate: "Translate",
 };
 
@@ -44,10 +44,10 @@ export const presetPrompt = (
       return `Polish the wording of ${target}: fix spelling and grammar, tighten long sentences, and make headings clear. Keep every fact, link, and the overall length about the same. Save it as a draft.`;
     }
     case "seo": {
-      return `Write the search engine details for ${target}: an SEO title under 60 characters and a description between 120 and 155 characters, both drawn only from what the entry already says. Save them in the entry's seo field as a draft.`;
+      return `Suggest search engine details for ${target}: an SEO title under 60 characters and a description between 120 and 155 characters, both drawn only from what the entry already says. Do not save anything: search details go live as soon as they are saved, so reply with the two suggestions and tell the person to paste them into the page's search (SEO) panel and review them.`;
     }
     case "alt-text": {
-      return `Find the photos in ${target} (image values have an "id" and an "alt") whose alt text is missing, generic, or just a file name. For each one, call describe_photo with its id and write a short, factual alt text under 125 characters. The page reads alt text from the entry itself, so set "alt" on each image value in the entry with content_update (keep every other property of the image value), then also save it on the media item with media_update. Report how many photos you described.`;
+      return `Find the photos in ${target} (image values have an "id" and an "alt") whose alt text is missing, generic, or just a file name. For each one, call describe_photo with its id and write a short, factual alt text under 125 characters. The page reads alt text from the entry itself, so set "alt" on each image value in the entry with content_update (keep every other property of the image value); that saves a draft. Report how many photos you described.`;
     }
     case "translate": {
       const others = locales.filter((locale) => locale !== entry.locale);

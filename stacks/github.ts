@@ -28,6 +28,8 @@ const sitePermissions: Cloudflare.ApiToken.PermissionGroupRef[] = [
   "Turnstile Sites Write",
   "Email Sending Write",
   "Workers Observability Write",
+  // Each deployed stage gets a rate-limited AI Gateway for the CMS assistant (`assistantAi`).
+  "AI Gateway Write",
   // The shared Alchemy state store keeps its bearer token in the account Secrets Store.
   "Secrets Store Write",
 ];

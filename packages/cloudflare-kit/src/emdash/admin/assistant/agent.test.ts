@@ -119,6 +119,12 @@ describe(refusal, () => {
     expect(refusal("content_create", { publishedAt: "2020-01-01" })).toBe(
       'The assistant saves drafts only; remove "publishedAt" and let the editor publish.'
     );
+    expect(refusal("content_update", { id: "a", seo: { title: "New" } })).toBe(
+      'The assistant saves drafts only; remove "seo" and let the editor publish.'
+    );
+    expect(refusal("media_update", { alt: "A roof", id: "m1" })).toBe(
+      "The assistant cannot use media_update."
+    );
     expect(refusal("content_update", { data: {}, id: "a" })).toBeUndefined();
   });
 });

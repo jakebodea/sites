@@ -41,7 +41,6 @@ export const ASSISTANT_TOOLS = [
   "search",
   "media_list",
   "media_get",
-  "media_update",
   "schema_list_collections",
   "schema_get_collection",
   "schema_list_block_types",
@@ -49,8 +48,20 @@ export const ASSISTANT_TOOLS = [
   "revision_list",
 ] as const;
 
-/** Arguments that would publish, unpublish, or backdate; the assistant never sends them. */
-const PUBLISHING_ARGUMENTS = ["status", "publishedAt"] as const;
+/**
+ * Arguments that would change the live site or another editor's work. EmDash
+ * stages only field values as a draft: `status` and `publishedAt` publish, and
+ * `seo`, `bylines`, and `taxonomies` are written to the live entry at once.
+ * `overrideLock` would take over an entry someone else is editing.
+ */
+const PUBLISHING_ARGUMENTS = [
+  "status",
+  "publishedAt",
+  "seo",
+  "bylines",
+  "taxonomies",
+  "overrideLock",
+] as const;
 
 const allowed = new Set<string>(ASSISTANT_TOOLS);
 const publishing = new Set<string>(PUBLISHING_ARGUMENTS);
