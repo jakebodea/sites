@@ -5,7 +5,7 @@
 export const repository = {
   /** Cloudflare account that hosts every site in this repo. */
   accountId: "984b82870acd18daf8bda97bad966b38",
-  owner: "jakebodea",
+  owner: "jbolabs",
   repository: "sites",
 } as const;
 
