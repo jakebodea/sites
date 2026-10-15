@@ -15,6 +15,7 @@ import {
   openSync,
   readdirSync,
   readFileSync,
+  readSync,
   rmSync,
   statSync,
   writeFileSync,
@@ -43,15 +44,21 @@ export const logPath = (site: SiteContext) =>
 
 // oxlint-disable-next-line no-control-regex -- matches the ESC byte of ANSI color codes on purpose.
 const ANSI_COLOR = /\u001B\[[0-9;]*m/gu;
-const READY_TIMEOUT_MS = 240_000;
+/** Boots settle in ~10 s warm and ~15 s cold; anything near this is stuck. */
+const READY_TIMEOUT_MS = 120_000;
 /**
- * A boot on a warm Vite cache settles in about 15 s, a cold one in about 70 s.
- * Past this, assume the module graph is stuck with two React copies after a
- * mid-boot re-optimize ("reading 'useState'" of null): retry once from a
- * clean cache.
+ * A dependency the SSR optimizer discovers at runtime re-optimizes mid-boot and
+ * can wedge the server for good: Vite closes an environment, Astro's fonts
+ * plugin clears its font data on that close (`FontFamilyNotFound` on every
+ * page), and workerd's runner keeps a second React copy ("Invalid hook call").
+ * `ssrPrebundle` in cloudflare-kit prevents it; a restart recovers, on the
+ * cache the wedged boot already wrote.
  */
-const FIRST_BOOT_TIMEOUT_MS = 150_000;
-const POLL_MS = 1000;
+const WEDGED = /FontFamilyNotFound|Invalid hook call|reading 'useState'/u;
+/** Restarts after a wedged boot, each on the cache the previous boot wrote. */
+const WEDGE_RESTARTS = 2;
+/** The first render after boot takes ~7 s; later rounds take ~20 ms, so poll tightly. */
+const POLL_MS = 250;
 /** Vite optimizes dependencies on the first requests; a few clean responses in a row mean it settled. */
 const WARM_STREAK = 3;
 const warmPaths = (site: SiteContext): string[] =>
@@ -102,17 +109,51 @@ const responds = async (url: string): Promise<boolean> => {
   }
 };
 
-/** Waits until every warm-up path answers cleanly several times in a row; false on timeout. */
+/** True when the log text names an error the dev server never recovers from without a restart. */
+export const isWedged = (log: string): boolean => WEDGED.test(log);
+
+const logSize = (site: SiteContext): number => {
+  const file = logPath(site);
+  return existsSync(file) ? statSync(file).size : 0;
+};
+
+/** The log written since `offset`, so errors from before this wait don't count. */
+const logSince = (site: SiteContext, offset: number): string => {
+  const file = logPath(site);
+  if (!existsSync(file)) {
+    return "";
+  }
+  const fd = openSync(file, "r");
+  try {
+    const length = Math.max(0, statSync(file).size - offset);
+    const buffer = Buffer.alloc(length);
+    readSync(fd, buffer, 0, length, offset);
+    return buffer.toString("utf-8");
+  } finally {
+    closeSync(fd);
+  }
+};
+
+type Warmth = "warm" | "wedged" | "timeout";
+
+/**
+ * Waits until every warm-up path answers cleanly several times in a row.
+ * Returns "wedged" as soon as the log shows an unrecoverable error, instead
+ * of polling a server that will never come good.
+ */
 const waitUntilWarm = async (
   site: SiteContext,
   origin: string,
-  timeoutMs: number
-): Promise<boolean> => {
-  const deadline = Date.now() + timeoutMs;
+  logOffset: number
+): Promise<Warmth> => {
+  const deadline = Date.now() + READY_TIMEOUT_MS;
   let streak = 0;
   while (streak < WARM_STREAK) {
+    if (isWedged(logSince(site, logOffset))) {
+      return "wedged";
+    }
     if (Date.now() > deadline) {
-      return false;
+      return "timeout";
     }
     const results = await Promise.all(
       warmPaths(site).map(async (route) => await responds(`${origin}${route}`))
@@ -120,7 +161,7 @@ const waitUntilWarm = async (
     streak = results.every(Boolean) ? streak + 1 : 0;
     await sleep(POLL_MS);
   }
-  return true;
+  return "warm";
 };
 
 const notReady = (origin: string): Error =>
@@ -128,13 +169,10 @@ const notReady = (origin: string): Error =>
     `Dev server at ${origin} did not become ready in time; check \`bun run app -- logs\`, then \`restart\``
   );
 
-const viteCache = (site: SiteContext) =>
-  path.join(site.directory, "node_modules", ".vite");
-
 /**
  * Starts `alchemy dev`. The Vite dependency cache is kept: a complete cache
- * boots in ~15 s with no re-optimization. Building it is what makes cold
- * boots slow and noisy, so it is cleared only to recover a wedged boot.
+ * boots in ~15 s with no re-optimization. Never clear it to recover: an
+ * empty cache is what wedges a boot.
  */
 const spawnServer = (site: SiteContext): DevState => {
   mkdirSync(site.artifacts, { recursive: true });
@@ -210,26 +248,28 @@ export const stop = async (site: SiteContext): Promise<boolean> => {
 /** Starts `alchemy dev` for this worktree's stage in the background, or reuses a running one. */
 export const start = async (site: SiteContext): Promise<DevState> => {
   const running = readState(site);
-  if (running !== undefined) {
-    if (!(await waitUntilWarm(site, running.origin, READY_TIMEOUT_MS))) {
-      throw notReady(running.origin);
-    }
-    return running;
-  }
-  const state = spawnServer(site);
-  if (await waitUntilWarm(site, site.origin, FIRST_BOOT_TIMEOUT_MS)) {
-    return state;
-  }
-  process.stderr.write(
-    "Dev server came up broken (Vite re-optimized mid-boot); restarting once from a clean Vite cache\n"
+  let state = running ?? spawnServer(site);
+  let warmth = await waitUntilWarm(
+    site,
+    state.origin,
+    running === undefined ? 0 : logSize(site)
   );
-  await stop(site);
-  rmSync(viteCache(site), { force: true, recursive: true });
-  const retry = spawnServer(site);
-  if (!(await waitUntilWarm(site, site.origin, READY_TIMEOUT_MS))) {
-    throw notReady(site.origin);
+  for (
+    let restart = 0;
+    warmth === "wedged" && restart < WEDGE_RESTARTS;
+    restart += 1
+  ) {
+    process.stderr.write(
+      "Dev server wedged after Vite re-optimized mid-boot (a dependency missing from ssrPrebundle?); restarting on the cache it wrote\n"
+    );
+    await stop(site);
+    state = spawnServer(site);
+    warmth = await waitUntilWarm(site, state.origin, 0);
   }
-  return retry;
+  if (warmth !== "warm") {
+    throw notReady(state.origin);
+  }
+  return state;
 };
 
 const localState = (site: SiteContext) =>
@@ -248,8 +288,8 @@ export const wipeLocalState = async (site: SiteContext): Promise<void> => {
  */
 const seedKey = (site: SiteContext): string => {
   const hash = createHash("sha256");
-  // Older snapshots contain a dev-bypass admin rather than a verified native owner.
-  hash.update("native-owner-content-v1");
+  // Older snapshots hold a dev-bypass admin, or secrets under the encryption key from remote dev state.
+  hash.update("native-owner-content-v1+local-dev-state");
   const seed = path.join(site.directory, "seed");
   hash.update(readFileSync(path.join(seed, "seed.json")));
   const media = path.join(seed, "media");

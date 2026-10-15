@@ -17,6 +17,7 @@
     "./seo": "./src/seo.ts",
     "./env": "./src/env.ts",
     "./astro/web-analytics-beacon.astro": "./src/astro/web-analytics-beacon.astro",
+    "./astro/ssr-prebundle": "./src/astro/ssr-prebundle.ts",
     "./emdash/analytics": "./src/emdash/analytics.ts",
     "./emdash/worker": "./src/emdash/worker.ts",
     "./emdash/public-html": "./src/emdash/public-html.ts",

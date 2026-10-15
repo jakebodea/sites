@@ -26,4 +26,5 @@ export {
 } from "./build-inputs.ts";
 export { TURNSTILE_TEST_KEYS } from "./turnstile.ts";
 export { cmsCrons } from "./cms-crons.ts";
+export { siteState } from "./state.ts";
 export { assistantAi, ASSISTANT_RATE_LIMIT } from "./assistant-ai.ts";

@@ -15,6 +15,7 @@ import {
   siteSecrets,
   writeBuildInputs,
   publishedContentDigest,
+  siteState,
 } from "@jakebodea/cloudflare-kit/infra";
 /**
  * MS Custom Homes infrastructure (one Alchemy stack, one stage per environment):
@@ -45,7 +46,7 @@ export default Alchemy.Stack(
   {
     providers: Layer.mergeAll(Cloudflare.providers(), RandomProvider()),
     secrets: siteSecrets(root),
-    state: Cloudflare.state(),
+    state: siteState(),
   },
   Effect.gen(function* stack() {
     const stage = resolveStage(site, yield* Alchemy.Stage);
