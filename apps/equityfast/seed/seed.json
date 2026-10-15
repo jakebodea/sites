@@ -69,7 +69,7 @@
     {
       "slug": "page_hero",
       "label": "Page hero",
-      "description": "Full-height page opener: eyebrow, two-line headline, intro, optional button, over a photo.",
+      "description": "Full-height page opener: two-line headline, intro, optional button, over a photo.",
       "category": "Sections",
       "currentVersion": 1,
       "versions": [

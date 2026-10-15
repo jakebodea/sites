@@ -30,7 +30,7 @@ const amount = isAmount(requested) ? formatDollars(requested) : undefined;
   <section class="bg-mist py-14 sm:py-20">
     <div class="mx-auto w-full max-w-xl px-5">
       <h1 class="sr-only">{t.applyTitle}</h1>
-      <div class="mt-3 border border-border bg-white p-6 shadow-xl sm:p-8">
+      <div class="border border-border bg-white p-6 shadow-xl sm:p-8">
         <ApplicationForm client:only="react" locale={locale} strings={t} turnstileSiteKey={env.TURNSTILE_SITE_KEY} initialAmount={amount} homeHref={localePath(locale, "/")}>
           <p slot="fallback" class="text-slate-blue">{t.applyIntro} <a href={`mailto:${site.business.email}`} class="font-semibold text-navy underline underline-offset-4">{site.business.email}</a></p>
         </ApplicationForm>
