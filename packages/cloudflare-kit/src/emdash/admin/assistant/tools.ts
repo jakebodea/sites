@@ -63,8 +63,19 @@ const PUBLISHING_ARGUMENTS = [
   "overrideLock",
 ] as const;
 
+/**
+ * `slug` on an update without `data` skips EmDash's draft staging and renames the
+ * live URL at once. On `content_create` it only names the new draft.
+ */
+const LIVE_ON_UPDATE = ["slug"] as const;
+
 const allowed = new Set<string>(ASSISTANT_TOOLS);
-const publishing = new Set<string>(PUBLISHING_ARGUMENTS);
+
+/** The arguments the assistant may never send to this tool. */
+const forbiddenArguments = (tool: string): readonly string[] =>
+  tool === "content_update"
+    ? [...PUBLISHING_ARGUMENTS, ...LIVE_ON_UPDATE]
+    : PUBLISHING_ARGUMENTS;
 
 /** Why a call is refused, or `undefined` when it may run. */
 export const refusal = (
@@ -74,21 +85,24 @@ export const refusal = (
   if (!allowed.has(name)) {
     return `The assistant cannot use ${name}.`;
   }
-  const argument = PUBLISHING_ARGUMENTS.find((key) => key in args);
+  const argument = forbiddenArguments(name).find((key) => key in args);
   return argument === undefined
     ? undefined
     : `The assistant saves drafts only; remove "${argument}" and let the editor publish.`;
 };
 
-/** The tool's schema without its publishing arguments, so the model never sees them. */
-const withoutPublishing = (schema: JSONSchema): JSONSchema => ({
-  ...schema,
-  properties: Object.fromEntries(
-    Object.entries(schema.properties ?? {}).filter(
-      ([name]) => !publishing.has(name)
-    )
-  ),
-});
+/** The tool's schema without its forbidden arguments, so the model never sees them. */
+const withoutForbidden = (tool: McpTool): JSONSchema => {
+  const forbidden = new Set(forbiddenArguments(tool.name));
+  return {
+    ...tool.inputSchema,
+    properties: Object.fromEntries(
+      Object.entries(tool.inputSchema.properties ?? {}).filter(
+        ([name]) => !forbidden.has(name)
+      )
+    ),
+  };
+};
 
 const decodeArgs = Schema.decodeUnknownOption(Schema.JsonObject);
 
@@ -96,7 +110,7 @@ const decodeArgs = Schema.decodeUnknownOption(Schema.JsonObject);
 const guardedTool = (tool: McpTool, mcp: McpConnection): AnyServerTool =>
   toolDefinition({
     description: tool.description ?? tool.name,
-    inputSchema: withoutPublishing(tool.inputSchema),
+    inputSchema: withoutForbidden(tool),
     name: tool.name,
   }).server(async (raw) => {
     const args = Option.getOrElse(decodeArgs(raw), () => ({}));
