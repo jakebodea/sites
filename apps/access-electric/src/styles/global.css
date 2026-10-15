@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "tw-animate-css";
+@import "@jakebodea/site-ui/mobile-menu.css";
 
 /*
  * Access Electric design tokens. Brand colors are sampled from the logo:

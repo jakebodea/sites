@@ -1,0 +1,46 @@
+/*
+ * Structure and motion for <MobileMenu> (mobile-menu.tsx). Import once from a
+ * site's global.css, after Tailwind:
+ *
+ *   @import "@jakebodea/site-ui/mobile-menu.css";
+ *
+ * The look (colors, type, blur) comes from the component's default classes,
+ * which the site overrides per slot through the `classNames` prop. The
+ * `@source` line lets the site's Tailwind see those default classes.
+ */
+@source "./";
+
+/* The overlay starts under the site header, which stays solid and on top; the island measures it on open. */
+@utility mobile-menu-overlay {
+  top: var(--mobile-menu-top, 0px);
+}
+
+/* Clears the iPhone home indicator. */
+@utility mobile-menu-footer {
+  padding-bottom: max(1.5rem, env(safe-area-inset-bottom));
+}
+
+/* Links and the footer drop in from above, staggered by `--i`. Closing is a plain fade of the overlay. */
+@utility mobile-menu-cascade {
+  opacity: 0;
+  translate: 0 -14px;
+  transition:
+    opacity 200ms ease-out,
+    translate 320ms cubic-bezier(0.16, 1, 0.3, 1);
+
+  [data-open="true"] & {
+    opacity: 1;
+    translate: 0 0;
+    transition-delay: calc(30ms + var(--i, 0) * 30ms);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+    translate: 0 0;
+  }
+}
+
+/* While open the page behind cannot scroll. */
+html[data-mobile-menu-open] body {
+  overflow: hidden;
+}
