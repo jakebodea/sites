@@ -81,19 +81,34 @@ const check = (name: string, ok: boolean, detail: string): SmokeCheck => ({
 
 /** A rendered page, not just a 200: streaming SSR can fail after the status line is sent. */
 const TITLE = /<title>[^<]+<\/title>/u;
+/** Every page opens with its headline; a page without one rendered no content (e.g. an unseeded CMS). */
+const H1 = /<h1[\s>]/u;
 
-const renderedPage = async (
-  url: string
-): Promise<{ readonly code: number; readonly complete: boolean }> => {
+export interface PageVerdict {
+  readonly ok: boolean;
+  readonly detail: string;
+}
+
+/** Judge one fetched page: a full document with a title and a headline. */
+export const pageVerdict = (code: number, html: string): PageVerdict => {
+  if (!(TITLE.test(html) && html.trimEnd().endsWith("</html>"))) {
+    return { detail: `HTTP ${code}, incomplete HTML`, ok: false };
+  }
+  if (!H1.test(html)) {
+    return {
+      detail: `HTTP ${code}, no <h1>: page rendered no content`,
+      ok: false,
+    };
+  }
+  return { detail: `HTTP ${code}`, ok: code === 200 };
+};
+
+const renderedPage = async (url: string): Promise<PageVerdict> => {
   try {
     const response = await request(url);
-    const html = await response.text();
-    return {
-      code: response.status,
-      complete: TITLE.test(html) && html.trimEnd().endsWith("</html>"),
-    };
+    return pageVerdict(response.status, await response.text());
   } catch {
-    return { code: 0, complete: false };
+    return { detail: "no response", ok: false };
   }
 };
 
@@ -131,16 +146,11 @@ const pageCheck = async (
 ): Promise<SmokeCheck> => {
   const url = `${origin}${route}`;
   const first = await renderedPage(url);
-  const passed = first.code === 200 && first.complete;
-  if (!passed) {
+  if (!first.ok) {
     await Bun.sleep(RETRY_DELAY_MS);
   }
-  const { code, complete } = passed ? first : await renderedPage(url);
-  return check(
-    `page ${route}`,
-    code === 200 && complete,
-    complete ? `HTTP ${code}` : `HTTP ${code}, incomplete HTML`
-  );
+  const { detail, ok } = first.ok ? first : await renderedPage(url);
+  return check(`page ${route}`, ok, detail);
 };
 
 const pageChecks = async (
