@@ -1,7 +1,8 @@
 ---
 /**
- * Home opener: the wordmark (the page's h1, read as the CMS headline), intro,
- * two buttons, and the quick equity estimate, over a photo under a navy wash.
+ * Home opener: the wordmark (the page's h1, read as the CMS headline) above its
+ * gold tagline pill, intro, two buttons, and the quick equity estimate, over a
+ * photo under a navy wash.
  */
 import { sanitizeHref } from "emdash";
 import { Image } from "emdash/ui";
@@ -28,10 +29,15 @@ const apply = applyHref(Astro.currentLocale);
   <div class="absolute inset-0 -z-10 bg-linear-to-b from-navy-deep/85 via-navy/80 to-navy-deep/95 lg:bg-linear-to-r lg:from-navy-deep/90 lg:via-navy/75 lg:to-navy-deep/60" aria-hidden="true"></div>
   <div class="container-page grid *:min-w-0 items-center gap-12 py-16 sm:py-20 lg:min-h-[calc(100svh-72px-49px)] lg:grid-cols-[1.25fr_1fr] lg:py-24">
     <div class="min-w-0 text-center lg:text-left">
-      <h1 class="text-white">
-        <span class="sr-only">{value.headline}</span>
-        <img src="/brand/equityfast.webp" alt="" width="1200" height="172" class="mx-auto h-auto w-full max-w-[520px] lg:mx-0" />
-      </h1>
+      <div class="mx-auto flex w-full max-w-[520px] flex-col items-center lg:mx-0">
+        <h1 class="w-full text-white">
+          <span class="sr-only">{value.headline}</span>
+          <img src="/brand/equityfast.webp" alt="" width="1200" height="172" class="h-auto w-full" />
+        </h1>
+        {value.tagline && (
+          <p class="mt-4 w-[82%] rounded-full bg-gold px-4 py-2 text-center text-[clamp(15px,4.2vw,22px)] font-semibold uppercase leading-tight text-navy-deep sm:mt-5">{value.tagline}</p>
+        )}
+      </div>
       {value.intro && <p class="mx-auto mt-7 max-w-xl text-lg leading-relaxed text-white/90 sm:text-xl lg:mx-0">{value.intro}</p>}
       <div class="mt-9 flex flex-col justify-center gap-3 sm:flex-row lg:justify-start">
         {value.apply_label && <ButtonLink href={apply} data-apply variant="accent" size="hero">{value.apply_label}</ButtonLink>}
