@@ -1,11 +1,11 @@
 /// <reference types="astro/client" />
 
 /** Worker bindings and vars, declared in alchemy.run.ts. */
-import type { KitEmDashEnv } from "@jakebodea/cloudflare-kit/env";
+import type { AssistantEnv, KitEmDashEnv } from "@jakebodea/cloudflare-kit/env";
 
 declare global {
   namespace Cloudflare {
-    interface Env extends KitEmDashEnv {
+    interface Env extends KitEmDashEnv, AssistantEnv {
       /** EmDash content (D1). */
       DB: D1Database;
       /** EmDash media library (R2). */

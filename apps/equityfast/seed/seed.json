@@ -923,7 +923,7 @@
       "labelSingular": "Home page",
       "icon": "house",
       "sortOrder": 0,
-      "supports": ["drafts", "revisions", "preview", "scheduling", "seo"],
+      "supports": ["drafts", "revisions", "preview", "seo"],
       "urlPattern": "/",
       "fields": [
         {
@@ -965,7 +965,11 @@
             "maxItems": 20
           }
         }
-      ]
+      ],
+      "description": "The first page visitors see. Edit its sections to change the home page.",
+      "admin": {
+        "quickCreate": false
+      }
     },
     {
       "slug": "pages",
@@ -973,7 +977,7 @@
       "labelSingular": "Page",
       "icon": "file-text",
       "sortOrder": 1,
-      "supports": ["drafts", "revisions", "preview", "scheduling", "seo"],
+      "supports": ["drafts", "revisions", "preview", "seo"],
       "urlPattern": "/{slug}",
       "fields": [
         {
@@ -1015,7 +1019,8 @@
             "maxItems": 20
           }
         }
-      ]
+      ],
+      "description": "Every other page on the site, like About and Contact."
     },
     {
       "slug": "site_text",
@@ -1054,7 +1059,7 @@
       "routable": false,
       "supports": [],
       "admin": {
-        "listColumns": ["amount", "email", "phone"],
+        "listColumns": ["email", "phone"],
         "quickCreate": false
       },
       "fields": [

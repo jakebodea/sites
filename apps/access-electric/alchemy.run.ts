@@ -1,6 +1,7 @@
 /// <reference types="bun" />
 import {
   BUILD_INPUTS_FILE,
+  assistantAi,
   cmsCrons,
   TURNSTILE_TEST_KEYS,
   WORKER_COMPATIBILITY,
@@ -20,6 +21,7 @@ import {
  *
  *   D1 (EmDash content) + R2 (media) + Images binding + session KV (auto)
  *   + Turnstile widget + every-minute cron (EmDash scheduled publishing)
+ *   + Workers AI + AI Gateway for the CMS assistant (deployed stages only)
  *   prod only: custom domain, retained backups bucket + daily backup cron
  *
  * Deploy: `bun alchemy deploy --stage <stage> --profile <profile>` from this
@@ -92,6 +94,8 @@ export default Alchemy.Stack(
           mode: "managed",
           name: stage.workerName,
         });
+    // CMS assistant: Workers AI behind a rate-limited AI Gateway (no model in offline dev).
+    const assistant = yield* assistantAi(stage);
     const bindings = {
       ...(yield* webAnalytics(stage)),
       ...leadMail(stage, {
@@ -101,6 +105,7 @@ export default Alchemy.Stack(
         inbox: site.leadInbox,
       }),
       ...(yield* emdashSecrets),
+      AI_GATEWAY_ID: assistant.gatewayId,
       BACKUPS: backups,
       CF_VERSION_METADATA: Cloudflare.Workers.VersionMetadata(),
       CMS_BOOTSTRAP_TOKEN: dev
@@ -122,12 +127,15 @@ export default Alchemy.Stack(
       TURNSTILE_SECRET_KEY: turnstile.secret,
       TURNSTILE_SITE_KEY: turnstile.sitekey,
     };
+    const withModel = assistant.bindModel
+      ? { ...bindings, AI: Cloudflare.Workers.AI() }
+      : bindings;
     // Cloudflare Email Service needs a verified sender; until then mail is logged, not sent.
     const env =
       emailFrom === undefined
-        ? bindings
+        ? withModel
         : {
-            ...bindings,
+            ...withModel,
             EMAIL: Cloudflare.Email.SendEmail("Email", {
               allowedSenderAddresses: [emailFrom],
             }),
