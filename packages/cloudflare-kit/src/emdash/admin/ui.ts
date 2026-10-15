@@ -4,15 +4,8 @@
  */
 import type { Block, BlockResponse } from "@emdash-cms/blocks";
 
-import type { AgentResult } from "./assistant/agent.ts";
 import { MCP_PATH } from "./assistant/mcp.ts";
-import { PRESET_LABELS } from "./assistant/prompts.ts";
-import type { AssistantPreset, GuideTip } from "./options.ts";
-
-export const ACTIONS = {
-  ask: "ask",
-  preset: "preset",
-} as const;
+import type { GuideTip } from "./options.ts";
 
 /** Tips stacked top to bottom: the dashboard shows this card at half width. */
 export const startHereWidget = (tips: readonly GuideTip[]): BlockResponse => ({
@@ -38,87 +31,11 @@ export const startHereWidget = (tips: readonly GuideTip[]): BlockResponse => ({
   ]),
 });
 
-const askForm = (placeholder: string): Block => ({
-  block_id: "ask",
-  fields: [
-    {
-      action_id: "request",
-      label: "What would you like to change?",
-      multiline: true,
-      placeholder,
-      type: "text_input",
-    },
-  ],
-  submit: { action_id: ACTIONS.ask, label: "Ask the assistant" },
-  type: "form",
-});
-
-export const resultBlocks = (result: AgentResult): Block[] => [
-  { text: result.answer, type: "section" },
-  {
-    text:
-      result.tools.length === 0
-        ? "No changes were made."
-        : `Steps: ${result.tools.join(", ")}`,
-    type: "context",
-  },
-];
-
-export const errorBlocks = (message: string): Block[] => [
-  {
-    description: message,
-    title: "The assistant couldn't finish",
-    type: "banner",
-    variant: "error",
-  },
-];
-
-export const assistantPage = (result: Block[] = []): BlockResponse => ({
-  blocks: [
-    { text: "Assistant", type: "header" },
-    {
-      text: "Describe a change in plain words. The assistant edits the site the way you would and saves drafts; nothing goes live until you review it and select Publish.",
-      type: "context",
-    },
-    ...result,
-    askForm(
-      'For example: "Add Riverside County to the service area on the home page" or "Make the About page intro shorter"'
-    ),
-    {
-      text: "Tip: on any page's edit screen, the Assistant panel has one-click jobs for that page.",
-      type: "context",
-    },
-  ],
-});
-
-export const editorPanel = (
-  presets: readonly AssistantPreset[],
-  result: Block[] = []
-): BlockResponse => ({
-  blocks: [
-    ...result,
-    {
-      elements: presets.map((preset) => ({
-        action_id: ACTIONS.preset,
-        label: PRESET_LABELS[preset],
-        type: "button" as const,
-        value: preset,
-      })),
-      type: "actions",
-    },
-    askForm('For example: "Mention that we now serve Orange County"'),
-    {
-      text: "Changes are saved as a draft of this page. Review them, then select Publish.",
-      type: "context",
-    },
-  ],
-});
-
 export const claudePage = (origin: string): BlockResponse => ({
   blocks: [
     { text: "Use with Claude", type: "header" },
     {
-      text: "Claude can edit this website for you in a normal conversation, using the same tools as the built-in assistant. It signs in as you, so it can do exactly what your account can do.",
+      text: "Claude can edit this website for you in a normal conversation, using the same tools as the assistant in the top bar. It signs in as you, so it can do exactly what your account can do.",
       type: "section",
     },
     {
