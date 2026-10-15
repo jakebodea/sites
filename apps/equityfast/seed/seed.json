@@ -29,6 +29,11 @@
               "required": true
             },
             {
+              "slug": "tagline",
+              "label": "Tagline (the gold pill under the wordmark)",
+              "type": "string"
+            },
+            {
               "slug": "intro",
               "label": "Intro",
               "type": "text"
@@ -1332,6 +1337,7 @@
               "_version": 1,
               "_key": "hero",
               "headline": "Get EquityFast: home equity, reimagined",
+              "tagline": "Your equity. Your terms.",
               "intro": "Skip the paperwork, and skip the appraisal on loans under $400K.* Get a competitive-rate HELOC with instant, tech-verified income and terms you control.",
               "apply_label": "Start My Request",
               "secondary_cta_label": "Run the Calculator",
@@ -1544,6 +1550,7 @@
               "_version": 1,
               "_key": "hero",
               "headline": "Obtenga EquityFast: la equidad de su vivienda, reinventada",
+              "tagline": "Su equidad. Sus términos.",
               "intro": "Olvídese del papeleo y del avalúo en préstamos menores a $400K.* Obtenga un HELOC con tasa competitiva, ingresos verificados al instante con tecnología y términos que usted controla.",
               "apply_label": "Iniciar Mi Solicitud",
               "secondary_cta_label": "Usar la Calculadora",
