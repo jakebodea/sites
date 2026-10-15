@@ -1,9 +1,13 @@
+// oxlint-disable-next-line typescript/triple-slash-reference -- consuming Astro config tsconfigs need the shared asset declaration.
+/// <reference path="./assets.d.ts" />
 /**
  * The admin screens this kit adds, as EmDash Block Kit (declarative JSON the
  * admin renders with its own components, so they match the theme for free).
  */
 import type { Block, BlockResponse } from "@emdash-cms/blocks";
 
+import claudeLogo from "./assets/claude.svg?url&no-inline";
+import openaiLogo from "./assets/openai.svg?url&no-inline";
 import { MCP_PATH } from "./assistant/mcp.ts";
 import type { GuideTip } from "./options.ts";
 
@@ -31,11 +35,11 @@ export const startHereWidget = (tips: readonly GuideTip[]): BlockResponse => ({
   ]),
 });
 
-export const claudePage = (origin: string): BlockResponse => ({
+export const connectorsPage = (origin: string): BlockResponse => ({
   blocks: [
-    { text: "Use with Claude", type: "header" },
+    { text: "Connect an assistant", type: "header" },
     {
-      text: "Claude can edit this website for you in a normal conversation, using the same tools as the assistant in the top bar. It signs in as you, so it can do exactly what your account can do.",
+      text: "Claude, ChatGPT, and Codex can edit this website for you in a normal conversation, using the same tools as the assistant in the top bar. Each connects as you and has the same permissions as your account.",
       type: "section",
     },
     {
@@ -47,6 +51,7 @@ export const claudePage = (origin: string): BlockResponse => ({
       panels: [
         {
           blocks: [
+            { alt: "Claude logo", type: "image", url: claudeLogo },
             {
               text: "1. In Claude, open Settings, then Connectors, and select Add custom connector.",
               type: "section",
@@ -64,10 +69,11 @@ export const claudePage = (origin: string): BlockResponse => ({
               type: "section",
             },
           ],
-          label: "Claude (web or desktop)",
+          label: "Claude",
         },
         {
           blocks: [
+            { alt: "Claude logo", type: "image", url: claudeLogo },
             {
               text: "Run this in a terminal, then sign in when the browser opens:",
               type: "section",
@@ -80,12 +86,65 @@ export const claudePage = (origin: string): BlockResponse => ({
           ],
           label: "Claude Code",
         },
+        {
+          blocks: [
+            { alt: "OpenAI logo", type: "image", url: openaiLogo },
+            {
+              text: "1. In ChatGPT on the web, open Plugins. Select the plus button, then Add custom MCP server.",
+              type: "section",
+            },
+            {
+              text: "2. Name it after your website, paste the connection address above as the Server URL, and choose OAuth authentication.",
+              type: "section",
+            },
+            {
+              text: "3. Review the connection warning and select Create as a plugin. Sign in to this website when prompted and approve the connection. Install the plugin before using it.",
+              type: "section",
+            },
+            {
+              text: '4. In a conversation, type @ and select your website plugin. Try: "Show me the home page text" or "Save a draft with a shorter introduction".',
+              type: "section",
+            },
+            {
+              text: "If you cannot add a custom server, check your workspace permissions or ask your workspace admin.",
+              type: "context",
+            },
+          ],
+          label: "ChatGPT",
+        },
+        {
+          blocks: [
+            { alt: "OpenAI logo", type: "image", url: openaiLogo },
+            {
+              text: "1. With the Codex CLI installed, run these commands in a terminal:",
+              type: "section",
+            },
+            {
+              code: `codex mcp add website --url ${origin}${MCP_PATH}\ncodex mcp login website`,
+              language: "bash",
+              type: "code",
+            },
+            {
+              text: "2. Follow the browser sign-in link, sign in to this website, and approve the connection.",
+              type: "section",
+            },
+            {
+              text: '3. Start a new Codex session and ask: "Use the website tools to show me the home page text" or "Save a draft with a shorter introduction".',
+              type: "section",
+            },
+            {
+              text: "In the Codex IDE extension, you can also open the gear menu, select MCP servers, then Add server. Choose Streamable HTTP, enter the address above, save, restart the extension, and select Authenticate.",
+              type: "context",
+            },
+          ],
+          label: "Codex",
+        },
       ],
       type: "tab",
     },
     {
       description:
-        "Ask Claude to save drafts and review them here before you select Publish. To disconnect, remove the connector in Claude.",
+        "Ask your assistant to save drafts and review them here before you select Publish. To disconnect, remove the website connection in your assistant. In the Codex CLI, run: codex mcp remove website.",
       title: "Good to know",
       type: "banner",
     },
