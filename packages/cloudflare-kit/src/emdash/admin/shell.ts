@@ -10,7 +10,8 @@
  *   column is the wrapper's only `div` after the `aside`.
  * - `.ring-kumo-fill`: Kumo's token utility on the inner surface of a layer card. Cards
  *   read as surfaces with a soft shadow instead of a second ring.
- * - `[data-testid=dashboard-metric]`: EmDash's dashboard stat cards.
+ * - `[data-testid=dashboard-metric]`, `[data-testid=admin-version]`: EmDash's dashboard stat
+ *   cards and the version stamp in the sidebar footer.
  * If an EmDash upgrade drops a hook, that rule stops matching and the admin falls back
  * to Kumo's default look for that part; nothing breaks.
  */
@@ -57,6 +58,10 @@ html[data-theme] .ring-kumo-fill {
 }
 ${SHELL} > aside [data-sidebar=content] * {
   border-color: transparent;
+}
+/* EmDash's build stamp in the sidebar footer means nothing to a client; footerLabel: false only drops the label beside it. */
+html[data-theme] [data-testid=admin-version] {
+  display: none;
 }
 html[data-theme] [data-testid=dashboard-metric] > div:first-child {
   padding-bottom: 0.25rem;
