@@ -52,7 +52,7 @@ export const Assistant = ({
         open={open}
       >
         <SheetContent
-          className="w-full sm:max-w-md"
+          className="data-[side=right]:w-full data-[side=right]:sm:max-w-md"
           container={host}
           showOverlay={false}
         >
