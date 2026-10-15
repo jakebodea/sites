@@ -1,7 +1,8 @@
 /**
  * Per-site admin theme. EmDash's admin is built on Kumo's semantic CSS tokens,
- * so restyling means overriding a dozen variables, not any component markup:
- * an EmDash upgrade keeps working as long as the token names hold.
+ * so a site's colors are a few variables, not component markup: an EmDash upgrade
+ * keeps working as long as the token names hold. Shape (radius, lines, the inset
+ * frame) is shared by every site; see `shell.ts`.
  *
  * Colors are any CSS color (hex, `oklch()`, ...); copy them from the site's `global.css`.
  */
@@ -14,8 +15,6 @@ export interface AdminTheme {
   readonly brandOnDark: string;
   /** Page background behind cards in light mode (the site's `--background`). */
   readonly canvas?: string;
-  /** Corner radius scale, e.g. "0.5rem" (the site's `--radius`). */
-  readonly radius?: string;
 }
 
 /**
@@ -33,13 +32,6 @@ const block = (selector: string, declarations: Declarations): string => {
     .join(";");
   return `${selector}{${body}}`;
 };
-
-const radii = (radius: string): Declarations => [
-  ["--radius-lg", radius],
-  ["--radius-md", `calc(${radius} * 0.75)`],
-  ["--radius-sm", `calc(${radius} * 0.5)`],
-  ["--radius-xl", `calc(${radius} * 1.5)`],
-];
 
 /** The stylesheet injected into the admin shell for one site. */
 export const adminThemeCss = (theme: AdminTheme): string => {
@@ -60,10 +52,6 @@ export const adminThemeCss = (theme: AdminTheme): string => {
       ["--color-kumo-canvas", theme.canvas],
       ["--color-kumo-elevated", theme.canvas]
     );
-  }
-  if (theme.radius !== undefined) {
-    light.push(...radii(theme.radius));
-    dark.push(...radii(theme.radius));
   }
   return [block(LIGHT, light), block(DARK, dark)].join("\n");
 };

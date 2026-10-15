@@ -33,6 +33,5 @@ export const cms = defineCmsAdmin({
     brand: "oklch(0.29 0.126 268.5)",
     brandHover: "oklch(0.24 0.14 269)",
     brandOnDark: "oklch(0.72 0.099 233)",
-    radius: "0.25rem",
   },
 });
