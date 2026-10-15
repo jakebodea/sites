@@ -1,0 +1,67 @@
+/*
+ * Edge strips and fades for `mountSeamlessEdges()` (seamless-edges.ts). Import
+ * once from a site's global.css, after Tailwind:
+ *
+ *   @import "@jakebodea/site-ui/seamless-edges.css";
+ *
+ * Touch screens only: on a desktop window the strips would just cover a few
+ * pixels of the page.
+ */
+.seamless-edge,
+.seamless-edge-fade {
+  display: none;
+  position: fixed;
+  inset-inline: 0;
+  pointer-events: none;
+}
+
+@media (pointer: coarse) {
+  .seamless-edge,
+  .seamless-edge-fade {
+    display: block;
+  }
+}
+
+/*
+ * Safari samples a fixed element only once about 5px of it is on screen, so a
+ * 12px strip sits 7px off the edge. It stays above everything; 5px of solid
+ * color matching the edge is invisible under the status bar and toolbar.
+ */
+.seamless-edge {
+  z-index: 100;
+  height: 12px;
+}
+
+.seamless-edge[data-edge="top"] {
+  top: -7px;
+  background-color: var(--seamless-edge-top, transparent);
+}
+
+.seamless-edge[data-edge="bottom"] {
+  bottom: -7px;
+  background-color: var(--seamless-edge-bottom, transparent);
+}
+
+/* Under the sticky header (z-40) and the mobile menu (z-30), so it only softens page content. */
+.seamless-edge-fade {
+  z-index: 10;
+  height: 48px;
+}
+
+.seamless-edge-fade[data-edge="top"] {
+  top: 5px;
+  background-image: linear-gradient(
+    to bottom,
+    var(--seamless-edge-top, transparent),
+    transparent
+  );
+}
+
+.seamless-edge-fade[data-edge="bottom"] {
+  bottom: 5px;
+  background-image: linear-gradient(
+    to top,
+    var(--seamless-edge-bottom, transparent),
+    transparent
+  );
+}

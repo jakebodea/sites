@@ -1,6 +1,7 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "@jakebodea/site-ui/mobile-menu.css";
+@import "@jakebodea/site-ui/seamless-edges.css";
 
 /*
  * MS Custom Homes design tokens. The brand blue is sampled from the logo
