@@ -44,7 +44,7 @@ export interface CmsAdminOptions {
   readonly favicon: string;
   readonly theme: AdminTheme;
   readonly guide?: readonly GuideTip[];
-  /** `false` hides the assistant and the "Use with Claude" page. */
+  /** `false` hides the assistant and the "Connect an assistant" page. */
   readonly assistant?: AssistantOptions | false;
 }
 

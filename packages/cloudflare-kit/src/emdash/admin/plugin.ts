@@ -1,6 +1,6 @@
 /**
- * The `site-admin` EmDash plugin: a "Start here" dashboard card and the "Use
- * with Claude" page (Block Kit), plus the admin bundle that puts the Assistant
+ * The `site-admin` EmDash plugin: a "Start here" dashboard card and the
+ * "Connect an assistant" page (Block Kit), plus the bundle that puts the Assistant
  * in the top bar (`client/`). The assistant itself streams from its own route
  * (`chat-route.ts`), since plugin routes answer with buffered JSON.
  */
@@ -11,7 +11,7 @@ import { definePlugin } from "emdash";
 import { decodeInteraction } from "./interactions.ts";
 import { DEFAULT_GUIDE, SITE_ADMIN_PLUGIN_ID } from "./options.ts";
 import type { CmsAdminOptions } from "./options.ts";
-import { claudePage, startHereWidget } from "./ui.ts";
+import { connectorsPage, startHereWidget } from "./ui.ts";
 
 const VERSION = "1.1.0";
 
@@ -27,12 +27,12 @@ export const createPlugin = (options: SiteAdminPluginOptions) => {
     const interaction = Option.getOrUndefined(decodeInteraction(ctx.input));
     return interaction?.page === "widget:start"
       ? startHereWidget(options.guide ?? DEFAULT_GUIDE)
-      : claudePage(new URL(ctx.request.url).origin);
+      : connectorsPage(new URL(ctx.request.url).origin);
   };
   return definePlugin({
     admin: {
       pages: options.assistant
-        ? [{ icon: "plug", label: "Use with Claude", path: "/claude" }]
+        ? [{ icon: "plug", label: "Connect an assistant", path: "/claude" }]
         : [],
       widgets: [{ id: "start", size: "full", title: "Start here" }],
     },
