@@ -495,7 +495,7 @@
       "labelSingular": "Home page",
       "icon": "house",
       "sortOrder": 0,
-      "supports": ["drafts", "revisions", "preview", "scheduling", "seo"],
+      "supports": ["drafts", "revisions", "preview", "seo"],
       "urlPattern": "/",
       "fields": [
         {
@@ -530,7 +530,11 @@
             "maxItems": 20
           }
         }
-      ]
+      ],
+      "description": "The first page visitors see. Edit its sections to change the home page.",
+      "admin": {
+        "quickCreate": false
+      }
     },
     {
       "slug": "pages",
@@ -538,7 +542,7 @@
       "labelSingular": "Page",
       "icon": "file-text",
       "sortOrder": 1,
-      "supports": ["drafts", "revisions", "preview", "scheduling", "seo"],
+      "supports": ["drafts", "revisions", "preview", "seo"],
       "urlPattern": "/{slug}",
       "fields": [
         {
@@ -573,7 +577,8 @@
             "maxItems": 20
           }
         }
-      ]
+      ],
+      "description": "Every other page on the site, like About and Contact."
     },
     {
       "slug": "projects",
@@ -581,17 +586,10 @@
       "labelSingular": "Project",
       "icon": "house-line",
       "sortOrder": 2,
-      "supports": [
-        "drafts",
-        "revisions",
-        "preview",
-        "scheduling",
-        "search",
-        "seo"
-      ],
+      "supports": ["drafts", "revisions", "preview", "search", "seo"],
       "urlPattern": "/projects/{slug}",
       "admin": {
-        "listColumns": ["project_type", "progress", "featured"]
+        "listColumns": ["project_type", "progress"]
       },
       "fields": [
         {
@@ -671,7 +669,8 @@
           "label": "Story",
           "type": "portableText"
         }
-      ]
+      ],
+      "description": "Your portfolio. Published projects appear on the website."
     },
     {
       "slug": "leads",

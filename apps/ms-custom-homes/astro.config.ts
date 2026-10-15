@@ -6,6 +6,11 @@ import { fileURLToPath } from "node:url";
 import { distilledCloudflare } from "@alchemy.run/frontend-frameworks/astro/cloudflare";
 import react from "@astrojs/react";
 import { d1, r2 } from "@emdash-cms/cloudflare";
+import {
+  adminBranding,
+  cmsAdmin,
+  siteAdminPlugin,
+} from "@jakebodea/cloudflare-kit/emdash/admin";
 import { emdashOnAlchemyAliases } from "@jakebodea/cloudflare-kit/emdash/alchemy-workarounds";
 import { analyticsPlugin } from "@jakebodea/cloudflare-kit/emdash/analytics";
 import { emailPlugin } from "@jakebodea/cloudflare-kit/emdash/email-plugin";
@@ -17,9 +22,11 @@ import {
   readBuildInputs,
 } from "@jakebodea/cloudflare-kit/infra";
 import tailwindcss from "@tailwindcss/vite";
+import type { AstroUserConfig } from "astro";
 import { defineConfig, fontProviders } from "astro/config";
 import emdash from "emdash/astro";
 
+import { cms } from "./cms.config.ts";
 import { site } from "./site.config.ts";
 
 const root = import.meta.dirname;
@@ -52,6 +59,14 @@ const buildCaches = standalone
   ? { astro: "./node_modules/.astro-build", vite: "node_modules/.vite-build" }
   : undefined;
 
+const bodyFont = {
+  cssVariable: "--font-body",
+  fallbacks: ["ui-sans-serif", "system-ui", "sans-serif"],
+  name: "Jost",
+  provider: fontProviders.google(),
+  weights: [300, 400, 500],
+} satisfies NonNullable<AstroUserConfig["fonts"]>[number];
+
 export default defineConfig({
   ...(buildCaches && { cacheDir: buildCaches.astro }),
   devToolbar: { enabled: false },
@@ -65,13 +80,9 @@ export default defineConfig({
       styles: ["normal", "italic"],
       weights: [400, 500, 600],
     },
-    {
-      cssVariable: "--font-body",
-      fallbacks: ["ui-sans-serif", "system-ui", "sans-serif"],
-      name: "Jost",
-      provider: fontProviders.google(),
-      weights: [300, 400, 500],
-    },
+    bodyFont,
+    // The CMS admin reads --font-emdash; it gets the site's body face.
+    { ...bodyFont, cssVariable: "--font-emdash" },
   ],
   image: {
     layout: "constrained",
@@ -88,14 +99,19 @@ export default defineConfig({
     seedMedia({ mediaBase: inputs.seedMediaBase }),
     react(),
     siteOwner(),
+    cmsAdmin(cms),
     publishedContent(),
     emdash({
+      admin: adminBranding(cms),
       database: d1({ binding: "DB", session: "auto" }),
+      // The admin uses the site's body face (--font-emdash above), not EmDash's Noto Sans.
+      fonts: false,
       middleware: { outer: "@jakebodea/cloudflare-kit/emdash/owner-gate" },
       // CMS mail (invites, magic links) only once a verified sender exists; until then
       // EmDash reports "Email is not configured" and invite links are copied by hand.
       plugins: [
         analyticsPlugin,
+        siteAdminPlugin(cms),
         ...(inputs.emailFrom === undefined
           ? []
           : [
@@ -130,6 +146,15 @@ export default defineConfig({
         include: [
           "emdash > sanitize-html",
           "emdash > @emdash-cms/admin > @lingui/core",
+          // EmDash's MCP route (called in-process by the CMS assistant) imports CJS content-type/ajv.
+          "emdash > @modelcontextprotocol/sdk/server/mcp.js",
+          "emdash > @modelcontextprotocol/sdk/server/webStandardStreamableHttp.js",
+          // CMS assistant (cloudflare-kit admin plugin): pre-bundled so nothing is discovered at runtime.
+          "@jakebodea/cloudflare-kit > @modelcontextprotocol/sdk/client/index.js",
+          "@jakebodea/cloudflare-kit > @modelcontextprotocol/sdk/client/streamableHttp.js",
+          "@jakebodea/cloudflare-kit > @tanstack/ai",
+          "@jakebodea/cloudflare-kit > @tanstack/ai/testing",
+          "@jakebodea/cloudflare-kit > @tanstack/ai-cloudflare",
           // Server-side Effect code: one pre-bundled chunk each instead of hundreds of modules.
           "effect",
           "effect/http",

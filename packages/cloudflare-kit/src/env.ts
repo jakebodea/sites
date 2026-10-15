@@ -18,5 +18,14 @@ export interface EmDashSecretsEnv {
   readonly EMDASH_ENCRYPTION_KEY: string;
 }
 
+/**
+ * The CMS assistant's model (see `assistantAi`); `AI` is unbound in offline local dev.
+ * Typed by the one method the assistant calls, so this module needs no workers-types.
+ */
+export interface AssistantEnv {
+  readonly AI?: { readonly run: (...args: never[]) => Promise<object> };
+  readonly AI_GATEWAY_ID: string;
+}
+
 export type KitEnv = WebAnalyticsEnv & LeadMailEnv;
 export type KitEmDashEnv = KitEnv & EmDashSecretsEnv;

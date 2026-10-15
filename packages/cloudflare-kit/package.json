@@ -27,7 +27,10 @@
     "./emdash/published-integration": "./src/emdash/published-integration.ts",
     "./emdash/published-route": "./src/emdash/published-route.ts",
     "./emdash/published-completion-route": "./src/emdash/published-completion-route.ts",
-    "./emdash/published-preflight": "./src/emdash/published-preflight.ts"
+    "./emdash/published-preflight": "./src/emdash/published-preflight.ts",
+    "./emdash/admin": "./src/emdash/admin/index.ts",
+    "./emdash/admin/plugin": "./src/emdash/admin/plugin.ts",
+    "./emdash/admin/middleware": "./src/emdash/admin/middleware.ts"
   },
   "scripts": {
     "test": "vitest run",
@@ -36,6 +39,10 @@
   "dependencies": {
     "@eisbachcode/emdash-plugin-analytics": "catalog:",
     "@emdash-cms/auth": "catalog:",
+    "@emdash-cms/blocks": "catalog:",
+    "@modelcontextprotocol/sdk": "catalog:",
+    "@tanstack/ai": "catalog:",
+    "@tanstack/ai-cloudflare": "catalog:",
     "effect": "catalog:",
     "kysely": "catalog:"
   },
