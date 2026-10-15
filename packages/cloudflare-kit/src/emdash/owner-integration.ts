@@ -1,5 +1,6 @@
 import type { AstroIntegration } from "astro";
 
+import { ADMIN_ALIAS } from "./admin-alias.ts";
 import { OWNER_BOOTSTRAP_PATH } from "./owner-policy.ts";
 
 export const siteOwner = (): AstroIntegration => ({
@@ -8,6 +9,11 @@ export const siteOwner = (): AstroIntegration => ({
       injectRoute({
         entrypoint: "@jakebodea/cloudflare-kit/emdash/owner-route",
         pattern: OWNER_BOOTSTRAP_PATH,
+        prerender: false,
+      });
+      injectRoute({
+        entrypoint: "@jakebodea/cloudflare-kit/emdash/admin-alias-route",
+        pattern: `${ADMIN_ALIAS}/[...path]`,
         prerender: false,
       });
       addMiddleware({
