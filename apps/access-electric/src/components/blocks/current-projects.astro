@@ -19,7 +19,7 @@ if (Astro.cache?.enabled) {
 {entries.length > 0 && (
   <section class="py-20 sm:py-28">
     <div class="container-page flex flex-wrap items-end justify-between gap-4">
-      <SectionHeading title={value.headline} intro={value.intro} eyebrow="Under construction" />
+      <SectionHeading title={value.headline} intro={value.intro} />
       <a href={`/portfolio/${CURRENT_PROJECTS.slug}`} class="inline-flex items-center gap-2 text-sm font-semibold text-navy hover:underline hover:underline-offset-4">
         {value.link_label ?? "See all"} <ArrowRight class="size-4" aria-hidden="true" />
       </a>

@@ -21,7 +21,7 @@ const seo = page ? getSeoMeta(page, { defaultDescription: page.data.intro, path:
 ---
 
 <Base title={seo?.title ?? title} description={seo?.description} image={seo?.ogImage} robots={seo?.robots}>
-  <PageHeader title={title} intro={page?.data.intro} eyebrow="Our work" />
+  <PageHeader title={title} intro={page?.data.intro} />
   <section class="container-page py-12 sm:py-16">
     <ul class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
       {current.entries.length > 0 && (

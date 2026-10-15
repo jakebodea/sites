@@ -14,8 +14,7 @@ const { value } = Astro.props;
 <section class="bg-navy-deep py-20 text-white sm:py-24">
   <div class="container-page grid *:min-w-0 gap-12 lg:grid-cols-[1fr_1.25fr] lg:gap-16">
     <div>
-      {value.eyebrow && <p class="eyebrow text-gold">{value.eyebrow}</p>}
-      <Headline text={value.headline} accent={value.headline_accent} tone="dark" class="mt-4 text-white [&>span]:italic" />
+      <Headline text={value.headline} accent={value.headline_accent} tone="dark" class="text-white [&>span]:italic" />
       {value.body && <p class="mt-6 max-w-lg text-lg leading-relaxed text-white/80">{value.body}</p>}
       {value.link_label && value.link_url && (
         <a href={sanitizeHref(value.link_url)} class="mt-8 inline-flex items-center gap-2 border-b border-gold pb-1 text-xs font-semibold tracking-label text-gold uppercase hover:text-white">

@@ -52,9 +52,9 @@
   "type": "module",
   "scripts": {
     "build": "turbo run build",
-    "check": "bun run sync && ultracite check --max-warnings 0",
+    "check": "bun run sync && ultracite check --max-warnings 0 && bun run check:markup",
     "fix": "bun run sync && ultracite fix",
-    "lint:ci": "bun run sync && ultracite check --max-warnings 0 --format github",
+    "lint:ci": "bun run sync && ultracite check --max-warnings 0 --format github && bun run check:markup",
     "typecheck": "turbo run typecheck //#typecheck:root",
     "test": "turbo run test //#test:root",
     "verify": "bun run ci && bun run build",
@@ -68,7 +68,8 @@
     "dev": "bun packages/control-app/src/cli.ts dev",
     "ci": "bun run check && turbo run typecheck test //#typecheck:root //#test:root",
     "proof": "bun packages/proof/src/cli.ts",
-    "sync": "turbo run sync --output-logs=errors-only"
+    "sync": "turbo run sync --output-logs=errors-only",
+    "check:markup": "bun packages/config/check-copy.ts && bun packages/config/check-style.ts"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "catalog:",

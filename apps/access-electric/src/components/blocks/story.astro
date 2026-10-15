@@ -21,7 +21,6 @@ const imageRight = value.image_position === "right";
       </div>
     )}
     <div>
-      {value.eyebrow && <p class="eyebrow mb-4">{value.eyebrow}</p>}
       <h2 class="text-3xl sm:text-4xl">{value.headline}</h2>
       <div class="prose-site mt-6"><PortableText value={value.body} /></div>
       {value.cta_label && value.cta_url && (

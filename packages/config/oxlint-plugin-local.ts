@@ -4,7 +4,8 @@
  *
  * Oxlint parses `.ts`/`.tsx` files and the frontmatter/scripts of `.astro`
  * files, not Astro template markup; `check-copy.ts` covers copy there and in
- * the EmDash seed.
+ * the EmDash seed, and `check-style.ts` the design rules (no eyebrows, a solid
+ * top bar) across markup, TSX, and CSS.
  */
 import { definePlugin, defineRule } from "@oxlint/plugins";
 import type { ESTree } from "@oxlint/plugins";

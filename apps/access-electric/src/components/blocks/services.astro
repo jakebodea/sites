@@ -24,7 +24,7 @@ const icons = {
 ---
 
 <section class="container-page py-20 sm:py-28">
-  <SectionHeading title={value.headline} intro={value.intro} eyebrow="services" />
+  <SectionHeading title={value.headline} intro={value.intro} />
   <ol class="mt-12 grid gap-px overflow-hidden rounded-xl border border-border bg-border md:grid-cols-3">
     {value.items.map((item, index) => {
       const Icon = icons[item.icon];

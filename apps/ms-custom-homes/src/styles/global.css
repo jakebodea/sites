@@ -121,16 +121,6 @@
   padding-bottom: max(1.25rem, env(safe-area-inset-bottom));
 }
 
-/* Section eyebrow: wide-tracked small caps after a hairline, echoing the rules in the logo. */
-@utility eyebrow {
-  @apply text-brand inline-flex items-center gap-4 text-[0.7rem] font-medium tracking-[0.32em] uppercase;
-
-  &::before {
-    content: "";
-    @apply bg-champagne h-px w-10;
-  }
-}
-
 /* Small uppercase label used for buttons, nav, and metadata. */
 @utility label-caps {
   @apply text-[0.72rem] font-medium tracking-[0.22em] uppercase;

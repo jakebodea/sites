@@ -16,8 +16,7 @@ const { value } = Astro.props;
 <section class="py-20 sm:py-24">
   <div class="container-page grid *:min-w-0 gap-12 lg:grid-cols-2 lg:gap-0">
     <div class="lg:pr-16">
-      {value.eyebrow && <p class="eyebrow text-sky-ink">{value.eyebrow}</p>}
-      <Headline text={value.headline} accent={value.headline_accent} class="mt-4" />
+      <Headline text={value.headline} accent={value.headline_accent} />
       <div class="mt-6 h-1 w-16 bg-gold" aria-hidden="true"></div>
       {value.body && <p class="mt-6 max-w-lg text-lg leading-relaxed text-slate-blue">{value.body}</p>}
       {value.apply_label && <ButtonLink href={applyHref(Astro.currentLocale)} data-apply variant="outline-navy" size="hero" class="mt-9">{value.apply_label}</ButtonLink>}

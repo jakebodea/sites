@@ -16,8 +16,7 @@ const { value } = Astro.props;
     <ul class="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
       {value.items.map((item) => (
         <li class="group relative flex flex-col border border-border bg-white p-8 transition-shadow hover:shadow-lg focus-within:shadow-lg">
-          {item.eyebrow && <p class="eyebrow text-sky-ink">{item.eyebrow}</p>}
-          <h3 class="mt-4 text-2xl">
+          <h3 class="text-2xl">
             {item.url ? <a href={sanitizeHref(item.url)} class="after:absolute after:inset-0 focus-visible:outline-none">{item.title}</a> : item.title}
           </h3>
           <p class="mt-4 flex-1 leading-relaxed text-slate-blue">{item.body}</p>

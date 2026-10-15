@@ -76,7 +76,7 @@ const BudgetPanel = ({
       id={panelId(project.name)}
       className="border-navy/15 border-t bg-white p-5"
     >
-      <p className="eyebrow text-slate-blue">{strings.drag}</p>
+      <p className="text-slate-blue text-sm font-semibold">{strings.drag}</p>
       <div className="mt-3 flex items-center gap-4">
         <Slider
           variant="brand"
@@ -163,8 +163,7 @@ const PlanSummary = ({
   ];
   return (
     <aside className="border-navy min-w-0 border-2 bg-white p-5 shadow-xl sm:p-7 lg:sticky lg:top-28">
-      <p className="eyebrow text-sky-ink">{strings.plan}</p>
-      <p className="text-slate-blue mt-3 text-xs font-semibold tracking-wider uppercase">
+      <p className="text-slate-blue text-xs font-semibold tracking-wider uppercase">
         {strings.gained}
       </p>
       <output
@@ -249,7 +248,9 @@ const RenovationPlanner = ({
     <div className="grid gap-8 lg:grid-cols-[1fr_360px] lg:items-start">
       <div className="min-w-0">
         <div className="flex flex-wrap items-baseline justify-between gap-2">
-          <h3 className="eyebrow text-slate-blue">{strings.pick}</h3>
+          <h3 className="text-slate-blue text-sm font-semibold">
+            {strings.pick}
+          </h3>
           <p className="text-slate-blue text-xs">{strings.pickHelp}</p>
         </div>
         <ul className="mt-4 grid gap-3">

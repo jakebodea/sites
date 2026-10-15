@@ -1,8 +1,7 @@
 ---
 /**
- * Home opener: the wordmark (the page's h1, read as the CMS headline), the
- * tagline pill, intro, two buttons, and the quick equity estimate, over a
- * photo under a navy wash.
+ * Home opener: the wordmark (the page's h1, read as the CMS headline), intro,
+ * two buttons, and the quick equity estimate, over a photo under a navy wash.
  */
 import { sanitizeHref } from "emdash";
 import { Image } from "emdash/ui";
@@ -33,7 +32,6 @@ const apply = applyHref(Astro.currentLocale);
         <span class="sr-only">{value.headline}</span>
         <img src="/brand/equityfast.webp" alt="" width="1200" height="172" class="mx-auto h-auto w-full max-w-[520px] lg:mx-0" />
       </h1>
-      <p class="mt-6 inline-flex rounded-full bg-gold px-5 py-2 text-[clamp(0.85rem,2.4vw,1.35rem)] sm:px-6 font-semibold tracking-[0.06em] text-navy uppercase">{value.tagline}</p>
       {value.intro && <p class="mx-auto mt-7 max-w-xl text-lg leading-relaxed text-white/90 sm:text-xl lg:mx-0">{value.intro}</p>}
       <div class="mt-9 flex flex-col justify-center gap-3 sm:flex-row lg:justify-start">
         {value.apply_label && <ButtonLink href={apply} data-apply variant="accent" size="hero">{value.apply_label}</ButtonLink>}

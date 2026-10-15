@@ -24,7 +24,7 @@ const seo = page ? getSeoMeta(page, { defaultDescription: page.data.intro, path:
   robots={seo?.robots}
   content={page ? { collection: "pages", id: page.data.id, slug: page.id } : undefined}
 >
-  <PageHeader title={title} intro={page?.data.intro} eyebrow="Our work" />
+  <PageHeader title={title} intro={page?.data.intro} />
   <section class="container-page py-20 sm:py-28">
     {projects.entries.length > 0 ? (
       <ProjectGrid projects={projects.entries} />

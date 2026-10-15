@@ -81,7 +81,7 @@
   --radius-lg: calc(var(--radius) + 2px);
   --radius-xl: calc(var(--radius) + 6px);
 
-  /* Tracked caps labels, eyebrows, and buttons. */
+  /* Tracked caps labels and buttons. */
   --tracking-label: 0.2em;
   --text-2xs: 0.625rem;
   /* The application's question heading and the estimator's big figures. */
@@ -133,11 +133,6 @@
 /* Bottom padding that clears the iPhone home indicator. */
 @utility pb-safe {
   padding-bottom: max(1.25rem, env(safe-area-inset-bottom));
-}
-
-/* Small tracked caps label above a headline. */
-@utility eyebrow {
-  @apply tracking-label text-xs font-semibold uppercase;
 }
 
 /* Section headline scale shared by the content blocks. */
