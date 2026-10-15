@@ -1,3 +1,4 @@
+export { adminFont } from "./font.ts";
 export { cmsAdmin } from "./integration.ts";
 export { siteAdminPlugin } from "./plugin.ts";
 export {

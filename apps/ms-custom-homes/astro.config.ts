@@ -9,6 +9,7 @@ import { d1, r2 } from "@emdash-cms/cloudflare";
 import { ssrPrebundle } from "@jakebodea/cloudflare-kit/astro/ssr-prebundle";
 import {
   adminBranding,
+  adminFont,
   cmsAdmin,
   siteAdminPlugin,
 } from "@jakebodea/cloudflare-kit/emdash/admin";
@@ -82,8 +83,7 @@ export default defineConfig({
       weights: [400, 500, 600],
     },
     bodyFont,
-    // The CMS admin reads --font-emdash; it gets the site's body face.
-    { ...bodyFont, cssVariable: "--font-emdash" },
+    adminFont,
   ],
   image: {
     layout: "constrained",
@@ -105,7 +105,7 @@ export default defineConfig({
     emdash({
       admin: adminBranding(cms),
       database: d1({ binding: "DB", session: "auto" }),
-      // The admin uses the site's body face (--font-emdash above), not EmDash's Noto Sans.
+      // Every admin uses the shared adminFont above, not EmDash's Noto Sans.
       fonts: false,
       middleware: { outer: "@jakebodea/cloudflare-kit/emdash/owner-gate" },
       // CMS mail (invites, magic links) only once a verified sender exists; until then
