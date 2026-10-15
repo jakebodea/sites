@@ -31,14 +31,17 @@ export const workersAiAdapter = (options: {
   });
 
 /**
- * Local-dev stand-in: lists a few entries through the real MCP tools on its
- * first turn, then answers, so the panel, the tool loop, and EmDash's permission
- * checks all run without a model.
+ * Local-dev stand-in: thinks, lists a few entries through the real MCP tools,
+ * then answers, so the panel's reasoning and tool steps, the tool loop, and
+ * EmDash's permission checks all run without a model.
  */
 export const offlineAdapter = (collection: string): AnyTextAdapter => {
   const fake = fakeText({ model: "offline" });
   fake.setResponses([
-    { toolCalls: [{ input: { collection, limit: 3 }, name: "content_list" }] },
+    {
+      thinking: `No model is connected, so I will check the connection instead: list a few "${collection}" entries through EmDash's MCP tools.`,
+      toolCalls: [{ input: { collection, limit: 3 }, name: "content_list" }],
+    },
     {
       text: `${OFFLINE_NOTE} It read the "${collection}" list through EmDash's MCP tools, so the connection works.`,
     },

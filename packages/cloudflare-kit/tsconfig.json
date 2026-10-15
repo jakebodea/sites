@@ -4,5 +4,7 @@
     "lib": ["ES2023", "DOM", "DOM.Iterable"],
     "types": ["bun"]
   },
-  "include": ["src"]
+  "include": ["src"],
+  // The admin bundle runs in the browser, where workers-types' global Element would clash with the DOM's.
+  "exclude": ["src/emdash/admin/client"]
 }

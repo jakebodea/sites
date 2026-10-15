@@ -20,11 +20,7 @@ export const cms = defineCmsAdmin({
       title: "Change a page",
     },
     {
-      body: "Describe a change in plain words, or use the Assistant panel on any page. It saves drafts for you to review.",
-      link: {
-        label: "Open the assistant",
-        target: { kind: "plugin-page", path: "/assistant" },
-      },
+      body: "Select Assistant in the top bar and describe a change in plain words. It saves drafts for you to review.",
       title: "Ask the assistant",
     },
   ],

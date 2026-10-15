@@ -3,3 +3,15 @@ declare module "virtual:cms-admin-theme" {
   const css: string;
   export default css;
 }
+
+declare module "virtual:cms-admin-config" {
+  /** The parts of the site's `cms.config.ts` the assistant route and admin panel read. */
+  const config: {
+    readonly siteName: string;
+    // oxlint-disable-next-line typescript/consistent-type-imports -- an ambient module block cannot import; import() is the only way to name the type.
+    readonly assistant: import("./options.ts").AssistantOptions | false;
+  };
+  export default config;
+}
+
+declare module "*.css" {}

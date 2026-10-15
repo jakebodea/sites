@@ -3,6 +3,9 @@
   "private": true,
   "description": "Shared code for every marketing site: Effect server services, analytics, and Alchemy helpers.",
   "type": "module",
+  "imports": {
+    "#assistant/*": "./src/emdash/admin/client/*"
+  },
   "exports": {
     "./server": "./src/server/index.ts",
     "./infra": "./src/infra/index.ts",
@@ -30,21 +33,36 @@
     "./emdash/published-preflight": "./src/emdash/published-preflight.ts",
     "./emdash/admin": "./src/emdash/admin/index.ts",
     "./emdash/admin/plugin": "./src/emdash/admin/plugin.ts",
-    "./emdash/admin/middleware": "./src/emdash/admin/middleware.ts"
+    "./emdash/admin/middleware": "./src/emdash/admin/middleware.ts",
+    "./emdash/admin/chat-route": "./src/emdash/admin/chat-route.ts",
+    "./emdash/admin/client": "./src/emdash/admin/client/index.tsx"
   },
   "scripts": {
     "test": "vitest run",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit && tsc --noEmit -p src/emdash/admin/client"
   },
   "dependencies": {
+    "@base-ui/react": "catalog:",
     "@eisbachcode/emdash-plugin-analytics": "catalog:",
     "@emdash-cms/auth": "catalog:",
     "@emdash-cms/blocks": "catalog:",
     "@modelcontextprotocol/sdk": "catalog:",
+    "@shadcn/react": "catalog:",
     "@tanstack/ai": "catalog:",
+    "@tanstack/ai-client": "catalog:",
     "@tanstack/ai-cloudflare": "catalog:",
+    "@tanstack/ai-react": "catalog:",
+    "class-variance-authority": "catalog:",
+    "clsx": "catalog:",
     "effect": "catalog:",
-    "kysely": "catalog:"
+    "kysely": "catalog:",
+    "lucide-react": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "shadcn": "catalog:",
+    "tailwind-merge": "catalog:",
+    "tailwindcss": "catalog:",
+    "tw-animate-css": "catalog:"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "catalog:",
@@ -52,6 +70,8 @@
     "@emdash-cms/cloudflare": "catalog:",
     "@jakebodea/config": "workspace:*",
     "@types/bun": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
     "alchemy": "catalog:",
     "astro": "catalog:",
     "emdash": "catalog:",

@@ -30,7 +30,7 @@ export interface AssistantOptions {
    */
   readonly model?: string;
   readonly presets?: readonly AssistantPreset[];
-  /** Collections whose editor shows the assistant panel; default: every collection with copy. */
+  /** Collections whose edit screen offers the one-click jobs; default: every collection. */
   readonly collections?: readonly string[];
   /** Locales the site publishes, for the `translate` preset, e.g. ["en", "es"]. */
   readonly locales?: readonly string[];
@@ -64,11 +64,7 @@ export const DEFAULT_GUIDE: readonly GuideTip[] = [
     title: "You can't break anything",
   },
   {
-    body: "Describe a change in plain words, or open any page and use its Assistant panel. It saves a draft for you to review before anything goes live.",
-    link: {
-      label: "Open the assistant",
-      target: { kind: "plugin-page", path: "/assistant" },
-    },
+    body: "Select Assistant in the top bar and describe a change in plain words. On a page's edit screen it also offers one-click jobs for that page. It saves drafts for you to review before anything goes live.",
     title: "Ask the assistant",
   },
 ];

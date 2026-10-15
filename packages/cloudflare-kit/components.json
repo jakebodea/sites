@@ -1,0 +1,22 @@
+{
+  "$schema": "https://ui.shadcn.com/schema.json",
+  "style": "base-nova",
+  "rsc": false,
+  "tsx": true,
+  "tailwind": {
+    "config": "",
+    "css": "src/emdash/admin/client/assistant.css",
+    "baseColor": "neutral",
+    "cssVariables": true,
+    "prefix": ""
+  },
+  "iconLibrary": "lucide",
+  "aliases": {
+    "components": "#assistant",
+    "utils": "#assistant/lib/utils",
+    "ui": "#assistant/ui",
+    "lib": "#assistant/lib",
+    "hooks": "#assistant/hooks"
+  },
+  "registries": {}
+}

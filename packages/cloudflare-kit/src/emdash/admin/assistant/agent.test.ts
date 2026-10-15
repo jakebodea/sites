@@ -1,9 +1,10 @@
-import type { JSONSchema } from "@tanstack/ai";
+import { EventType } from "@tanstack/ai";
+import type { JSONSchema, StreamChunk } from "@tanstack/ai";
 import { fakeText } from "@tanstack/ai/testing";
 import type { Schema } from "effect";
 import { describe, expect, it } from "vitest";
 
-import { runAgent } from "./agent.ts";
+import { streamAgent } from "./agent.ts";
 import { refusal } from "./tools.ts";
 import type { McpConnection, McpTool } from "./tools.ts";
 
@@ -41,8 +42,37 @@ const fakeEmDash = (answers: Record<string, string>) => {
   return { calls, connection };
 };
 
-describe(runAgent, () => {
-  it("runs the model's MCP calls and returns its final answer with the steps", async () => {
+/** Drains one streamed turn into what the panel would show: the tools that ran and the reply. */
+const runTurn = async (
+  input: Omit<
+    Parameters<typeof streamAgent>[0],
+    "messages" | "systemPrompts"
+  > & {
+    readonly prompt: string;
+  }
+) => {
+  const chunks: StreamChunk[] = [];
+  for await (const chunk of streamAgent({
+    ...input,
+    messages: [{ content: input.prompt, role: "user" }],
+    systemPrompts: ["test"],
+  })) {
+    chunks.push(chunk);
+  }
+  return {
+    answer: chunks
+      .flatMap((chunk) =>
+        chunk.type === EventType.TEXT_MESSAGE_CONTENT ? [chunk.delta] : []
+      )
+      .join(""),
+    tools: chunks.flatMap((chunk) =>
+      chunk.type === EventType.TOOL_CALL_START ? [chunk.toolCallName] : []
+    ),
+  };
+};
+
+describe(streamAgent, () => {
+  it("streams the model's MCP calls and its final answer", async () => {
     const emdash = fakeEmDash({ content_get: '{"title":"About","_rev":"r1"}' });
     const model = fakeText();
     model.setResponses([
@@ -62,11 +92,10 @@ describe(runAgent, () => {
       { text: "I shortened the About intro and saved it as a draft." },
     ]);
 
-    const result = await runAgent({
+    const result = await runTurn({
       adapter: model,
       mcp: emdash.connection,
       prompt: "Shorten the About intro",
-      system: "test",
     });
 
     expect(result).toStrictEqual({
@@ -97,11 +126,10 @@ describe(runAgent, () => {
       { text: "I could not publish; the draft is ready for you." },
     ]);
 
-    const result = await runAgent({
+    const result = await runTurn({
       adapter: model,
       mcp: emdash.connection,
       prompt: "Publish the About page",
-      system: "test",
     });
 
     expect(result.answer).toBe(

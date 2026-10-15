@@ -4,6 +4,7 @@
  * enforce); presets are one-click prompts for a single entry.
  */
 import type { AssistantPreset } from "../options.ts";
+import { PRESET_LABELS } from "./protocol.ts";
 
 export const systemPrompt = (siteName: string): string =>
   [
@@ -12,6 +13,7 @@ export const systemPrompt = (siteName: string): string =>
     "Before changing an entry, read it with content_get (you need its _rev), and check the collection or section type with the schema tools when unsure which fields exist. In content_update, send only the fields you change, and send a field with sections (type blocks) as the complete array with every section's _type and _key kept.",
     "Keep the site's existing voice. Never invent facts: no new phone numbers, prices, dates, licenses, awards, or claims the page does not already make. If you need a fact you do not have, ask for it instead.",
     "Write copy without em dashes or en dashes; use commas, periods, or colons. Do not add small all-caps labels above headings.",
+    "Your reply appears in a narrow side panel and is rendered as Markdown: keep it short, and use bold or a short list only when it helps.",
     "Finish with a short summary: which entries you changed (by title), what changed, and that the drafts are ready to review. If you changed nothing, say why.",
   ].join("\n\n");
 
@@ -24,13 +26,6 @@ export interface EntryRef {
 const describeEntry = (entry: EntryRef): string => {
   const locale = entry.locale === null ? "" : ` (locale ${entry.locale})`;
   return `the "${entry.collection}" entry with id ${entry.id}${locale}`;
-};
-
-export const PRESET_LABELS: Record<AssistantPreset, string> = {
-  "alt-text": "Describe the photos",
-  polish: "Polish the wording",
-  seo: "Suggest search details",
-  translate: "Translate",
 };
 
 export const presetPrompt = (
@@ -59,7 +54,14 @@ export const presetPrompt = (
   }
 };
 
-export const freeformPrompt = (request: string, entry?: EntryRef): string =>
-  entry === undefined
-    ? request
-    : `${request}\n\n(The person is looking at ${describeEntry(entry)}. Assume the request is about this entry unless it says otherwise.)`;
+/** Tells the model which entry is open in the editor, so "this page" resolves. */
+export const openEntryPrompt = (entry: EntryRef): string =>
+  `The person has ${describeEntry(entry)} open in the editor. Assume a request is about this entry unless it says otherwise.`;
+
+/** A one-click job: the panel shows its label as the message, the model gets the full instructions. */
+export const presetRunPrompt = (
+  preset: AssistantPreset,
+  entry: EntryRef,
+  locales: readonly string[]
+): string =>
+  `The person's latest message is the one-click job "${PRESET_LABELS[preset]}". Do this: ${presetPrompt(preset, entry, locales)}`;

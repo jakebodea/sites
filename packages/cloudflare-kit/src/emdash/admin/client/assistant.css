@@ -1,0 +1,72 @@
+/*
+ * The Assistant's styles inside EmDash's admin. The admin ships its own
+ * Tailwind build (Kumo), so this one skips preflight, scans only this folder,
+ * and maps shadcn's semantic tokens onto Kumo's: the panel follows the site's
+ * admin theme and its light and dark modes with no colors of its own.
+ */
+@layer theme, base, components, utilities;
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css" layer(utilities) source(none);
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@source "./";
+
+/* The admin marks dark mode on <html data-mode="dark">. */
+@custom-variant dark (&:where([data-mode="dark"], [data-mode="dark"] *));
+
+:root {
+  --background: var(--color-kumo-base);
+  --foreground: var(--text-color-kumo-default);
+  --card: var(--color-kumo-base);
+  --card-foreground: var(--text-color-kumo-default);
+  --popover: var(--color-kumo-base);
+  --popover-foreground: var(--text-color-kumo-default);
+  --primary: var(--color-kumo-brand);
+  --primary-foreground: oklch(1 0 0);
+  --secondary: var(--color-kumo-tint);
+  --secondary-foreground: var(--text-color-kumo-default);
+  --muted: var(--color-kumo-tint);
+  --muted-foreground: var(--text-color-kumo-subtle);
+  --accent: var(--color-kumo-tint);
+  --accent-foreground: var(--text-color-kumo-default);
+  --destructive: var(--color-kumo-danger);
+  --border: var(--color-kumo-line);
+  --input: var(--color-kumo-line);
+  --ring: var(--color-kumo-brand);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+}
+
+/* Preflight is the admin's; only the border color shadcn relies on is added, scoped to the Assistant. */
+@layer base {
+  :where(#site-assistant, [data-site-assistant-slot]) * {
+    border-color: var(--color-border);
+  }
+}
+
+/* Kumo caps every [role=dialog] at 100vw - 2rem on phones (unlayered); the side panel fills the screen there. */
+@media (max-width: 639px) {
+  #site-assistant [data-slot="sheet-content"] {
+    max-width: none;
+  }
+}

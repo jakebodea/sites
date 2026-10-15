@@ -1,35 +1,52 @@
 /**
  * `cmsAdmin(options)`: the Astro half of the admin kit. It injects the site's
- * admin theme and scopes the assistant's plugin routes (see `middleware.ts`).
+ * admin theme, adds the assistant's streaming route, and hands the site's
+ * options to that route and the admin bundle through `virtual:cms-admin-config`.
  * The EmDash half is `adminBranding(options)` and `siteAdminPlugin(options)`.
  */
 import type { AstroIntegration } from "astro";
 
+import { CHAT_PATH } from "./assistant/protocol.ts";
 import type { CmsAdminOptions } from "./options.ts";
 import { adminThemeCss } from "./theme.ts";
 
-const THEME_MODULE = "virtual:cms-admin-theme";
+const virtualModule = (name: string, source: () => string) => ({
+  load: (id: string) => (id === `\0${name}` ? source() : undefined),
+  name,
+  resolveId: (id: string) => (id === name ? `\0${name}` : undefined),
+});
 
 export const cmsAdmin = (options: CmsAdminOptions): AstroIntegration => ({
   hooks: {
-    "astro:config:setup": ({ addMiddleware, updateConfig }) => {
+    "astro:config:setup": ({ addMiddleware, injectRoute, updateConfig }) => {
       const css = adminThemeCss(options.theme);
+      // Logos, favicons and the theme stay out: the route and the panel need only these.
+      const config = {
+        assistant: options.assistant ?? {},
+        siteName: options.siteName,
+      };
       addMiddleware({
         entrypoint: "@jakebodea/cloudflare-kit/emdash/admin/middleware",
         order: "post",
       });
+      if (options.assistant !== false) {
+        injectRoute({
+          entrypoint: "@jakebodea/cloudflare-kit/emdash/admin/chat-route",
+          pattern: CHAT_PATH,
+          prerender: false,
+        });
+      }
       updateConfig({
         vite: {
           plugins: [
-            {
-              load: (id) =>
-                id === `\0${THEME_MODULE}`
-                  ? `export default ${JSON.stringify(css)}`
-                  : undefined,
-              name: "cms-admin-theme",
-              resolveId: (id) =>
-                id === THEME_MODULE ? `\0${THEME_MODULE}` : undefined,
-            },
+            virtualModule(
+              "virtual:cms-admin-theme",
+              () => `export default ${JSON.stringify(css)}`
+            ),
+            virtualModule(
+              "virtual:cms-admin-config",
+              () => `export default ${JSON.stringify(config)}`
+            ),
           ],
         },
       });
