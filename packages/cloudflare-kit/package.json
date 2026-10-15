@@ -22,6 +22,7 @@
     "./emdash/owner-middleware": "./src/emdash/owner-middleware.ts",
     "./emdash/owner-integration": "./src/emdash/owner-integration.ts",
     "./emdash/owner-route": "./src/emdash/owner-route.ts",
+    "./emdash/admin-alias-route": "./src/emdash/admin-alias-route.ts",
     "./emdash/published-content": "./src/emdash/published-content.ts",
     "./emdash/published-integration": "./src/emdash/published-integration.ts",
     "./emdash/published-route": "./src/emdash/published-route.ts",

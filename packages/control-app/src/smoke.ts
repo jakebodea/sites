@@ -106,6 +106,19 @@ const status = async (url: string): Promise<number> => {
   }
 };
 
+const adminAlias = async (origin: string): Promise<string> => {
+  try {
+    const response = await request(`${origin}/_admin/content`, {
+      redirect: "manual",
+    });
+    return response.status === 302
+      ? new URL(response.headers.get("location") ?? "", origin).href
+      : "";
+  } catch {
+    return "";
+  }
+};
+
 /** Pages render on demand under dev; a handful at a time keeps the server responsive. */
 const PAGE_CONCURRENCY = 6;
 
@@ -234,6 +247,14 @@ export const smoke = async (options: SmokeOptions): Promise<SmokeCheck[]> => {
     const admin = await status(`${origin}/_emdash/admin`);
     checks.push(
       check("CMS admin", admin === 200 || admin === 302, `HTTP ${admin}`)
+    );
+    const alias = await adminAlias(origin);
+    checks.push(
+      check(
+        "/_admin alias",
+        alias === `${origin}/_emdash/admin/content`,
+        alias || "no redirect"
+      )
     );
   }
   checks.push(...(await imageChecks(origin, paths)));
