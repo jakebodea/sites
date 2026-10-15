@@ -34,17 +34,18 @@ const switchHref = alternates[other] ?? localePath(other, "/");
     <a href={home} class="flex shrink-0 items-center" aria-label={`${site.name}, ${locale === "es" ? "inicio" : "home"}`}>
       <img src="/brand/equityfast.webp" alt="EquityFast" width="1200" height="172" class="h-6 w-auto sm:h-7" />
     </a>
-    <div class="hidden items-center gap-2 border-l border-white/20 pl-4 xl:flex">
-      <span class="text-[9px] leading-tight font-semibold whitespace-nowrap tracking-label text-white/60 uppercase">{t.poweredBy}</span>
+    <div class="hidden shrink-0 items-center gap-2 border-l border-white/20 pl-4 xl:flex">
+      {/* Below 2xl the label would push the Spanish menu into the logo; the lender logo alone still reads. */}
+      <span class="hidden text-[9px] leading-tight font-semibold whitespace-nowrap tracking-label text-white/60 uppercase 2xl:inline">{t.poweredBy}</span>
       <img src="/brand/emc.webp" alt={site.business.legalName} width="640" height="145" loading="lazy" class="h-5 w-auto brightness-0 invert" />
     </div>
-    <nav aria-label={t.mainNav} class="ml-auto hidden items-center gap-1 xl:flex">
+    <nav aria-label={t.mainNav} class="ml-auto hidden shrink-0 items-center gap-1 xl:flex">
       {
         items.map((item) => (
           <a
             href={item.url}
             aria-current={isActive(item.url) ? "page" : undefined}
-            class="relative px-3 py-2 text-xs font-semibold tracking-label text-white/70 uppercase transition-colors hover:text-white aria-[current=page]:text-white aria-[current=page]:after:absolute aria-[current=page]:after:inset-x-3 aria-[current=page]:after:-bottom-0.5 aria-[current=page]:after:h-0.5 aria-[current=page]:after:bg-gold"
+            class="relative px-3 py-2 text-xs font-semibold whitespace-nowrap tracking-label text-white/70 uppercase transition-colors hover:text-white aria-[current=page]:text-white aria-[current=page]:after:absolute aria-[current=page]:after:inset-x-3 aria-[current=page]:after:-bottom-0.5 aria-[current=page]:after:h-0.5 aria-[current=page]:after:bg-gold"
           >
             {item.label}
           </a>
