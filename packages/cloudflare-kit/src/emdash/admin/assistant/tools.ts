@@ -211,7 +211,9 @@ export const mergeBlockFields = (
     }
     return [field, sections];
   });
-  return Object.fromEntries(entries);
+  return Schema.decodeUnknownSync(Schema.JsonObject)(
+    Object.fromEntries(entries)
+  );
 };
 
 /** Merges partial `blocks` updates with the live entry before EmDash sees them. */
