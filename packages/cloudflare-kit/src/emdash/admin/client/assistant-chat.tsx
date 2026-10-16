@@ -25,6 +25,7 @@ import { useRef, useState } from "react";
 import type { SubmitEvent } from "react";
 
 import { AssistantSteps } from "#assistant/assistant-steps.tsx";
+import { isLongConversation } from "#assistant/conversation-size.ts";
 import { failureKind } from "#assistant/errors.ts";
 import type { FailureKind } from "#assistant/errors.ts";
 import { messageSteps, messageText, savedDraft } from "#assistant/steps.ts";
@@ -375,6 +376,21 @@ export const AssistantChat = ({
             </div>
           )}
           <div className="flex flex-col gap-2 p-4 pt-2">
+            {!busy && isLongConversation(messages) && (
+              <Alert>
+                <AlertTitle>This conversation is getting long</AlertTitle>
+                <AlertDescription>
+                  A new one keeps the assistant quick. Drafts it saved stay
+                  saved.
+                </AlertDescription>
+                <AlertAction>
+                  <Button onClick={clear} size="sm" variant="outline">
+                    <SquarePenIcon data-icon="inline-start" />
+                    New conversation
+                  </Button>
+                </AlertAction>
+              </Alert>
+            )}
             {presets.length > 0 && (
               <div className="scroll-fade-x flex scrollbar-none gap-2 overflow-x-auto overscroll-x-contain">
                 {presets.map((preset) => (
