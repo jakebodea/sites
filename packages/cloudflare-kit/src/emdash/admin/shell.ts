@@ -61,6 +61,10 @@ ${DARK} {
   --color-kumo-fill: oklch(1 0 0 / 0.07);
   --admin-card-shadow: 0 0 0 1px oklch(1 0 0 / 0.06);
 }
+/* Kumo's 16px checkbox uses the small radius, which the rounder scale would turn into a circle. */
+html[data-theme] [data-kumo-component=Checkbox] {
+  border-radius: 0.3125rem;
+}
 html[data-theme] .ring-kumo-hairline:has(> .ring-kumo-fill) {
   --tw-ring-color: transparent;
   background: var(--color-kumo-base);
