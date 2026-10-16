@@ -4,7 +4,7 @@ import { fakeText } from "@tanstack/ai/testing";
 import type { Schema } from "effect";
 import { describe, expect, it } from "vitest";
 
-import { streamAgent } from "./agent.ts";
+import { LAST_ROUND_PROMPT, MAX_ITERATIONS, streamAgent } from "./agent.ts";
 import { assistantSkills } from "./skills.ts";
 import { droppedSections, refusal } from "./tools.ts";
 import type { McpConnection, McpTool } from "./tools.ts";
@@ -217,6 +217,44 @@ describe(streamAgent, () => {
     ]);
     expect(result.results.join("")).toContain(
       "This update would remove sections from the page (content: facts, content: service_area)."
+    );
+  });
+
+  it("ends a job that hits the round cap with a summary, not a cut-off step", async () => {
+    const emdash = fakeEmDash({ content_get: '{"title":"About","_rev":"r1"}' });
+    const model = fakeText();
+    const lastRound: { tools: number; prompt: string; options: string }[] = [];
+    model.setResponses([
+      ...Array.from({ length: MAX_ITERATIONS - 1 }, () => ({
+        toolCalls: [
+          { input: { collection: "pages", id: "about" }, name: "content_get" },
+        ],
+      })),
+      ({ request }) => {
+        lastRound.push({
+          options: JSON.stringify(request.modelOptions),
+          prompt: JSON.stringify(request.systemPrompts?.at(-1)),
+          tools: request.tools?.length ?? 0,
+        });
+        return { text: "I read the page but ran out of steps before editing." };
+      },
+    ]);
+
+    const result = await runTurn({
+      adapter: model,
+      mcp: emdash.connection,
+      prompt: "Rewrite every page",
+    });
+
+    expect(lastRound).toStrictEqual([
+      {
+        options: '{"parallel_tool_calls":false}',
+        prompt: JSON.stringify(LAST_ROUND_PROMPT),
+        tools: 0,
+      },
+    ]);
+    expect(result.answer).toBe(
+      "I read the page but ran out of steps before editing."
     );
   });
 
