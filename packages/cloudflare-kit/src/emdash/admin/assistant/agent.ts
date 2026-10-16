@@ -16,6 +16,7 @@ import type {
 import { withSkills } from "@tanstack/ai-skills";
 import type { SkillSource } from "@tanstack/ai-skills";
 
+import { trimOldToolOutput } from "./context.ts";
 import { emdashToolSource } from "./tools.ts";
 import type { McpConnection } from "./tools.ts";
 
@@ -60,8 +61,8 @@ export const streamAgent = (input: {
     // Skills first: they add load_skill, which the last round removes with the rest.
     middleware:
       input.skills === undefined
-        ? [lastRoundSummary]
-        : [withSkills(input.skills), lastRoundSummary],
+        ? [lastRoundSummary, trimOldToolOutput]
+        : [withSkills(input.skills), lastRoundSummary, trimOldToolOutput],
     // One call at a time: two parallel updates to one entry race on its _rev.
     modelOptions: { parallel_tool_calls: false },
     reasoning: input.reasoning,

@@ -12,10 +12,15 @@ import {
   chatParamsFromRequestBody,
   toServerSentEventsResponse,
 } from "@tanstack/ai";
+import type { ModelMessage, UIMessage } from "@tanstack/ai";
 import type { APIRoute } from "astro";
 import { Option, Predicate, Schema } from "effect";
 import cmsAdmin from "virtual:cms-admin-config";
 
+import {
+  conversationSession,
+  withSessionAffinity,
+} from "./assistant/affinity.ts";
 import { streamAgent } from "./assistant/agent.ts";
 import { connectEmDashMcp } from "./assistant/mcp.ts";
 import { offlineAdapter, workersAiAdapter } from "./assistant/model.ts";
@@ -53,6 +58,12 @@ const decodeMediaItem = Schema.decodeUnknownOption(MediaItem);
 
 const isWorkersAi = (value: unknown): value is WorkersAiBinding =>
   Predicate.hasProperty(value, "run") && Predicate.isFunction(value.run);
+
+/** UI messages carry an id; a model message (or none) gives `undefined`. */
+const messageId = (
+  message: UIMessage | ModelMessage | undefined
+): string | undefined =>
+  message !== undefined && "id" in message ? message.id : undefined;
 
 const problem = (status: number, message: string) =>
   Response.json({ error: { message } }, { status });
@@ -93,7 +104,14 @@ const handleAssistantTurn: APIRoute = async (context) => {
     binding === undefined
       ? offlineAdapter(entry?.collection ?? "pages")
       : workersAiAdapter({
-          binding,
+          binding: withSessionAffinity(
+            binding,
+            conversationSession(
+              context.locals.user?.id,
+              messageId(params.messages[0]),
+              params.threadId
+            )
+          ),
           gatewayId,
           model: assistant.model ?? DEFAULT_ASSISTANT_MODEL,
         });
