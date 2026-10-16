@@ -24,10 +24,27 @@ export interface GuideTip {
  */
 export type AssistantPreset = "polish" | "seo" | "alt-text" | "translate";
 
+/**
+ * A skill of the site's own, loaded by the assistant only when a request needs it.
+ * The shared skills (editing entries, page sections, photos, copy editing, search
+ * descriptions) come with the kit; a site adds what is not on its pages, such
+ * as tone preferences or words the client avoids (facts the assistant reads from
+ * the pages themselves). A site skill named like a shared one replaces it.
+ */
+export interface SiteSkill {
+  /** Lowercase letters, digits and hyphens, e.g. "house-style". */
+  readonly name: string;
+  /** When to load it; the assistant sees only this until it does. */
+  readonly description: string;
+  /** The skill itself, Markdown. */
+  readonly instructions: string;
+}
+
 export interface AssistantOptions {
   /**
-   * Workers AI text model with tool calling. Kimi K2.5 is the strongest agentic
-   * model on Workers AI that does not need paid billing.
+   * Workers AI text model with tool calling and image input (`describe_photo`
+   * uses the same model). Default: GLM-5.3-Flash, chosen to fit the daily free
+   * neurons; see `DEFAULT_ASSISTANT_MODEL`.
    */
   readonly model?: string;
   readonly presets?: readonly AssistantPreset[];
@@ -35,6 +52,7 @@ export interface AssistantOptions {
   readonly collections?: readonly string[];
   /** Locales the site publishes, for the `translate` preset, e.g. ["en", "es"]. */
   readonly locales?: readonly string[];
+  readonly skills?: readonly SiteSkill[];
 }
 
 export interface CmsAdminOptions {
@@ -57,7 +75,19 @@ export interface CmsAdminOptions {
 /** EmDash plugin id; also the path segment of the plugin's admin pages and API routes. */
 export const SITE_ADMIN_PLUGIN_ID = "site-admin";
 
-export const DEFAULT_ASSISTANT_MODEL = "@cf/moonshotai/kimi-k2.5";
+/**
+ * GLM-5.3-Flash: tool calling, native image input, a 1M-token context, and prompt
+ * caching, at about a sixth of Kimi K2.6's neurons per token ($0.15 / $0.03 cached /
+ * $0.50 per M input / cached / output). A typical edit turn costs a few hundred
+ * neurons, so dozens fit in the 10,000 free each day. Needs Workers Paid or AI
+ * Gateway credits. Kimi K2.5, the previous default, is deprecated.
+ */
+export const DEFAULT_ASSISTANT_MODEL = "@cf/zai-org/glm-5.3-flash";
+/**
+ * GLM-5.3-Flash thinks at `max` unless told otherwise, and thinking is billed as
+ * output; `high` keeps the agentic quality at a fraction of the tokens.
+ */
+export const ASSISTANT_REASONING = "high";
 export const DEFAULT_PRESETS: readonly AssistantPreset[] = ["polish", "seo"];
 
 export const DEFAULT_GUIDE: readonly GuideTip[] = [
