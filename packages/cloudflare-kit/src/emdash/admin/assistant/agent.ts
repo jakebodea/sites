@@ -29,6 +29,7 @@ export const streamAgent = (input: {
   readonly messages: (UIMessage | ModelMessage)[];
   readonly extraTools?: readonly AnyServerTool[];
   readonly skills?: SkillSource;
+  readonly reasoning?: "low" | "high";
   readonly abortController?: AbortController;
 }): AsyncIterable<StreamChunk> =>
   chat({
@@ -39,6 +40,7 @@ export const streamAgent = (input: {
     mcp: { clients: [emdashToolSource(input.mcp)], connection: "close" },
     messages: input.messages,
     middleware: input.skills === undefined ? [] : [withSkills(input.skills)],
+    reasoning: input.reasoning,
     systemPrompts: [...input.systemPrompts],
     tools: [...(input.extraTools ?? [])],
   });
