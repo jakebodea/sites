@@ -8,10 +8,10 @@
  *   `inset` variant, but EmDash renders `variant="sidebar"`, so the inset frame (sidebar
  *   on a tinted canvas, the page in a rounded card) is drawn here on desktop. The page
  *   column is the wrapper's only `div` after the `aside`.
- * - `.ring-kumo-fill`: Kumo's token utility on the inner surface of a layer card. Cards
- *   read as surfaces with a soft shadow instead of a second ring.
- * - `[data-testid=dashboard-metric]`, `[data-testid=admin-version]`: EmDash's dashboard stat
- *   cards and the version stamp in the sidebar footer.
+ * - `.ring-kumo-hairline:has(> .ring-kumo-fill)`: Kumo's layer card, an outer frame (title)
+ *   around an inner surface, matched by its token utilities. The frame becomes the one card,
+ *   title inside, and the inner surface blends into it.
+ * - `[data-testid=admin-version]`: the version stamp in the sidebar footer.
  * - `main thead`, `main div:has(> table)`, `main footer`: EmDash's list tables and sticky
  *   page footers, by element rather than class.
  * - `#admin-root > astro-island > div`: the sign-in and setup screens have no hooks, so
@@ -59,9 +59,20 @@ ${DARK} {
   --color-kumo-fill: oklch(1 0 0 / 0.07);
   --admin-card-shadow: 0 0 0 1px oklch(1 0 0 / 0.06);
 }
-html[data-theme] .ring-kumo-fill {
-  --tw-ring-color: transparent;
+html[data-theme] .ring-kumo-hairline:has(> .ring-kumo-fill) {
+  background: var(--color-kumo-base);
   box-shadow: var(--admin-card-shadow);
+}
+html[data-theme] .ring-kumo-hairline:has(> .ring-kumo-fill) > :not(.ring-kumo-fill) {
+  margin-block: 0;
+  padding-bottom: 0;
+  background: transparent;
+  color: var(--text-color-kumo-subtle);
+  font-size: 0.875rem;
+}
+html[data-theme] .ring-kumo-hairline > .ring-kumo-fill {
+  --tw-ring-color: transparent;
+  background: transparent;
 }
 ${SHELL} > aside [data-sidebar=content] * {
   border-color: transparent;
@@ -106,9 +117,6 @@ ${BARE} div:has(> h1) + div {
 }
 ${BARE} .uppercase {
   text-transform: none;
-}
-html[data-theme] [data-testid=dashboard-metric] > div:first-child {
-  padding-bottom: 0.625rem;
 }
 @media ${DESKTOP} {
   ${SHELL} {
