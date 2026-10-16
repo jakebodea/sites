@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { adminThemeCss, injectAdminTheme } from "./theme.ts";
+import { adminThemeCss, brandAdminCopy, injectAdminTheme } from "./theme.ts";
 
 const theme = {
   brand: "oklch(0.38 0.05 225)",
@@ -45,5 +45,18 @@ describe(injectAdminTheme, () => {
 
   it("returns a document without a head unchanged", () => {
     expect(injectAdminTheme("<p>partial</p>", "a{b:c}")).toBe("<p>partial</p>");
+  });
+});
+
+describe(brandAdminCopy, () => {
+  it("welcomes a new editor to the client's site instead of EmDash", () => {
+    expect(
+      brandAdminCopy(
+        '<astro-island props="{&quot;7vQyJA&quot;:[1,[[0,&quot;Welcome to EmDash, &quot;]]]}">',
+        'Smith & "Sons"'
+      )
+    ).toBe(
+      '<astro-island props="{&quot;7vQyJA&quot;:[1,[[0,&quot;Welcome to Smith &amp; \\&quot;Sons\\&quot;, &quot;]]]}">'
+    );
   });
 });

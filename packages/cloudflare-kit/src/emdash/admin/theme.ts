@@ -63,3 +63,18 @@ export const injectAdminTheme = (html: string, css: string): string => {
     ? html
     : `${html.slice(0, head)}<style id="site-admin-theme">${css}</style>${html.slice(head)}`;
 };
+
+/**
+ * EmDash's first-sign-in dialog says "Welcome to EmDash". The admin's translations ride in
+ * the shell's HTML (an island's props, JSON inside an HTML attribute), so the client's site
+ * name goes in there; other mentions of EmDash are about the CMS itself and stay.
+ */
+export const brandAdminCopy = (html: string, siteName: string): string => {
+  const name = JSON.stringify(siteName)
+    .slice(1, -1)
+    .replaceAll("&", "&amp;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;");
+  return html.replaceAll("Welcome to EmDash", `Welcome to ${name}`);
+};

@@ -12,6 +12,10 @@
  *   read as surfaces with a soft shadow instead of a second ring.
  * - `[data-testid=dashboard-metric]`, `[data-testid=admin-version]`: EmDash's dashboard stat
  *   cards and the version stamp in the sidebar footer.
+ * - `main thead`, `main div:has(> table)`, `main footer`: EmDash's list tables and sticky
+ *   page footers, by element rather than class.
+ * - `#admin-root > astro-island > div`: the sign-in and setup screens have no hooks, so
+ *   they are matched by shape (logo before the heading, the card after it).
  * If an EmDash upgrade drops a hook, that rule stops matching and the admin falls back
  * to Kumo's default look for that part; nothing breaks.
  */
@@ -21,6 +25,9 @@ const DARK = "html[data-theme][data-mode=dark]";
 /** The left nav's wrapper; the entry editor's settings panel is a second, right-side Sidebar. */
 const SHELL = "html[data-theme] [data-sidebar-wrapper][data-side=left]";
 const PAGE = `${SHELL} > aside + div`;
+/** Screens outside the sidebar layout: sign-in, invite, setup, and the loading screen. */
+const BARE =
+  "html[data-theme] #admin-root > astro-island > div:not([data-sidebar-wrapper])";
 
 /** Kumo's mobile breakpoint: below it the sidebar is an off-canvas drawer. */
 const DESKTOP = "(min-width: 768px)";
@@ -63,14 +70,56 @@ ${SHELL} > aside [data-sidebar=content] * {
 html[data-theme] [data-testid=admin-version] {
   display: none;
 }
+/* Tables: a flat, quiet header row and the same soft edge as cards instead of a border. */
+html[data-theme] main thead > tr {
+  background: transparent;
+}
+html[data-theme] main thead th {
+  color: var(--text-color-kumo-subtle);
+  font-size: 0.8125rem;
+  font-weight: 500;
+}
+html[data-theme] main div:has(> table) {
+  border-color: transparent;
+  box-shadow: var(--admin-card-shadow);
+}
+/* The entry editor's settings panel: a rounded card beside the form, not a bordered column. */
+html[data-theme] [data-sidebar-wrapper][data-side=right] > aside [data-sidebar=content-container] {
+  border-color: transparent;
+  border-radius: var(--radius-xl);
+  box-shadow: var(--admin-card-shadow);
+}
+${BARE} {
+  background: var(--admin-shell);
+}
+${BARE} img:has(+ h1) {
+  height: 3.5rem;
+  margin-bottom: 1rem;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--admin-card-shadow);
+}
+${BARE} div:has(> h1) + div {
+  padding: 2rem;
+  border-color: transparent;
+  border-radius: var(--radius-xl);
+  box-shadow: var(--admin-card-shadow), 0 8px 24px oklch(0 0 0 / 0.04);
+}
+${BARE} .uppercase {
+  text-transform: none;
+}
 html[data-theme] [data-testid=dashboard-metric] > div:first-child {
-  padding-bottom: 0.25rem;
+  padding-bottom: 0.625rem;
 }
 @media ${DESKTOP} {
   ${SHELL} {
     --sidebar-bg: var(--admin-shell);
     --sidebar-active-bg: var(--admin-active);
     background: var(--admin-shell);
+  }
+  /* The current page is a raised pill in the page's own color; hover keeps Kumo's tint. */
+  ${SHELL} [data-sidebar=menu-button][data-active=true] {
+    background: var(--admin-page);
+    box-shadow: var(--admin-card-shadow);
   }
   ${SHELL} :is([data-sidebar=content-container], [data-sidebar=header], [data-sidebar=footer]) {
     border-color: transparent;
@@ -89,6 +138,28 @@ html[data-theme] [data-testid=dashboard-metric] > div:first-child {
     border-color: transparent;
   }
   ${PAGE} > main {
-    padding: 2rem 2.5rem;
+    padding: 1.5rem 2.5rem;
   }
+  /* Sticky footers (media pagination) bleed to the card edge by Kumo's 1.5rem; match the wider gutter. */
+  ${PAGE} > main footer {
+    margin-inline: -2.5rem;
+    padding-inline: 2.5rem;
+  }
+}`;
+
+/**
+ * EmDash's own mark (its 75x75 logo SVG) shows in dialogs such as the first-sign-in welcome;
+ * the site's logo takes its place.
+ */
+export const adminLogoCss = (logo: string): string => `
+html[data-theme] [role=dialog] svg[viewBox="0 0 75 75"] {
+  display: none;
+}
+html[data-theme] [role=dialog] :has(> svg[viewBox="0 0 75 75"])::before {
+  content: "";
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: var(--radius-md);
+  background: url(${JSON.stringify(logo)}) center / cover;
+  box-shadow: var(--admin-card-shadow);
 }`;
