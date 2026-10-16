@@ -180,13 +180,12 @@ export const mergeBlockFields = (
   current: Schema.JsonObject,
   update: Schema.JsonObject
 ): Schema.JsonObject => {
-  const merged: Schema.JsonObject = Object.fromEntries(Object.entries(update));
-  for (const [field, value] of Object.entries(update)) {
+  const entries = Object.entries(update).map(([field, value]) => {
     const next = blockRows(value);
     const currentValue = current[field];
     const before = currentValue === undefined ? null : blockRows(currentValue);
     if (next === null || before === null) {
-      continue;
+      return [field, value];
     }
     const nextByKey = new Map(
       next.flatMap((section) => {
@@ -210,9 +209,9 @@ export const mergeBlockFields = (
         sections.push(section);
       }
     }
-    merged[field] = sections;
-  }
-  return merged;
+    return [field, sections];
+  });
+  return Object.fromEntries(entries);
 };
 
 /** Merges partial `blocks` updates with the live entry before EmDash sees them. */
