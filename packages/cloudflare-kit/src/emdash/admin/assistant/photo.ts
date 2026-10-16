@@ -76,6 +76,8 @@ export const describePhotoTool = (
           role: "user",
         },
       ],
+      // One factual sentence needs no deliberation; thinking is billed as output.
+      reasoning: "low",
       stream: false,
     });
     return text.trim() || "No description.";
