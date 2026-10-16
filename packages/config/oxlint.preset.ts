@@ -127,6 +127,7 @@ export default defineConfig({
   ],
   rules: {
     "local/no-long-dashes": "error",
+    "local/no-public-admin-imports": "error",
     "local/no-transition-colors": "error",
     "local/prefer-shared-controls": "error",
     // Effect modules co-locate a service class with the tagged error classes it fails with.

@@ -113,6 +113,30 @@ const Sections = Schema.Array(
 );
 const decodeSections = Schema.decodeUnknownOption(Sections);
 
+/** A `blocks` array as stored on the entry; keeps fields the strict section schema omits. */
+const sectionKey = (section: Schema.JsonObject): string | null => {
+  const decoded = Schema.decodeUnknownOption(Schema.String)(section._key);
+  return Option.isNone(decoded) ? null : decoded.value;
+};
+
+const blockRows = (value: Schema.Json): readonly Schema.JsonObject[] | null => {
+  if (Option.isNone(decodeSections(value))) {
+    return null;
+  }
+  if (!Array.isArray(value)) {
+    return null;
+  }
+  const rows: Schema.JsonObject[] = [];
+  for (const item of value) {
+    const row = Schema.decodeUnknownOption(Schema.JsonObject)(item);
+    if (Option.isNone(row)) {
+      return null;
+    }
+    rows.push(row.value);
+  }
+  return rows;
+};
+
 /** What `content_get` answers: the entry, its field values under `item.data`. */
 const decodeEntry = Schema.decodeUnknownOption(
   Schema.fromJsonString(
@@ -148,25 +172,62 @@ export const droppedSections = (
     );
   });
 
-const droppedSectionsRefusal = (dropped: readonly string[]): string =>
-  `This update would remove sections from the page (${dropped.join(", ")}). Send the field's complete array: every section from content_get, in order, each with its _type and _key, changing only the ones you mean to. Removing a section is for a person to do in the editor.`;
+/**
+ * EmDash replaces each `blocks` array whole. A model that sends only the section
+ * it changed would drop the rest; merge in every existing section by `_key`.
+ */
+export const mergeBlockFields = (
+  current: Schema.JsonObject,
+  update: Schema.JsonObject
+): Schema.JsonObject => {
+  const entries = Object.entries(update).map(([field, value]) => {
+    const next = blockRows(value);
+    const currentValue = current[field];
+    const before = currentValue === undefined ? null : blockRows(currentValue);
+    if (next === null || before === null) {
+      return [field, value];
+    }
+    const nextByKey = new Map(
+      next.flatMap((section) => {
+        const key = sectionKey(section);
+        return key === null ? [] : [[key, section]];
+      })
+    );
+    const beforeKeys = new Set(
+      before.flatMap((section) => {
+        const key = sectionKey(section);
+        return key === null ? [] : [key];
+      })
+    );
+    const sections: Schema.JsonObject[] = before.map((section) => {
+      const key = sectionKey(section);
+      return key === null ? section : (nextByKey.get(key) ?? section);
+    });
+    for (const section of next) {
+      const key = sectionKey(section);
+      if (key !== null && !beforeKeys.has(key)) {
+        sections.push(section);
+      }
+    }
+    return [field, sections];
+  });
+  return Schema.decodeUnknownSync(Schema.JsonObject)(
+    Object.fromEntries(entries)
+  );
+};
 
-/** Reads the entry an update targets and names the sections it would drop. */
-const sectionsDroppedBy = async (
+/** Merges partial `blocks` updates with the live entry before EmDash sees them. */
+const mergedUpdateData = async (
   args: Schema.JsonObject,
   mcp: McpConnection
-): Promise<readonly string[]> => {
+): Promise<Schema.JsonObject | undefined> => {
   const update = decodeArgs(args.data);
-  // Only an update that sends sections can drop any; plain field edits skip the extra read.
   if (
     Option.isNone(update) ||
-    !Object.values(update.value).some((value) =>
-      Option.isSome(decodeSections(value))
-    )
+    !Object.values(update.value).some((value) => blockRows(value) !== null)
   ) {
-    return [];
+    return Option.isSome(update) ? update.value : undefined;
   }
-  // The same entry the update names: its collection, id or slug, and locale when given.
   const target: Schema.JsonObject = Object.fromEntries(
     ["collection", "id", "locale"].flatMap((key) => {
       const value = args[key];
@@ -175,9 +236,10 @@ const sectionsDroppedBy = async (
   );
   const read = await mcp.callTool("content_get", target);
   const entry = decodeEntry(read.text);
-  return read.isError || Option.isNone(entry)
-    ? []
-    : droppedSections(entry.value.item.data, update.value);
+  if (read.isError || Option.isNone(entry)) {
+    return update.value;
+  }
+  return mergeBlockFields(entry.value.item.data, update.value);
 };
 
 /** One allowlisted MCP tool as a TanStack server tool, with the draft-only guard in front. */
@@ -187,15 +249,15 @@ const guardedTool = (tool: McpTool, mcp: McpConnection): AnyServerTool =>
     inputSchema: withoutForbidden(tool),
     name: tool.name,
   }).server(async (raw) => {
-    const args = Option.getOrElse(decodeArgs(raw), () => ({}));
+    let args = Option.getOrElse(decodeArgs(raw), () => ({}));
     const refused = refusal(tool.name, args);
     if (refused !== undefined) {
       return { error: refused };
     }
     if (tool.name === "content_update") {
-      const dropped = await sectionsDroppedBy(args, mcp);
-      if (dropped.length > 0) {
-        return { error: droppedSectionsRefusal(dropped) };
+      const data = await mergedUpdateData(args, mcp);
+      if (data !== undefined) {
+        args = { ...args, data };
       }
     }
     const result = await mcp.callTool(tool.name, args);

@@ -3,6 +3,7 @@ import { describe, test } from "vitest";
 
 import {
   noLongDashesRule,
+  noPublicAdminImportsRule,
   noTransitionColorsRule,
   preferSharedControlsRule,
 } from "./oxlint-plugin-local.ts";
@@ -55,6 +56,27 @@ tester.run("prefer-shared-controls", preferSharedControlsRule, {
     {
       code: `<button type="button" aria-expanded={open} />`,
       filename: "/repo/packages/site-ui/src/mobile-menu.tsx",
+    },
+  ],
+});
+
+tester.run("no-public-admin-imports", noPublicAdminImportsRule, {
+  invalid: [
+    {
+      code: `import { Assistant } from "@jakebodea/cloudflare-kit/emdash/admin/client";`,
+      errors: [{ messageId: "adminClient" }],
+      filename: "/repo/apps/example/src/islands/bad.tsx",
+    },
+    {
+      code: `import assistantCss from "#assistant/assistant.css";`,
+      errors: [{ messageId: "adminClient" }],
+      filename: "/repo/apps/example/src/islands/bad.tsx",
+    },
+  ],
+  valid: [
+    {
+      code: `import { site } from "../site.config.ts";`,
+      filename: "/repo/apps/example/src/islands/ok.tsx",
     },
   ],
 });

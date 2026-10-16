@@ -83,6 +83,31 @@ const check = (name: string, ok: boolean, detail: string): SmokeCheck => ({
 const TITLE = /<title>[^<]+<\/title>/u;
 /** Every page opens with its headline; a page without one rendered no content (e.g. an unseeded CMS). */
 const H1 = /<h1[\s>]/u;
+/** Layout chrome can pass with an empty main; real pages have copy in `<main>`. */
+const MIN_MAIN_TEXT = 48;
+
+const visibleText = (html: string): string => {
+  let text = html;
+  text = text.replaceAll(/<script\b[^>]*>[\s\S]*?<\/script>/giu, " ");
+  text = text.replaceAll(/<style\b[^>]*>[\s\S]*?<\/style>/giu, " ");
+  return text
+    .replaceAll(/<[^>]{0,200}>/gu, " ")
+    .replaceAll(/\s+/gu, " ")
+    .trim();
+};
+
+const mainInnerHtml = (html: string): string => {
+  const open = /<main\b[^>]*>/iu.exec(html);
+  if (open === null || open.index === undefined) {
+    return "";
+  }
+  const start = open.index + open[0].length;
+  const close = html.indexOf("</main>", start);
+  return close === -1 ? "" : html.slice(start, close);
+};
+
+const mainTextLength = (html: string): number =>
+  visibleText(mainInnerHtml(html)).length;
 
 export interface PageVerdict {
   readonly ok: boolean;
@@ -97,6 +122,13 @@ export const pageVerdict = (code: number, html: string): PageVerdict => {
   if (!H1.test(html)) {
     return {
       detail: `HTTP ${code}, no <h1>: page rendered no content`,
+      ok: false,
+    };
+  }
+  const mainChars = mainTextLength(html);
+  if (mainChars < MIN_MAIN_TEXT) {
+    return {
+      detail: `HTTP ${code}, main has ${mainChars} visible characters (need ${MIN_MAIN_TEXT})`,
       ok: false,
     };
   }
