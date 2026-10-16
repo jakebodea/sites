@@ -78,6 +78,7 @@ const TITLES = new Map<string, Titles>([
     "describe_photo",
     ["Looking at a photo", "Looked at a photo", "Couldn't look at a photo"],
   ],
+  ["load_skill", ["Reading up", "Read up", "Couldn't read up"]],
   [
     "media_get",
     ["Looking up a photo", "Looked up a photo", "Couldn't look up a photo"],
@@ -133,10 +134,13 @@ const STATUS_INDEX = { done: 1, failed: 2, running: 0 } as const;
 export const toolTitle = (name: string, status: StepStatus): string =>
   TITLES.get(name)?.[STATUS_INDEX[status]] ?? name;
 
-/** "pages / about", or a search query in quotes: enough to tell two calls apart. */
+/** "pages / about", a search query in quotes, or a skill in words: enough to tell two calls apart. */
 export const toolTarget = (args: ToolArgs): string | undefined => {
   if (args.query !== undefined) {
     return `"${args.query}"`;
+  }
+  if (args.name !== undefined) {
+    return args.name.replaceAll("-", " ");
   }
   const parts = [args.collection, args.slug ?? args.id].filter(
     (part) => part !== undefined

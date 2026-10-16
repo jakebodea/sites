@@ -53,6 +53,7 @@
     "@tanstack/ai-client": "catalog:",
     "@tanstack/ai-cloudflare": "catalog:",
     "@tanstack/ai-react": "catalog:",
+    "@tanstack/ai-skills": "0.1.19",
     "class-variance-authority": "catalog:",
     "clsx": "catalog:",
     "effect": "catalog:",

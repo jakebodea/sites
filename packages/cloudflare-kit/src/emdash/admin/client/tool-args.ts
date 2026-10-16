@@ -10,6 +10,8 @@ export interface ToolArgs {
   readonly id?: string;
   readonly slug?: string;
   readonly query?: string;
+  /** `load_skill`'s skill name. */
+  readonly name?: string;
 }
 
 type Json = string | number | boolean | null | Json[] | { [key: string]: Json };
@@ -36,6 +38,7 @@ export const readToolArgs = (json: string): ToolArgs => {
   return {
     collection: field(value, "collection"),
     id: field(value, "id"),
+    name: field(value, "name"),
     query: field(value, "query"),
     slug: field(value, "slug"),
   };

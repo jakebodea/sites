@@ -28,8 +28,13 @@ import {
   systemPrompt,
 } from "./assistant/prompts.ts";
 import type { EntryRef } from "./assistant/prompts.ts";
+import { assistantSkills } from "./assistant/skills.ts";
 import { Preset } from "./interactions.ts";
-import { DEFAULT_ASSISTANT_MODEL, DEFAULT_PRESETS } from "./options.ts";
+import {
+  ASSISTANT_REASONING,
+  DEFAULT_ASSISTANT_MODEL,
+  DEFAULT_PRESETS,
+} from "./options.ts";
 
 export const prerender = false;
 
@@ -131,6 +136,8 @@ const handleAssistantTurn: APIRoute = async (context) => {
       extraTools,
       mcp,
       messages: params.messages,
+      reasoning: ASSISTANT_REASONING,
+      skills: assistantSkills(assistant.skills),
       systemPrompts,
     }),
     { abortController, headers: { "Cache-Control": "private, no-store" } }
