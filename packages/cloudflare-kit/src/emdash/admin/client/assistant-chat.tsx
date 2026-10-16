@@ -25,6 +25,8 @@ import { useRef, useState } from "react";
 import type { SubmitEvent } from "react";
 
 import { AssistantSteps } from "#assistant/assistant-steps.tsx";
+import { failureKind } from "#assistant/errors.ts";
+import type { FailureKind } from "#assistant/errors.ts";
 import { messageSteps, messageText, savedDraft } from "#assistant/steps.ts";
 import {
   Alert,
@@ -151,6 +153,59 @@ const STARTERS = [
   { icon: <PhoneIcon />, prompt: "Update our phone number everywhere to " },
   { icon: <ImageIcon />, prompt: "Write alt text for photos that have none" },
 ] as const;
+
+/** What went wrong, in the person's terms, with the one action that helps. */
+const FAILURES = {
+  other: {
+    action: "retry",
+    description:
+      "Nothing changed after the problem. Try again in a minute, or with a smaller request.",
+    title: "The assistant could not finish",
+  },
+  "rate-limit": {
+    action: "retry",
+    description:
+      "It has had a lot of requests in the last few minutes. Wait a few minutes, then try again.",
+    title: "The assistant is busy",
+  },
+  "too-long": {
+    action: "restart",
+    description:
+      "Start a new conversation and say what is left to do. Drafts it already saved stay saved.",
+    title: "This conversation is too long",
+  },
+} as const;
+
+const FailureNotice = ({
+  kind,
+  onRetry,
+  onRestart,
+}: {
+  readonly kind: FailureKind;
+  readonly onRetry: () => void;
+  readonly onRestart: () => void;
+}) => {
+  const failure = FAILURES[kind];
+  return (
+    <Alert variant="destructive">
+      <AlertTitle>{failure.title}</AlertTitle>
+      <AlertDescription>{failure.description}</AlertDescription>
+      <AlertAction>
+        {failure.action === "retry" ? (
+          <Button onClick={onRetry} size="sm" variant="outline">
+            <RotateCwIcon data-icon="inline-start" />
+            Retry
+          </Button>
+        ) : (
+          <Button onClick={onRestart} size="sm" variant="outline">
+            <SquarePenIcon data-icon="inline-start" />
+            New conversation
+          </Button>
+        )}
+      </AlertAction>
+    </Alert>
+  );
+};
 
 const presetsFor = (config: PanelConfig, entry: OpenEntry | undefined) =>
   entry !== undefined &&
@@ -304,27 +359,13 @@ export const AssistantChat = ({
                       )}
                     {error !== undefined && (
                       <MessageScrollerItem messageId="error">
-                        <Alert variant="destructive">
-                          <AlertTitle>
-                            The assistant could not finish
-                          </AlertTitle>
-                          <AlertDescription>
-                            Nothing changed after the problem. Try again in a
-                            minute, or with a smaller request.
-                          </AlertDescription>
-                          <AlertAction>
-                            <Button
-                              onClick={() => {
-                                void reload();
-                              }}
-                              size="sm"
-                              variant="outline"
-                            >
-                              <RotateCwIcon data-icon="inline-start" />
-                              Retry
-                            </Button>
-                          </AlertAction>
-                        </Alert>
+                        <FailureNotice
+                          kind={failureKind(error.message)}
+                          onRestart={clear}
+                          onRetry={() => {
+                            void reload();
+                          }}
+                        />
                       </MessageScrollerItem>
                     )}
                   </MessageScrollerContent>
