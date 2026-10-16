@@ -60,12 +60,11 @@ const run = async (): Promise<void> => {
       `${site}: run ASTRO_STANDALONE_BUILD=1 bun run build in apps/${site} first`
     );
   }
-  const configModule = (await import(
+  const configModule = await import(
     pathToFileURL(path.join(directory, "site.config.ts")).href
-  )) as Schema.Json;
-  const { site: siteConfig } = Schema.decodeUnknownSync(SiteConfigModule)(
-    configModule
   );
+  const { site: siteConfig } =
+    Schema.decodeUnknownSync(SiteConfigModule)(configModule);
   writeBuildInputs(directory, {
     contentDigest: "seed",
     seedMediaBase: siteConfig.localSeedMediaBase,

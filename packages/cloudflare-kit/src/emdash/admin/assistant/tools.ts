@@ -114,6 +114,11 @@ const Sections = Schema.Array(
 const decodeSections = Schema.decodeUnknownOption(Sections);
 
 /** A `blocks` array as stored on the entry; keeps fields the strict section schema omits. */
+const sectionKey = (section: Schema.JsonObject): string | null => {
+  const decoded = Schema.decodeUnknownOption(Schema.String)(section._key);
+  return Option.isNone(decoded) ? null : decoded.value;
+};
+
 const blockRows = (value: Schema.Json): readonly Schema.JsonObject[] | null => {
   if (Option.isNone(decodeSections(value))) {
     return null;
@@ -175,31 +180,39 @@ export const mergeBlockFields = (
   current: Schema.JsonObject,
   update: Schema.JsonObject
 ): Schema.JsonObject => {
-  const merged: Record<string, Schema.Json> = Object.assign({}, update);
+  const merged: Record<string, Schema.Json> = { ...update };
   for (const [field, value] of Object.entries(update)) {
     const next = blockRows(value);
     const currentValue = current[field];
-    const before =
-      currentValue === undefined ? null : blockRows(currentValue);
+    const before = currentValue === undefined ? null : blockRows(currentValue);
     if (next === null || before === null) {
       continue;
     }
     const nextByKey = new Map(
-      next.map((section) => [String(section._key), section])
+      next.flatMap((section) => {
+        const key = sectionKey(section);
+        return key === null ? [] : [[key, section]];
+      })
     );
-    const beforeKeys = new Set(before.map((section) => String(section._key)));
-    const sections: Schema.JsonObject[] = before.map(
-      (section) => nextByKey.get(String(section._key)) ?? section
+    const beforeKeys = new Set(
+      before.flatMap((section) => {
+        const key = sectionKey(section);
+        return key === null ? [] : [key];
+      })
     );
+    const sections: Schema.JsonObject[] = before.map((section) => {
+      const key = sectionKey(section);
+      return key === null ? section : (nextByKey.get(key) ?? section);
+    });
     for (const section of next) {
-      const key = String(section._key);
-      if (!beforeKeys.has(key)) {
+      const key = sectionKey(section);
+      if (key !== null && !beforeKeys.has(key)) {
         sections.push(section);
       }
     }
     merged[field] = sections;
   }
-  return merged as Schema.JsonObject;
+  return merged;
 };
 
 /** Merges partial `blocks` updates with the live entry before EmDash sees them. */

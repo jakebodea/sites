@@ -36,7 +36,7 @@ export const infrastructureLine = (content: string): string | null => {
   const block = content.slice(start, end);
   const line = block
     .split("\n")
-    .map((text) => text.replace(/^\s*\*\s?/, "").trim())
+    .map((text) => text.replace(/^\s*\*\s?/u, "").trim())
     .find((text) => text.includes("infrastructure"));
   if (line === undefined) {
     return null;
@@ -68,8 +68,7 @@ export const findScaffoldViolations = (
   if (headerMatchesSite(line, identity)) {
     return [];
   }
-  const lineNumber =
-    alchemy.slice(0, alchemy.indexOf(line)).split("\n").length;
+  const lineNumber = alchemy.slice(0, alchemy.indexOf(line)).split("\n").length;
   return [
     {
       line: lineNumber,
@@ -79,7 +78,9 @@ export const findScaffoldViolations = (
   ];
 };
 
-export const checkScaffold = async (root: string): Promise<ScaffoldViolation[]> => {
+export const checkScaffold = async (
+  root: string
+): Promise<ScaffoldViolation[]> => {
   const appsDir = path.join(root, "apps");
   const sites: string[] = [];
   for (const entry of readdirSync(appsDir, { withFileTypes: true })) {

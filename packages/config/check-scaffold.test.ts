@@ -42,7 +42,9 @@ describe(findScaffoldViolations, () => {
     const alchemy = `/**
  * Access Electric infrastructure:
  */`;
-    expect(findScaffoldViolations("apps/equityfast", config, alchemy)).toStrictEqual([
+    expect(
+      findScaffoldViolations("apps/equityfast", config, alchemy)
+    ).toStrictEqual([
       {
         line: 2,
         path: "apps/equityfast/alchemy.run.ts",

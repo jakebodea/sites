@@ -90,7 +90,10 @@ const visibleText = (html: string): string => {
   let text = html;
   text = text.replaceAll(/<script\b[^>]*>[\s\S]*?<\/script>/giu, " ");
   text = text.replaceAll(/<style\b[^>]*>[\s\S]*?<\/style>/giu, " ");
-  return text.replaceAll(/<[^>]{0,200}>/gu, " ").replaceAll(/\s+/gu, " ").trim();
+  return text
+    .replaceAll(/<[^>]{0,200}>/gu, " ")
+    .replaceAll(/\s+/gu, " ")
+    .trim();
 };
 
 const mainInnerHtml = (html: string): string => {

@@ -59,7 +59,7 @@ describe(pageVerdict, () => {
       pageVerdict(
         200,
         page(
-          "<main><h1 class=\"x\">Hi</h1><p>Enough body copy for smoke to treat the page as rendered.</p></main>"
+          '<main><h1 class="x">Hi</h1><p>Enough body copy for smoke to treat the page as rendered.</p></main>'
         )
       )
     ).toStrictEqual({

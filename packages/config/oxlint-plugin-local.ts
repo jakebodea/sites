@@ -9,6 +9,7 @@
  */
 import { definePlugin, defineRule } from "@oxlint/plugins";
 import type { ESTree } from "@oxlint/plugins";
+import { Predicate } from "effect";
 
 /** Em dash and en dash. A hyphen, comma, colon, or parentheses read better in UI copy. */
 export const LONG_DASH = /[–—]/u;
@@ -227,7 +228,7 @@ export const noPublicAdminImportsRule = defineRule({
           return;
         }
         const literal = node.source.value;
-        if (typeof literal !== "string") {
+        if (!Predicate.isString(literal)) {
           return;
         }
         if (ADMIN_CLIENT_IMPORT.test(literal)) {
