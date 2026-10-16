@@ -6,7 +6,7 @@ import { describe, expect, it } from "vitest";
 
 import { streamAgent } from "./agent.ts";
 import { assistantSkills } from "./skills.ts";
-import { refusal } from "./tools.ts";
+import { droppedSections, refusal } from "./tools.ts";
 import type { McpConnection, McpTool } from "./tools.ts";
 
 const schema = (properties: Record<string, JSONSchema>): JSONSchema => ({
@@ -167,6 +167,59 @@ describe(streamAgent, () => {
     );
   });
 
+  it("refuses an update that would drop the page's other sections", async () => {
+    const page = {
+      item: {
+        data: {
+          content: [
+            { _key: "story", _type: "rich_text", text: "Our superintendants" },
+            { _key: "facts", _type: "facts" },
+            { _key: "area", _type: "service_area" },
+          ],
+        },
+      },
+    };
+    const emdash = fakeEmDash({ content_get: JSON.stringify(page) });
+    const model = fakeText();
+    model.setResponses([
+      {
+        toolCalls: [
+          {
+            input: {
+              _rev: "r1",
+              collection: "pages",
+              data: {
+                content: [
+                  {
+                    _key: "story",
+                    _type: "rich_text",
+                    text: "Our superintendents",
+                  },
+                ],
+              },
+              id: "about",
+            },
+            name: "content_update",
+          },
+        ],
+      },
+      { text: "I will send the whole page." },
+    ]);
+
+    const result = await runTurn({
+      adapter: model,
+      mcp: emdash.connection,
+      prompt: "Fix the typo on About",
+    });
+
+    expect(emdash.calls.map((call) => call.name)).toStrictEqual([
+      "content_get",
+    ]);
+    expect(result.results.join("")).toContain(
+      "This update would remove sections from the page (content: facts, content: service_area)."
+    );
+  });
+
   it("never forwards a publish to EmDash", async () => {
     const emdash = fakeEmDash({});
     const model = fakeText();
@@ -197,6 +250,38 @@ describe(streamAgent, () => {
 
 const draftsOnly = (argument: string) =>
   `The assistant saves drafts only; remove "${argument}" and let the editor publish.`;
+
+describe(droppedSections, () => {
+  const current = {
+    content: [
+      { _key: "a", _type: "hero" },
+      { _key: "b", _type: "cta_band" },
+    ],
+    title: "Home",
+  };
+
+  it("names each section a new array leaves out", () => {
+    expect(
+      droppedSections(current, { content: [{ _key: "a", _type: "hero" }] })
+    ).toStrictEqual(["content: cta_band"]);
+  });
+
+  it("lets through a complete, reordered, or extended array and plain fields", () => {
+    expect(
+      droppedSections(current, {
+        content: [
+          { _key: "b", _type: "cta_band" },
+          { _key: "new", _type: "rich_text" },
+          { _key: "a", _type: "hero" },
+        ],
+        title: "Welcome",
+      })
+    ).toStrictEqual([]);
+    expect(
+      droppedSections(current, { content: [{ _key: "a" }] })
+    ).toStrictEqual(["content: cta_band"]);
+  });
+});
 
 describe(refusal, () => {
   it.each([
