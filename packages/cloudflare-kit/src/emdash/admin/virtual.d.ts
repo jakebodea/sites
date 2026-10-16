@@ -21,3 +21,9 @@ declare module "*.css?inline" {
   const css: string;
   export default css;
 }
+
+declare module "*.md?raw" {
+  /** The file's text, bundled at build time. */
+  const text: string;
+  export default text;
+}

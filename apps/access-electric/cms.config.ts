@@ -4,10 +4,29 @@
  */
 import { defineCmsAdmin } from "@jakebodea/cloudflare-kit/emdash/admin";
 
+import { site } from "./site.config.ts";
+
+/** What the assistant may state about the business; only facts already published in site.config.ts. */
+const businessFacts = [
+  `# ${site.name}`,
+  site.description,
+  `- Founded: ${site.business.foundingYear}`,
+  `- Service area: ${site.business.areaServed.join("; ")}`,
+  "",
+  "Use these facts as written. Anything not listed here (licenses, phone numbers, prices, client names, awards) must come from the site's own pages or from the person; ask rather than guess.",
+].join("\n");
+
 export const cms = defineCmsAdmin({
   assistant: {
     collections: ["home", "pages", "projects", "categories"],
     presets: ["polish", "seo", "alt-text"],
+    skills: [
+      {
+        description: `Verified facts about ${site.shortName}: who they are, when they started, and where they work. Load before writing or checking any claim about the business.`,
+        instructions: businessFacts,
+        name: "business-facts",
+      },
+    ],
   },
   favicon: "/favicon.png",
   guide: [

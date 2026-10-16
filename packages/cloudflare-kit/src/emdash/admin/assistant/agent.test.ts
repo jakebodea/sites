@@ -5,6 +5,7 @@ import type { Schema } from "effect";
 import { describe, expect, it } from "vitest";
 
 import { streamAgent } from "./agent.ts";
+import { assistantSkills } from "./skills.ts";
 import { refusal } from "./tools.ts";
 import type { McpConnection, McpTool } from "./tools.ts";
 
@@ -65,6 +66,12 @@ const runTurn = async (
         chunk.type === EventType.TEXT_MESSAGE_CONTENT ? [chunk.delta] : []
       )
       .join(""),
+    // Serialized: a result may be text or content parts; the tests look for phrases in either.
+    results: chunks.flatMap((chunk) =>
+      chunk.type === EventType.TOOL_CALL_RESULT
+        ? [JSON.stringify(chunk.content)]
+        : []
+    ),
     tools: chunks.flatMap((chunk) =>
       chunk.type === EventType.TOOL_CALL_START ? [chunk.toolCallName] : []
     ),
@@ -98,10 +105,10 @@ describe(streamAgent, () => {
       prompt: "Shorten the About intro",
     });
 
-    expect(result).toStrictEqual({
-      answer: "I shortened the About intro and saved it as a draft.",
-      tools: ["content_get", "content_update"],
-    });
+    expect(result.answer).toBe(
+      "I shortened the About intro and saved it as a draft."
+    );
+    expect(result.tools).toStrictEqual(["content_get", "content_update"]);
     expect(emdash.calls).toStrictEqual([
       { args: { collection: "pages", id: "about" }, name: "content_get" },
       {
@@ -109,6 +116,53 @@ describe(streamAgent, () => {
         name: "content_update",
       },
     ]);
+  });
+
+  it("loads a skill's instructions when the model asks for one", async () => {
+    const emdash = fakeEmDash({});
+    const model = fakeText();
+    model.setResponses([
+      { toolCalls: [{ input: { name: "page-sections" }, name: "load_skill" }] },
+      { text: "Which section should the new banner go after?" },
+    ]);
+
+    const result = await runTurn({
+      adapter: model,
+      mcp: emdash.connection,
+      prompt: "Add a banner to the home page",
+      skills: assistantSkills(),
+    });
+
+    expect(result.tools).toStrictEqual(["load_skill"]);
+    expect(result.results.join("")).toContain(
+      "Never change or drop an existing `_key`"
+    );
+    expect(result.answer).toBe("Which section should the new banner go after?");
+  });
+
+  it("offers a site's own skill beside the shared ones", async () => {
+    const model = fakeText();
+    model.setResponses([
+      {
+        toolCalls: [{ input: { name: "business-facts" }, name: "load_skill" }],
+      },
+      { text: "Founded in 2001." },
+    ]);
+
+    const result = await runTurn({
+      adapter: model,
+      mcp: fakeEmDash({}).connection,
+      prompt: "When were we founded?",
+      skills: assistantSkills([
+        {
+          description: "Verified facts about the business.",
+          instructions: "Founded: 2001.",
+          name: "business-facts",
+        },
+      ]),
+    });
+
+    expect(result.results.join("")).toContain("Founded: 2001.");
   });
 
   it("never forwards a publish to EmDash", async () => {

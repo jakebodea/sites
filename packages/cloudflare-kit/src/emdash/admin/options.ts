@@ -24,6 +24,21 @@ export interface GuideTip {
  */
 export type AssistantPreset = "polish" | "seo" | "alt-text" | "translate";
 
+/**
+ * A skill of the site's own, loaded by the assistant only when a request needs it.
+ * The shared skills (editing entries, page sections, photos, copy editing, search
+ * descriptions) come with the kit; a site adds what only it knows, such as its
+ * business facts. A site skill named like a shared one replaces it.
+ */
+export interface SiteSkill {
+  /** Lowercase letters, digits and hyphens, e.g. "business-facts". */
+  readonly name: string;
+  /** When to load it; the assistant sees only this until it does. */
+  readonly description: string;
+  /** The skill itself, Markdown. */
+  readonly instructions: string;
+}
+
 export interface AssistantOptions {
   /**
    * Workers AI text model with tool calling. Kimi K2.5 is the strongest agentic
@@ -35,6 +50,7 @@ export interface AssistantOptions {
   readonly collections?: readonly string[];
   /** Locales the site publishes, for the `translate` preset, e.g. ["en", "es"]. */
   readonly locales?: readonly string[];
+  readonly skills?: readonly SiteSkill[];
 }
 
 export interface CmsAdminOptions {

@@ -78,6 +78,31 @@ describe(messageSteps, () => {
       { status: "failed", title: "Couldn't search the site" },
     ]);
   });
+
+  it("names a loaded skill in words", () => {
+    const loaded: UIMessage = {
+      id: "m3",
+      parts: [
+        {
+          arguments: '{"name":"business-facts"}',
+          id: "call-4",
+          name: "load_skill",
+          state: "input-complete",
+          type: "tool-call",
+        },
+        {
+          content: '{"skill":"business-facts","content":"Founded: 2001."}',
+          state: "complete",
+          toolCallId: "call-4",
+          type: "tool-result",
+        },
+      ],
+      role: "assistant",
+    };
+    expect(messageSteps(loaded, false)).toMatchObject([
+      { status: "done", target: "business facts", title: "Read up" },
+    ]);
+  });
 });
 
 describe(messageText, () => {
