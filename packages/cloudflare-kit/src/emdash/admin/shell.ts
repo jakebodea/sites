@@ -120,9 +120,12 @@ ${BARE} .uppercase {
 }
 @media ${DESKTOP} {
   ${SHELL} {
+    background: var(--admin-shell);
+  }
+  /* On the aside, not the wrapper: EmDash sets --sidebar-bg inline on the wrapper. */
+  ${SHELL} > aside {
     --sidebar-bg: var(--admin-shell);
     --sidebar-active-bg: var(--admin-active);
-    background: var(--admin-shell);
   }
   /* The current page is a raised pill in the page's own color; hover keeps Kumo's tint. */
   ${SHELL} [data-sidebar=menu-button][data-active=true] {
