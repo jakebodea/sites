@@ -211,10 +211,45 @@ export const noLongDashesRule = defineRule({
   },
 });
 
+const PUBLIC_SITE_FILES = /(?:^|\/)apps\/[^/]+\/src\//u;
+const ADMIN_CLIENT_IMPORT =
+  /(?:@jakebodea\/cloudflare-kit\/emdash\/admin\/client|#assistant\/|assistant\.css)/u;
+
+export const noPublicAdminImportsRule = defineRule({
+  create(context) {
+    const filename = context.filename.replaceAll("\\", "/");
+    if (!PUBLIC_SITE_FILES.test(filename)) {
+      return {};
+    }
+    return {
+      ImportDeclaration(node) {
+        const source =
+          node.source.type === "Literal" ? String(node.source.value) : "";
+        if (ADMIN_CLIENT_IMPORT.test(source)) {
+          context.report({ messageId: "adminClient", node: node.source });
+        }
+      },
+    };
+  },
+  meta: {
+    docs: {
+      description:
+        "Site pages must not import the CMS admin client or assistant CSS; those mount only in the admin bundle.",
+    },
+    messages: {
+      adminClient:
+        "Do not import the CMS admin client or assistant CSS from site code. Admin UI lives in cloudflare-kit's admin entry.",
+    },
+    schema: [],
+    type: "problem",
+  },
+});
+
 export default definePlugin({
   meta: { name: "local" },
   rules: {
     "no-long-dashes": noLongDashesRule,
+    "no-public-admin-imports": noPublicAdminImportsRule,
     "no-transition-colors": noTransitionColorsRule,
     "prefer-shared-controls": preferSharedControlsRule,
   },

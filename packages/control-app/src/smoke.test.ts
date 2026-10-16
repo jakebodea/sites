@@ -56,10 +56,24 @@ const page = (body: string): string =>
 describe(pageVerdict, () => {
   it("passes a full page with a headline", () => {
     expect(
-      pageVerdict(200, page('<main><h1 class="x">Hi</h1></main>'))
+      pageVerdict(
+        200,
+        page(
+          "<main><h1 class=\"x\">Hi</h1><p>Enough body copy for smoke to treat the page as rendered.</p></main>"
+        )
+      )
     ).toStrictEqual({
       detail: "HTTP 200",
       ok: true,
+    });
+  });
+
+  it("fails when main has a headline but almost no body copy", () => {
+    expect(
+      pageVerdict(200, page("<main><h1>Hi</h1><p>Short</p></main>"))
+    ).toStrictEqual({
+      detail: "HTTP 200, main has 8 visible characters (need 48)",
+      ok: false,
     });
   });
 
@@ -89,7 +103,12 @@ describe(pageVerdict, () => {
 
   it("fails a complete page served with an error status", () => {
     expect(
-      pageVerdict(500, page("<h1>Something went wrong</h1>"))
+      pageVerdict(
+        500,
+        page(
+          "<main><h1>Something went wrong</h1><p>Enough body copy for smoke to treat the page as rendered.</p></main>"
+        )
+      )
     ).toStrictEqual({
       detail: "HTTP 500",
       ok: false,

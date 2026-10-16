@@ -74,7 +74,7 @@ Hosting, CMS login, email, analytics, monitoring, backups, secrets, and stages a
 
 ## Style
 
-Ultracite (oxlint + oxfmt) is strict and the source of truth: see `.agents/skills/ultracite`. Oxlint cannot read Astro template markup, so `bun run check:markup` (part of `check`) covers it and CSS: no em/en dashes in copy, no eyebrows (no tracked-caps label over a headline), and a solid top bar (blur is fine elsewhere, never on the sticky header). Project skills live in `.agents/skills/` (symlinked into `.claude/skills/`): `new-site`, `add-section`, `control-app`, `seo`, `deploy`, `proof`. Prefer Effect Schema at every I/O boundary, `Data`/`Schema.TaggedError` for failures, small focused modules, and comments that explain why, not what.
+Ultracite (oxlint + oxfmt) is strict and the source of truth: see `.agents/skills/ultracite`. Oxlint cannot read Astro template markup, so `bun run check:markup` (part of `check`) covers it and CSS: no em/en dashes in copy, no eyebrows (no tracked-caps label over a headline), and a solid top bar (blur is fine elsewhere, never on the sticky header). Project skills live in `.agents/skills/` (symlinked into `.claude/skills/`): `new-site`, `add-section`, `control-app`, `verify`, `seo`, `deploy`, `proof`. Prefer Effect Schema at every I/O boundary, `Data`/`Schema.TaggedError` for failures, small focused modules, and comments that explain why, not what.
 
 <!-- BEGIN:turborepo-agent-rules -->
 

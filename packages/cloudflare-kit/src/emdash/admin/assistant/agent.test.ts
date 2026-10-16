@@ -6,7 +6,7 @@ import { describe, expect, it } from "vitest";
 
 import { LAST_ROUND_PROMPT, MAX_ITERATIONS, streamAgent } from "./agent.ts";
 import { assistantSkills } from "./skills.ts";
-import { droppedSections, refusal } from "./tools.ts";
+import { droppedSections, mergeBlockFields, refusal } from "./tools.ts";
 import type { McpConnection, McpTool } from "./tools.ts";
 
 const schema = (properties: Record<string, JSONSchema>): JSONSchema => ({
@@ -167,7 +167,7 @@ describe(streamAgent, () => {
     );
   });
 
-  it("refuses an update that would drop the page's other sections", async () => {
+  it("merges a partial section update so the rest of the page stays", async () => {
     const page = {
       item: {
         data: {
@@ -212,12 +212,32 @@ describe(streamAgent, () => {
       prompt: "Fix the typo on About",
     });
 
-    expect(emdash.calls.map((call) => call.name)).toStrictEqual([
-      "content_get",
+    expect(emdash.calls).toStrictEqual([
+      {
+        args: { collection: "pages", id: "about" },
+        name: "content_get",
+      },
+      {
+        args: {
+          _rev: "r1",
+          collection: "pages",
+          data: {
+            content: [
+              {
+                _key: "story",
+                _type: "rich_text",
+                text: "Our superintendents",
+              },
+              { _key: "facts", _type: "facts" },
+              { _key: "area", _type: "service_area" },
+            ],
+          },
+          id: "about",
+        },
+        name: "content_update",
+      },
     ]);
-    expect(result.results.join("")).toContain(
-      "This update would remove sections from the page (content: facts, content: service_area)."
-    );
+    expect(result.tools).toStrictEqual(["content_update"]);
   });
 
   it("ends a job that hits the round cap with a summary, not a cut-off step", async () => {
@@ -288,6 +308,29 @@ describe(streamAgent, () => {
 
 const draftsOnly = (argument: string) =>
   `The assistant saves drafts only; remove "${argument}" and let the editor publish.`;
+
+describe(mergeBlockFields, () => {
+  it("fills in sections the model omitted", () => {
+    expect(
+      mergeBlockFields(
+        {
+          content: [
+            { _key: "a", _type: "hero" },
+            { _key: "b", _type: "cta_band" },
+          ],
+        },
+        {
+          content: [{ _key: "a", _type: "hero", headline: "New" }],
+        }
+      )
+    ).toStrictEqual({
+      content: [
+        { _key: "a", _type: "hero", headline: "New" },
+        { _key: "b", _type: "cta_band" },
+      ],
+    });
+  });
+});
 
 describe(droppedSections, () => {
   const current = {
