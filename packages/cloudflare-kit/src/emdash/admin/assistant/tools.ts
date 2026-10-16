@@ -114,20 +114,22 @@ const Sections = Schema.Array(
 const decodeSections = Schema.decodeUnknownOption(Sections);
 
 /** A `blocks` array as stored on the entry; keeps fields the strict section schema omits. */
-const blockArray = (
-  value: unknown
-): readonly Record<string, unknown>[] | null => {
+const blockRows = (value: Schema.Json): readonly Schema.JsonObject[] | null => {
+  if (Option.isNone(decodeSections(value))) {
+    return null;
+  }
   if (!Array.isArray(value)) {
     return null;
   }
-  return value.every(
-    (item) =>
-      typeof item === "object" &&
-      item !== null &&
-      typeof (item as { _key?: unknown })._key === "string"
-  )
-    ? (value as Record<string, unknown>[])
-    : null;
+  const rows: Schema.JsonObject[] = [];
+  for (const item of value) {
+    const row = Schema.decodeUnknownOption(Schema.JsonObject)(item);
+    if (Option.isNone(row)) {
+      return null;
+    }
+    rows.push(row.value);
+  }
+  return rows;
 };
 
 /** What `content_get` answers: the entry, its field values under `item.data`. */
@@ -173,10 +175,12 @@ export const mergeBlockFields = (
   current: Schema.JsonObject,
   update: Schema.JsonObject
 ): Schema.JsonObject => {
-  const merged: Record<string, Schema.Json> = { ...update };
+  const merged: Record<string, Schema.Json> = Object.assign({}, update);
   for (const [field, value] of Object.entries(update)) {
-    const next = blockArray(value);
-    const before = blockArray(current[field]);
+    const next = blockRows(value);
+    const currentValue = current[field];
+    const before =
+      currentValue === undefined ? null : blockRows(currentValue);
     if (next === null || before === null) {
       continue;
     }
@@ -184,7 +188,7 @@ export const mergeBlockFields = (
       next.map((section) => [String(section._key), section])
     );
     const beforeKeys = new Set(before.map((section) => String(section._key)));
-    const sections = before.map(
+    const sections: Schema.JsonObject[] = before.map(
       (section) => nextByKey.get(String(section._key)) ?? section
     );
     for (const section of next) {
@@ -193,7 +197,7 @@ export const mergeBlockFields = (
         sections.push(section);
       }
     }
-    merged[field] = sections as Schema.Json;
+    merged[field] = sections;
   }
   return merged as Schema.JsonObject;
 };
@@ -206,7 +210,7 @@ const mergedUpdateData = async (
   const update = decodeArgs(args.data);
   if (
     Option.isNone(update) ||
-    !Object.values(update.value).some((value) => blockArray(value) !== null)
+    !Object.values(update.value).some((value) => blockRows(value) !== null)
   ) {
     return Option.isSome(update) ? update.value : undefined;
   }

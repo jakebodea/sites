@@ -223,9 +223,14 @@ export const noPublicAdminImportsRule = defineRule({
     }
     return {
       ImportDeclaration(node) {
-        const source =
-          node.source.type === "Literal" ? String(node.source.value) : "";
-        if (ADMIN_CLIENT_IMPORT.test(source)) {
+        if (node.source.type !== "Literal") {
+          return;
+        }
+        const literal = node.source.value;
+        if (typeof literal !== "string") {
+          return;
+        }
+        if (ADMIN_CLIENT_IMPORT.test(literal)) {
           context.report({ messageId: "adminClient", node: node.source });
         }
       },

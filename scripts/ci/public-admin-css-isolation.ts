@@ -8,21 +8,30 @@
  */
 import { existsSync } from "node:fs";
 import path from "node:path";
+import { pathToFileURL } from "node:url";
 
 import { writeBuildInputs } from "@jakebodea/cloudflare-kit/infra";
-import { request } from "../../packages/control-app/src/http.ts";
+import { Schema } from "effect";
 
-import { LOCAL_CMS_BOOTSTRAP_TOKEN, localWorker } from "./local-worker.ts";
+import { request } from "../../packages/control-app/src/http.ts";
 import { seedStage } from "../../packages/control-app/src/seed.ts";
+import { LOCAL_CMS_BOOTSTRAP_TOKEN, localWorker } from "./local-worker.ts";
 
 const root = path.resolve(import.meta.dirname, "../..");
 const site = process.argv[2] ?? "equityfast";
 const directory = path.join(root, "apps", site);
 
+const SiteConfigModule = Schema.Struct({
+  site: Schema.Struct({
+    localSeedMediaBase: Schema.optional(Schema.String),
+  }),
+});
+
 /** Markers that belong in inlined admin assistant CSS, not public HTML or site CSS. */
 const ASSISTANT_PUBLIC_MARKERS =
   /assistant\.css|site-assistant|#assistant\/assistant\.css/u;
 const KUMO_TOKEN_IN_CSS = /--kumo-/u;
+const STYLESHEET_HREF = /\bhref="(?<href>[^"]+\.css[^"]*)"/gu;
 
 export const publicHtmlViolation = (html: string): string | undefined => {
   if (ASSISTANT_PUBLIC_MARKERS.test(html)) {
@@ -39,8 +48,8 @@ export const publicStylesheetViolation = (css: string): string | undefined => {
 };
 
 const stylesheetLinks = (html: string, origin: string): string[] =>
-  [...html.matchAll(/\bhref="([^"]+\.css[^"]*)"/gu)].flatMap((match) => {
-    const href = match[1];
+  [...html.matchAll(STYLESHEET_HREF)].flatMap((match) => {
+    const href = match.groups?.href;
     return href === undefined ? [] : [new URL(href, origin).href];
   });
 
@@ -51,8 +60,11 @@ const run = async (): Promise<void> => {
       `${site}: run ASTRO_STANDALONE_BUILD=1 bun run build in apps/${site} first`
     );
   }
-  const { site: siteConfig } = await import(
-    path.join(directory, "site.config.ts")
+  const configModule = (await import(
+    pathToFileURL(path.join(directory, "site.config.ts")).href
+  )) as Schema.Json;
+  const { site: siteConfig } = Schema.decodeUnknownSync(SiteConfigModule)(
+    configModule
   );
   writeBuildInputs(directory, {
     contentDigest: "seed",
@@ -71,7 +83,8 @@ const run = async (): Promise<void> => {
       throw new Error(htmlViolation);
     }
     for (const url of stylesheetLinks(html, worker.origin)) {
-      const css = await (await request(url)).text();
+      const response = await request(url);
+      const css = await response.text();
       const cssViolation = publicStylesheetViolation(css);
       if (cssViolation !== undefined) {
         throw new Error(`${cssViolation} (${url})`);
@@ -87,7 +100,8 @@ if (import.meta.main) {
     await run();
     process.stdout.write(`${site}: public admin CSS isolation ok\n`);
   } catch (error) {
-    process.stderr.write(`${error instanceof Error ? error.message : error}\n`);
+    const message = error instanceof Error ? error.message : String(error);
+    process.stderr.write(`${message}\n`);
     process.exit(1);
   }
 }

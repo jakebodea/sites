@@ -16,11 +16,10 @@ export interface ScaffoldViolation {
 const SITE_APPS = /^apps\/[^/]+$/u;
 
 const readSiteIdentity = (
-  configPath: string,
   content: string
 ): { id: string; name: string } | null => {
-  const id = /\bid:\s*"([^"]+)"/u.exec(content)?.[1];
-  const name = /\bname:\s*"([^"]+)"/u.exec(content)?.[1];
+  const id = /\bid:\s*"(?<id>[^"]+)"/u.exec(content)?.groups?.id;
+  const name = /\bname:\s*"(?<name>[^"]+)"/u.exec(content)?.groups?.name;
   if (id === undefined || name === undefined) {
     return null;
   }
@@ -29,8 +28,21 @@ const readSiteIdentity = (
 
 /** First `* … infrastructure` line in the stack file header comment. */
 export const infrastructureLine = (content: string): string | null => {
-  const match = /\/\*\*[\s\S]*?\*\s+(.+?\sinfrastructure)/mu.exec(content);
-  return match?.[1] ?? null;
+  const start = content.indexOf("/**");
+  const end = content.indexOf("*/", start);
+  if (start === -1 || end === -1) {
+    return null;
+  }
+  const block = content.slice(start, end);
+  const line = block
+    .split("\n")
+    .map((text) => text.replace(/^\s*\*\s?/, "").trim())
+    .find((text) => text.includes("infrastructure"));
+  if (line === undefined) {
+    return null;
+  }
+  const index = line.toLowerCase().indexOf("infrastructure");
+  return line.slice(0, index + "infrastructure".length);
 };
 
 export const headerMatchesSite = (
@@ -48,7 +60,7 @@ export const findScaffoldViolations = (
   siteConfig: string,
   alchemy: string
 ): ScaffoldViolation[] => {
-  const identity = readSiteIdentity(siteDir, siteConfig);
+  const identity = readSiteIdentity(siteConfig);
   const line = infrastructureLine(alchemy);
   if (identity === null || line === null) {
     return [];
@@ -69,10 +81,16 @@ export const findScaffoldViolations = (
 
 export const checkScaffold = async (root: string): Promise<ScaffoldViolation[]> => {
   const appsDir = path.join(root, "apps");
-  const sites = readdirSync(appsDir, { withFileTypes: true })
-    .filter((entry) => entry.isDirectory())
-    .map((entry) => `apps/${entry.name}`)
-    .filter((site) => SITE_APPS.test(site));
+  const sites: string[] = [];
+  for (const entry of readdirSync(appsDir, { withFileTypes: true })) {
+    if (!entry.isDirectory()) {
+      continue;
+    }
+    const site = `apps/${entry.name}`;
+    if (SITE_APPS.test(site)) {
+      sites.push(site);
+    }
+  }
 
   const results = await Promise.all(
     sites.map(async (site) => {

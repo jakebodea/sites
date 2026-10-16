@@ -6,31 +6,23 @@ import {
 } from "./public-admin-css-isolation.ts";
 
 describe(publicHtmlViolation, () => {
-  it("flags assistant assets on a public page", () => {
-    expect(
-      publicHtmlViolation(
-        '<link rel="stylesheet" href="/_astro/assistant.css">'
-      )
-    ).toBe("public HTML references the CMS assistant stylesheet");
-  });
-
-  it("allows ordinary site markup", () => {
-    expect(
-      publicHtmlViolation('<link rel="stylesheet" href="/_astro/index.css">')
-    ).toBeUndefined();
+  it("flags assistant assets on a public page but not ordinary stylesheets", () => {
+    const dirty = '<link rel="stylesheet" href="/_astro/assistant.css">';
+    const clean = '<link rel="stylesheet" href="/_astro/index.css">';
+    expect(publicHtmlViolation(dirty)).toBe(
+      "public HTML references the CMS assistant stylesheet"
+    );
+    expect(publicHtmlViolation(clean)).toBeUndefined();
   });
 });
 
 describe(publicStylesheetViolation, () => {
-  it("flags Kumo tokens leaked into a public stylesheet", () => {
-    expect(
-      publicStylesheetViolation(":root { --kumo-canvas: transparent; }")
-    ).toBe("public stylesheet defines Kumo admin tokens");
-  });
-
-  it("allows site theme tokens", () => {
-    expect(
-      publicStylesheetViolation(":root { --color-brand: #112233; }")
-    ).toBeUndefined();
+  it("flags Kumo tokens in CSS but not site theme tokens", () => {
+    const dirty = ":root { --kumo-canvas: transparent; }";
+    const clean = ":root { --color-brand: #112233; }";
+    expect(publicStylesheetViolation(dirty)).toBe(
+      "public stylesheet defines Kumo admin tokens"
+    );
+    expect(publicStylesheetViolation(clean)).toBeUndefined();
   });
 });

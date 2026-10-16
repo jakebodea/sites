@@ -24,7 +24,7 @@ describe(headerMatchesSite, () => {
         id: "equityfast",
         name: "EquityFast",
       })
-    ).toBe(true);
+    ).toBeTruthy();
   });
 
   it("rejects the reference site name", () => {
@@ -33,7 +33,7 @@ describe(headerMatchesSite, () => {
         id: "equityfast",
         name: "EquityFast",
       })
-    ).toBe(false);
+    ).toBeFalsy();
   });
 });
 
@@ -42,7 +42,7 @@ describe(findScaffoldViolations, () => {
     const alchemy = `/**
  * Access Electric infrastructure:
  */`;
-    expect(findScaffoldViolations("apps/equityfast", config, alchemy)).toEqual([
+    expect(findScaffoldViolations("apps/equityfast", config, alchemy)).toStrictEqual([
       {
         line: 2,
         path: "apps/equityfast/alchemy.run.ts",
