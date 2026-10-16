@@ -142,6 +142,20 @@ ${BARE} .uppercase {
   ${SHELL} :is([data-sidebar=content-container], [data-sidebar=header], [data-sidebar=footer]) {
     border-color: transparent;
   }
+  /*
+   * Kumo folds a group's label to a divider line when the nav collapses to icons, so every
+   * icon below it jumps up. The label keeps its height and only fades, so icons stay put.
+   */
+  ${SHELL} > aside [data-sidebar=group-label] {
+    grid-template-rows: 1fr;
+    margin-block: 0;
+  }
+  ${SHELL} > aside [data-sidebar=group-label] > div {
+    transition: opacity var(--sidebar-animation-duration) var(--sidebar-easing);
+  }
+  ${SHELL} > aside[data-state=collapsed] [data-sidebar=group-label] > div {
+    opacity: 0;
+  }
   ${PAGE} {
     /* Surfaces inside the card follow it (the editor form; cards one step up); both resolved on <html>. */
     --color-kumo-elevated: var(--admin-page);
