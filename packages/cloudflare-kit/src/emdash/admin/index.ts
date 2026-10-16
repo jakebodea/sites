@@ -13,4 +13,5 @@ export type {
   CmsAdminOptions,
   GuideTip,
 } from "./options.ts";
+export type { OptionalNavItem } from "./nav.ts";
 export type { AdminTheme } from "./theme.ts";

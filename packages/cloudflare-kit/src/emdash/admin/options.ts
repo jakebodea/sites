@@ -3,6 +3,7 @@
  * The defaults are deliberately small: branding, a theme, a "Start here" card, and
  * the assistant with the two presets every site benefits from. Sites opt into more.
  */
+import type { OptionalNavItem } from "./nav.ts";
 import type { AdminTheme } from "./theme.ts";
 
 /** Where a tip's link goes; resolved by the admin (EmDash's Block Kit link targets). */
@@ -46,6 +47,11 @@ export interface CmsAdminOptions {
   readonly guide?: readonly GuideTip[];
   /** `false` hides the assistant and the "Connect an assistant" page. */
   readonly assistant?: AssistantOptions | false;
+  /**
+   * Built-in admin screens the site uses that are hidden by default (comments,
+   * bylines, tags, ...), so the client's nav lists only what applies to them.
+   */
+  readonly nav?: { readonly show?: readonly OptionalNavItem[] };
 }
 
 /** EmDash plugin id; also the path segment of the plugin's admin pages and API routes. */
