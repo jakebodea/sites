@@ -42,6 +42,8 @@ describe("site astro.config ssrPrebundle", () => {
       expect(loaded.default.vite?.ssr?.optimizeDeps?.include).toStrictEqual(
         expected
       );
-    }
+    },
+    // Dynamic `import()` of each site's astro.config can exceed 5s on CI runners.
+    { timeout: 15_000 }
   );
 });
