@@ -16,6 +16,7 @@ import {
   SparklesIcon,
   SquareIcon,
   SquarePenIcon,
+  XIcon,
 } from "lucide-react";
 import { useRef, useState } from "react";
 import type { SubmitEvent } from "react";
@@ -32,7 +33,6 @@ import { Bubble, BubbleContent } from "#assistant/ui/bubble.tsx";
 import { Button } from "#assistant/ui/button.tsx";
 import {
   Empty,
-  EmptyDescription,
   EmptyHeader,
   EmptyMedia,
   EmptyTitle,
@@ -53,8 +53,8 @@ import {
 } from "#assistant/ui/message-scroller.tsx";
 import { Message, MessageContent } from "#assistant/ui/message.tsx";
 import {
+  SheetClose,
   SheetDescription,
-  SheetHeader,
   SheetTitle,
 } from "#assistant/ui/sheet.tsx";
 import {
@@ -187,178 +187,184 @@ export const AssistantChat = ({
 
   return (
     <MessageScrollerProvider autoScroll>
-      <div className="flex items-center gap-2 border-b pr-12">
-        <SheetHeader className="min-w-0 flex-1">
-          <SheetTitle>Assistant</SheetTitle>
-          <SheetDescription>
-            {entry === undefined
-              ? "Edits the site as drafts"
-              : `Working on this ${entry.collection} entry`}
-          </SheetDescription>
-        </SheetHeader>
-        <Tooltip>
-          <TooltipTrigger
+      {/* One wrapper, so the sheet's gap does not push the conversation away from its top row. */}
+      <div className="flex min-h-0 flex-1 flex-col">
+        {/* Title and description are for screen readers; the top row is only the two actions, level with the admin's top bar. */}
+        <SheetTitle className="sr-only">Assistant</SheetTitle>
+        <SheetDescription className="sr-only">
+          {entry === undefined
+            ? "Edits the site as drafts"
+            : `Working on this ${entry.collection} entry`}
+        </SheetDescription>
+        <div className="flex h-14.5 shrink-0 items-center justify-end gap-1 px-4">
+          <Tooltip>
+            <TooltipTrigger
+              render={
+                <Button
+                  aria-label="New conversation"
+                  disabled={busy || messages.length === 0}
+                  onClick={clear}
+                  size="icon-sm"
+                  variant="ghost"
+                />
+              }
+            >
+              <SquarePenIcon />
+            </TooltipTrigger>
+            <TooltipContent>New conversation</TooltipContent>
+          </Tooltip>
+          <SheetClose
             render={
-              <Button
-                aria-label="New conversation"
-                disabled={busy || messages.length === 0}
-                onClick={clear}
-                size="icon-sm"
-                variant="ghost"
-              />
+              <Button aria-label="Close" size="icon-sm" variant="ghost" />
             }
           >
-            <SquarePenIcon />
-          </TooltipTrigger>
-          <TooltipContent>New conversation</TooltipContent>
-        </Tooltip>
-      </div>
-      <div className="flex min-h-0 flex-1 flex-col">
-        {messages.length === 0 ? (
-          <Empty className="flex-1">
-            <EmptyHeader>
-              <EmptyMedia variant="icon">
-                <SparklesIcon />
-              </EmptyMedia>
-              <EmptyTitle>What should we change?</EmptyTitle>
-              <EmptyDescription>
-                Describe it in plain words. The assistant edits{" "}
-                {config.siteName} the way you would and saves drafts; nothing
-                goes live until you select Publish.
-              </EmptyDescription>
-            </EmptyHeader>
-          </Empty>
-        ) : (
-          <div className="flex min-h-0 flex-1 flex-col px-4 pt-4">
-            <MessageScroller>
-              <MessageScrollerViewport>
-                <MessageScrollerContent aria-busy={busy}>
-                  {messages.map((message) =>
-                    message.role === "user" ? (
-                      <MessageScrollerItem
-                        key={message.id}
-                        messageId={message.id}
-                        scrollAnchor
-                      >
-                        <UserTurn message={message} />
-                      </MessageScrollerItem>
-                    ) : (
-                      <MessageScrollerItem
-                        key={message.id}
-                        messageId={message.id}
-                      >
-                        <AssistantTurn
-                          entryOpen={entry !== undefined}
-                          message={message}
-                          streaming={busy && message === messages.at(-1)}
-                        />
-                      </MessageScrollerItem>
-                    )
-                  )}
-                  {status === "submitted" &&
-                    messages.at(-1)?.role === "user" && (
-                      <MessageScrollerItem messageId="pending">
-                        <p className="text-muted-foreground shimmer text-sm">
-                          Working on it
-                        </p>
+            <XIcon />
+          </SheetClose>
+        </div>
+        <div className="flex min-h-0 flex-1 flex-col">
+          {messages.length === 0 ? (
+            <Empty className="flex-1">
+              <EmptyHeader>
+                <EmptyMedia variant="icon">
+                  <SparklesIcon />
+                </EmptyMedia>
+                <EmptyTitle>What should we change?</EmptyTitle>
+              </EmptyHeader>
+            </Empty>
+          ) : (
+            <div className="flex min-h-0 flex-1 flex-col px-4">
+              <MessageScroller>
+                <MessageScrollerViewport>
+                  <MessageScrollerContent aria-busy={busy}>
+                    {messages.map((message) =>
+                      message.role === "user" ? (
+                        <MessageScrollerItem
+                          key={message.id}
+                          messageId={message.id}
+                          scrollAnchor
+                        >
+                          <UserTurn message={message} />
+                        </MessageScrollerItem>
+                      ) : (
+                        <MessageScrollerItem
+                          key={message.id}
+                          messageId={message.id}
+                        >
+                          <AssistantTurn
+                            entryOpen={entry !== undefined}
+                            message={message}
+                            streaming={busy && message === messages.at(-1)}
+                          />
+                        </MessageScrollerItem>
+                      )
+                    )}
+                    {status === "submitted" &&
+                      messages.at(-1)?.role === "user" && (
+                        <MessageScrollerItem messageId="pending">
+                          <p className="text-muted-foreground shimmer text-sm">
+                            Working on it
+                          </p>
+                        </MessageScrollerItem>
+                      )}
+                    {error !== undefined && (
+                      <MessageScrollerItem messageId="error">
+                        <Alert variant="destructive">
+                          <AlertTitle>
+                            The assistant could not finish
+                          </AlertTitle>
+                          <AlertDescription>
+                            Nothing changed after the problem. Try again in a
+                            minute, or with a smaller request.
+                          </AlertDescription>
+                          <AlertAction>
+                            <Button
+                              onClick={() => {
+                                void reload();
+                              }}
+                              size="sm"
+                              variant="outline"
+                            >
+                              <RotateCwIcon data-icon="inline-start" />
+                              Retry
+                            </Button>
+                          </AlertAction>
+                        </Alert>
                       </MessageScrollerItem>
                     )}
-                  {error !== undefined && (
-                    <MessageScrollerItem messageId="error">
-                      <Alert variant="destructive">
-                        <AlertTitle>The assistant could not finish</AlertTitle>
-                        <AlertDescription>
-                          Nothing changed after the problem. Try again in a
-                          minute, or with a smaller request.
-                        </AlertDescription>
-                        <AlertAction>
-                          <Button
-                            onClick={() => {
-                              void reload();
-                            }}
-                            size="sm"
-                            variant="outline"
-                          >
-                            <RotateCwIcon data-icon="inline-start" />
-                            Retry
-                          </Button>
-                        </AlertAction>
-                      </Alert>
-                    </MessageScrollerItem>
-                  )}
-                </MessageScrollerContent>
-              </MessageScrollerViewport>
-              <MessageScrollerButton />
-            </MessageScroller>
-          </div>
-        )}
-        <div className="flex flex-col gap-2 p-4 pt-2">
-          {presets.length > 0 && (
-            <div className="scroll-fade-x flex scrollbar-none gap-2 overflow-x-auto overscroll-x-contain">
-              {presets.map((preset) => (
-                <Button
-                  className="shrink-0"
-                  disabled={busy}
-                  key={preset}
-                  onClick={() => {
-                    send(PRESET_LABELS[preset], preset);
-                  }}
-                  size="sm"
-                  variant="outline"
-                >
-                  {PRESET_LABELS[preset]}
-                </Button>
-              ))}
+                  </MessageScrollerContent>
+                </MessageScrollerViewport>
+                <MessageScrollerButton />
+              </MessageScroller>
             </div>
           )}
-          <form onSubmit={onSubmit} ref={formRef}>
-            <InputGroup>
-              <InputGroupTextarea
-                aria-label="Message"
-                className="max-h-40 min-h-16"
-                onChange={(event) => {
-                  setText(event.target.value);
-                }}
-                onKeyDown={(event) => {
-                  if (event.key === "Enter" && !event.shiftKey) {
-                    event.preventDefault();
-                    formRef.current?.requestSubmit();
+          <div className="flex flex-col gap-2 p-4 pt-2">
+            {presets.length > 0 && (
+              <div className="scroll-fade-x flex scrollbar-none gap-2 overflow-x-auto overscroll-x-contain">
+                {presets.map((preset) => (
+                  <Button
+                    className="shrink-0"
+                    disabled={busy}
+                    key={preset}
+                    onClick={() => {
+                      send(PRESET_LABELS[preset], preset);
+                    }}
+                    size="sm"
+                    variant="outline"
+                  >
+                    {PRESET_LABELS[preset]}
+                  </Button>
+                ))}
+              </div>
+            )}
+            <form onSubmit={onSubmit} ref={formRef}>
+              <InputGroup>
+                <InputGroupTextarea
+                  aria-label="Message"
+                  className="max-h-40 min-h-16"
+                  onChange={(event) => {
+                    setText(event.target.value);
+                  }}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter" && !event.shiftKey) {
+                      event.preventDefault();
+                      formRef.current?.requestSubmit();
+                    }
+                  }}
+                  placeholder={
+                    entry === undefined
+                      ? "Describe a change to the site"
+                      : "Describe a change to this page"
                   }
-                }}
-                placeholder={
-                  entry === undefined
-                    ? "Describe a change to the site"
-                    : "Describe a change to this page"
-                }
-                value={text}
-              />
-              <InputGroupAddon align="block-end">
-                {busy ? (
-                  <InputGroupButton
-                    aria-label="Stop"
-                    className="ml-auto"
-                    onClick={stop}
-                    size="icon-sm"
-                    type="button"
-                    variant="default"
-                  >
-                    <SquareIcon />
-                  </InputGroupButton>
-                ) : (
-                  <InputGroupButton
-                    aria-label="Send"
-                    className="ml-auto"
-                    disabled={text.trim() === ""}
-                    size="icon-sm"
-                    type="submit"
-                    variant="default"
-                  >
-                    <ArrowUpIcon />
-                  </InputGroupButton>
-                )}
-              </InputGroupAddon>
-            </InputGroup>
-          </form>
+                  value={text}
+                />
+                <InputGroupAddon align="block-end">
+                  {busy ? (
+                    <InputGroupButton
+                      aria-label="Stop"
+                      className="ml-auto"
+                      onClick={stop}
+                      size="icon-sm"
+                      type="button"
+                      variant="default"
+                    >
+                      <SquareIcon />
+                    </InputGroupButton>
+                  ) : (
+                    <InputGroupButton
+                      aria-label="Send"
+                      className="ml-auto"
+                      disabled={text.trim() === ""}
+                      size="icon-sm"
+                      type="submit"
+                      variant="default"
+                    >
+                      <ArrowUpIcon />
+                    </InputGroupButton>
+                  )}
+                </InputGroupAddon>
+              </InputGroup>
+            </form>
+          </div>
         </div>
       </div>
     </MessageScrollerProvider>
