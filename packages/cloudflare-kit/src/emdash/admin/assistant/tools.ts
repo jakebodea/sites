@@ -180,7 +180,7 @@ export const mergeBlockFields = (
   current: Schema.JsonObject,
   update: Schema.JsonObject
 ): Schema.JsonObject => {
-  const merged: Record<string, Schema.Json> = { ...update };
+  const merged: Schema.JsonObject = Object.fromEntries(Object.entries(update));
   for (const [field, value] of Object.entries(update)) {
     const next = blockRows(value);
     const currentValue = current[field];

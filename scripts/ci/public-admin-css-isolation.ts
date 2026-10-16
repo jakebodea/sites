@@ -60,7 +60,7 @@ const run = async (): Promise<void> => {
       `${site}: run ASTRO_STANDALONE_BUILD=1 bun run build in apps/${site} first`
     );
   }
-  const configModule = await import(
+  const configModule: unknown = await import(
     pathToFileURL(path.join(directory, "site.config.ts")).href
   );
   const { site: siteConfig } =
