@@ -38,7 +38,6 @@ ${LIGHT}, ${DARK} {
   --radius-md: 0.625rem;
   --radius-lg: 0.875rem;
   --radius-xl: 1.25rem;
-  --color-kumo-hairline: transparent;
 }
 ${LIGHT} {
   --admin-shell: color-mix(in oklch, var(--color-kumo-elevated), black 3.5%);
@@ -46,6 +45,8 @@ ${LIGHT} {
   --admin-raised: var(--color-kumo-base);
   --admin-active: color-mix(in oklch, var(--admin-shell), var(--text-color-kumo-default) 6%);
   --color-kumo-line: oklch(0.2 0.01 85 / 0.07);
+  /* Faint, never transparent: an unchecked Kumo checkbox is drawn only by this ring. */
+  --color-kumo-hairline: oklch(0.2 0.01 85 / 0.14);
   --color-kumo-fill: oklch(0.2 0.01 85 / 0.06);
   --admin-card-shadow: 0 0 0 1px oklch(0 0 0 / 0.035), 0 1px 2px oklch(0 0 0 / 0.04);
 }
@@ -56,10 +57,12 @@ ${DARK} {
   --admin-raised: color-mix(in oklch, var(--color-kumo-elevated), white 10%);
   --admin-active: color-mix(in oklch, var(--admin-shell), var(--text-color-kumo-default) 12%);
   --color-kumo-line: oklch(1 0 0 / 0.08);
+  --color-kumo-hairline: oklch(1 0 0 / 0.16);
   --color-kumo-fill: oklch(1 0 0 / 0.07);
   --admin-card-shadow: 0 0 0 1px oklch(1 0 0 / 0.06);
 }
 html[data-theme] .ring-kumo-hairline:has(> .ring-kumo-fill) {
+  --tw-ring-color: transparent;
   background: var(--color-kumo-base);
   box-shadow: var(--admin-card-shadow);
 }

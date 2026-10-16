@@ -76,5 +76,6 @@ export const brandAdminCopy = (html: string, siteName: string): string => {
     .replaceAll('"', "&quot;")
     .replaceAll("<", "&lt;")
     .replaceAll(">", "&gt;");
-  return html.replaceAll("Welcome to EmDash", `Welcome to ${name}`);
+  // A function, so `$&` or `$$` in a site name is not read as a replacement pattern.
+  return html.replaceAll("Welcome to EmDash", () => `Welcome to ${name}`);
 };

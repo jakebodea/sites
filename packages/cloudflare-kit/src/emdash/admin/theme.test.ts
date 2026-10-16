@@ -59,4 +59,10 @@ describe(brandAdminCopy, () => {
       '<astro-island props="{&quot;7vQyJA&quot;:[1,[[0,&quot;Welcome to Smith &amp; \\&quot;Sons\\&quot;, &quot;]]]}">'
     );
   });
+
+  it("keeps a dollar sign in the site name literal", () => {
+    expect(brandAdminCopy("Welcome to EmDash!", "Bucks $& Co")).toBe(
+      "Welcome to Bucks $&amp; Co!"
+    );
+  });
 });
