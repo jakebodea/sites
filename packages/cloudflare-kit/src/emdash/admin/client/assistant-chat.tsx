@@ -13,7 +13,10 @@ import { TextPart } from "@tanstack/ai-react/ui";
 import {
   ArrowUpIcon,
   RotateCwIcon,
+  ImageIcon,
+  PhoneIcon,
   SparklesIcon,
+  SpellCheckIcon,
   SquareIcon,
   SquarePenIcon,
   XIcon,
@@ -31,12 +34,6 @@ import {
 } from "#assistant/ui/alert.tsx";
 import { Bubble, BubbleContent } from "#assistant/ui/bubble.tsx";
 import { Button } from "#assistant/ui/button.tsx";
-import {
-  Empty,
-  EmptyHeader,
-  EmptyMedia,
-  EmptyTitle,
-} from "#assistant/ui/empty.tsx";
 import {
   InputGroup,
   InputGroupAddon,
@@ -57,6 +54,7 @@ import {
   SheetDescription,
   SheetTitle,
 } from "#assistant/ui/sheet.tsx";
+import { Suggestion, Suggestions } from "#assistant/ui/suggestion.tsx";
 import {
   Tooltip,
   TooltipContent,
@@ -144,6 +142,16 @@ const AssistantTurn = ({
   );
 };
 
+/**
+ * Starters for a client facing an empty box: the everyday jobs on a marketing site.
+ * Each fills the message box rather than sending, so the details can be added first.
+ */
+const STARTERS = [
+  { icon: <SpellCheckIcon />, prompt: "Fix typos and grammar across the site" },
+  { icon: <PhoneIcon />, prompt: "Update our phone number everywhere to " },
+  { icon: <ImageIcon />, prompt: "Write alt text for photos that have none" },
+] as const;
+
 const presetsFor = (config: PanelConfig, entry: OpenEntry | undefined) =>
   entry !== undefined &&
   (config.collections === undefined ||
@@ -167,12 +175,23 @@ export const AssistantChat = ({
   );
   const [text, setText] = useState("");
   const formRef = useRef<HTMLFormElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
   const busy = status === "submitted" || status === "streaming";
   const presets = presetsFor(config, entry);
 
   const send = (content: string, preset?: AssistantPreset) => {
     const turn: TurnContext = { entry, preset };
     void sendMessage(content, { body: turn });
+  };
+
+  const draft = (prompt: string) => {
+    setText(prompt);
+    const box = textareaRef.current;
+    box?.focus();
+    // After React writes the value, so the caret lands at its end.
+    requestAnimationFrame(() => {
+      box?.setSelectionRange(prompt.length, prompt.length);
+    });
   };
 
   const onSubmit = (event: SubmitEvent<HTMLFormElement>) => {
@@ -223,14 +242,31 @@ export const AssistantChat = ({
         </div>
         <div className="flex min-h-0 flex-1 flex-col">
           {messages.length === 0 ? (
-            <Empty className="flex-1">
-              <EmptyHeader>
-                <EmptyMedia variant="icon">
-                  <SparklesIcon />
-                </EmptyMedia>
-                <EmptyTitle>What should we change?</EmptyTitle>
-              </EmptyHeader>
-            </Empty>
+            <div className="flex flex-1 flex-col justify-end gap-5 px-4 pb-4">
+              <div className="flex flex-col gap-3">
+                <SparklesIcon className="text-primary size-6" />
+                <h2 className="text-2xl font-medium tracking-tight text-balance">
+                  {entry === undefined
+                    ? `What should we change on ${config.siteName}?`
+                    : "What should we change on this page?"}
+                </h2>
+              </div>
+              {entry === undefined && (
+                <Suggestions>
+                  {STARTERS.map(({ icon, prompt }) => (
+                    <Suggestion
+                      icon={icon}
+                      key={prompt}
+                      onClick={() => {
+                        draft(prompt);
+                      }}
+                    >
+                      {prompt.trimEnd()}
+                    </Suggestion>
+                  ))}
+                </Suggestions>
+              )}
+            </div>
           ) : (
             <div className="flex min-h-0 flex-1 flex-col px-4">
               <MessageScroller>
@@ -320,6 +356,7 @@ export const AssistantChat = ({
               <InputGroup>
                 <InputGroupTextarea
                   aria-label="Message"
+                  ref={textareaRef}
                   className="max-h-40 min-h-16"
                   onChange={(event) => {
                     setText(event.target.value);
