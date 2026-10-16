@@ -7,6 +7,7 @@
 import type { AstroIntegration } from "astro";
 
 import { CHAT_PATH } from "./assistant/protocol.ts";
+import { adminNavCss } from "./nav.ts";
 import type { CmsAdminOptions } from "./options.ts";
 import { ADMIN_SHELL_CSS, adminLogoCss } from "./shell.ts";
 import { adminThemeCss } from "./theme.ts";
@@ -21,7 +22,7 @@ export const cmsAdmin = (options: CmsAdminOptions): AstroIntegration => ({
   hooks: {
     "astro:config:setup": ({ addMiddleware, injectRoute, updateConfig }) => {
       // The shared shell first, so a site's canvas and brand land on top of it.
-      const css = `${ADMIN_SHELL_CSS}\n${adminLogoCss(options.logo)}\n${adminThemeCss(options.theme)}`;
+      const css = `${ADMIN_SHELL_CSS}\n${adminLogoCss(options.logo)}\n${adminNavCss(options.nav?.show)}\n${adminThemeCss(options.theme)}`;
       // Logos, favicons and the theme stay out: the route and the panel need only these.
       const config = {
         assistant: options.assistant ?? {},

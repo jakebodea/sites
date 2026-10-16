@@ -57,6 +57,9 @@ export const Assistant = ({
         <SheetContent
           className="data-[side=right]:w-full data-[side=right]:sm:max-w-md"
           container={host}
+          // Straight to the message box, so the close button does not open wearing a focus ring.
+          initialFocus={() => host.querySelector("textarea")}
+          showCloseButton={false}
           showOverlay={false}
         >
           <AssistantChat config={config} entry={entry} />
