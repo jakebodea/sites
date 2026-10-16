@@ -12,5 +12,7 @@ export type {
   AssistantPreset,
   CmsAdminOptions,
   GuideTip,
+  SiteSkill,
 } from "./options.ts";
+export type { OptionalNavItem } from "./nav.ts";
 export type { AdminTheme } from "./theme.ts";

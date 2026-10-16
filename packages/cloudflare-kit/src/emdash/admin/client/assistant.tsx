@@ -1,6 +1,7 @@
 /**
  * The Assistant: a button in the admin's top bar that opens a side panel. The
- * panel is non-modal, so the editor stays usable while the assistant works.
+ * panel is non-modal, so the editor stays usable while the assistant works; on
+ * desktop it is a rounded pane beside the page card (see `assistant.css`).
  */
 import { SparklesIcon } from "lucide-react";
 import { useState } from "react";
@@ -9,6 +10,7 @@ import { createPortal } from "react-dom";
 import { AssistantChat } from "#assistant/assistant-chat.tsx";
 import { useHeaderSlot } from "#assistant/hooks/use-header-slot.ts";
 import { usePathname } from "#assistant/hooks/use-location.ts";
+import { useSidePane } from "#assistant/hooks/use-side-pane.ts";
 import { openEntryFromPath } from "#assistant/open-entry.ts";
 import { Button } from "#assistant/ui/button.tsx";
 import { Sheet, SheetContent } from "#assistant/ui/sheet.tsx";
@@ -27,6 +29,7 @@ export const Assistant = ({
   const [open, setOpen] = useState(false);
   const slot = useHeaderSlot();
   const entry = openEntryFromPath(usePathname());
+  useSidePane(open);
 
   return (
     <TooltipProvider>
@@ -54,6 +57,9 @@ export const Assistant = ({
         <SheetContent
           className="data-[side=right]:w-full data-[side=right]:sm:max-w-md"
           container={host}
+          // Straight to the message box, so the close button does not open wearing a focus ring.
+          initialFocus={() => host.querySelector("textarea")}
+          showCloseButton={false}
           showOverlay={false}
         >
           <AssistantChat config={config} entry={entry} />

@@ -4,8 +4,9 @@ import { fakeText } from "@tanstack/ai/testing";
 import type { Schema } from "effect";
 import { describe, expect, it } from "vitest";
 
-import { streamAgent } from "./agent.ts";
-import { refusal } from "./tools.ts";
+import { LAST_ROUND_PROMPT, MAX_ITERATIONS, streamAgent } from "./agent.ts";
+import { assistantSkills } from "./skills.ts";
+import { droppedSections, refusal } from "./tools.ts";
 import type { McpConnection, McpTool } from "./tools.ts";
 
 const schema = (properties: Record<string, JSONSchema>): JSONSchema => ({
@@ -65,6 +66,12 @@ const runTurn = async (
         chunk.type === EventType.TEXT_MESSAGE_CONTENT ? [chunk.delta] : []
       )
       .join(""),
+    // Serialized: a result may be text or content parts; the tests look for phrases in either.
+    results: chunks.flatMap((chunk) =>
+      chunk.type === EventType.TOOL_CALL_RESULT
+        ? [JSON.stringify(chunk.content)]
+        : []
+    ),
     tools: chunks.flatMap((chunk) =>
       chunk.type === EventType.TOOL_CALL_START ? [chunk.toolCallName] : []
     ),
@@ -98,10 +105,10 @@ describe(streamAgent, () => {
       prompt: "Shorten the About intro",
     });
 
-    expect(result).toStrictEqual({
-      answer: "I shortened the About intro and saved it as a draft.",
-      tools: ["content_get", "content_update"],
-    });
+    expect(result.answer).toBe(
+      "I shortened the About intro and saved it as a draft."
+    );
+    expect(result.tools).toStrictEqual(["content_get", "content_update"]);
     expect(emdash.calls).toStrictEqual([
       { args: { collection: "pages", id: "about" }, name: "content_get" },
       {
@@ -109,6 +116,146 @@ describe(streamAgent, () => {
         name: "content_update",
       },
     ]);
+  });
+
+  it("loads a skill's instructions when the model asks for one", async () => {
+    const emdash = fakeEmDash({});
+    const model = fakeText();
+    model.setResponses([
+      { toolCalls: [{ input: { name: "page-sections" }, name: "load_skill" }] },
+      { text: "Which section should the new banner go after?" },
+    ]);
+
+    const result = await runTurn({
+      adapter: model,
+      mcp: emdash.connection,
+      prompt: "Add a banner to the home page",
+      skills: assistantSkills(),
+    });
+
+    expect(result.tools).toStrictEqual(["load_skill"]);
+    expect(result.results.join("")).toContain(
+      "Never change or drop an existing `_key`"
+    );
+    expect(result.answer).toBe("Which section should the new banner go after?");
+  });
+
+  it("offers a site's own skill beside the shared ones", async () => {
+    const model = fakeText();
+    model.setResponses([
+      {
+        toolCalls: [{ input: { name: "house-style" }, name: "load_skill" }],
+      },
+      { text: "I will say affordable rather than cheap." },
+    ]);
+
+    const result = await runTurn({
+      adapter: model,
+      mcp: fakeEmDash({}).connection,
+      prompt: "Can you say we are cheap?",
+      skills: assistantSkills([
+        {
+          description: "Words this business uses and avoids.",
+          instructions: "Never call the work cheap; say affordable.",
+          name: "house-style",
+        },
+      ]),
+    });
+
+    expect(result.results.join("")).toContain(
+      "Never call the work cheap; say affordable."
+    );
+  });
+
+  it("refuses an update that would drop the page's other sections", async () => {
+    const page = {
+      item: {
+        data: {
+          content: [
+            { _key: "story", _type: "rich_text", text: "Our superintendants" },
+            { _key: "facts", _type: "facts" },
+            { _key: "area", _type: "service_area" },
+          ],
+        },
+      },
+    };
+    const emdash = fakeEmDash({ content_get: JSON.stringify(page) });
+    const model = fakeText();
+    model.setResponses([
+      {
+        toolCalls: [
+          {
+            input: {
+              _rev: "r1",
+              collection: "pages",
+              data: {
+                content: [
+                  {
+                    _key: "story",
+                    _type: "rich_text",
+                    text: "Our superintendents",
+                  },
+                ],
+              },
+              id: "about",
+            },
+            name: "content_update",
+          },
+        ],
+      },
+      { text: "I will send the whole page." },
+    ]);
+
+    const result = await runTurn({
+      adapter: model,
+      mcp: emdash.connection,
+      prompt: "Fix the typo on About",
+    });
+
+    expect(emdash.calls.map((call) => call.name)).toStrictEqual([
+      "content_get",
+    ]);
+    expect(result.results.join("")).toContain(
+      "This update would remove sections from the page (content: facts, content: service_area)."
+    );
+  });
+
+  it("ends a job that hits the round cap with a summary, not a cut-off step", async () => {
+    const emdash = fakeEmDash({ content_get: '{"title":"About","_rev":"r1"}' });
+    const model = fakeText();
+    const lastRound: { tools: number; prompt: string; options: string }[] = [];
+    model.setResponses([
+      ...Array.from({ length: MAX_ITERATIONS - 1 }, () => ({
+        toolCalls: [
+          { input: { collection: "pages", id: "about" }, name: "content_get" },
+        ],
+      })),
+      ({ request }) => {
+        lastRound.push({
+          options: JSON.stringify(request.modelOptions),
+          prompt: JSON.stringify(request.systemPrompts?.at(-1)),
+          tools: request.tools?.length ?? 0,
+        });
+        return { text: "I read the page but ran out of steps before editing." };
+      },
+    ]);
+
+    const result = await runTurn({
+      adapter: model,
+      mcp: emdash.connection,
+      prompt: "Rewrite every page",
+    });
+
+    expect(lastRound).toStrictEqual([
+      {
+        options: '{"parallel_tool_calls":false}',
+        prompt: JSON.stringify(LAST_ROUND_PROMPT),
+        tools: 0,
+      },
+    ]);
+    expect(result.answer).toBe(
+      "I read the page but ran out of steps before editing."
+    );
   });
 
   it("never forwards a publish to EmDash", async () => {
@@ -141,6 +288,38 @@ describe(streamAgent, () => {
 
 const draftsOnly = (argument: string) =>
   `The assistant saves drafts only; remove "${argument}" and let the editor publish.`;
+
+describe(droppedSections, () => {
+  const current = {
+    content: [
+      { _key: "a", _type: "hero" },
+      { _key: "b", _type: "cta_band" },
+    ],
+    title: "Home",
+  };
+
+  it("names each section a new array leaves out", () => {
+    expect(
+      droppedSections(current, { content: [{ _key: "a", _type: "hero" }] })
+    ).toStrictEqual(["content: cta_band"]);
+  });
+
+  it("lets through a complete, reordered, or extended array and plain fields", () => {
+    expect(
+      droppedSections(current, {
+        content: [
+          { _key: "b", _type: "cta_band" },
+          { _key: "new", _type: "rich_text" },
+          { _key: "a", _type: "hero" },
+        ],
+        title: "Welcome",
+      })
+    ).toStrictEqual([]);
+    expect(
+      droppedSections(current, { content: [{ _key: "a" }] })
+    ).toStrictEqual(["content: cta_band"]);
+  });
+});
 
 describe(refusal, () => {
   it.each([

@@ -70,3 +70,35 @@
     max-width: none;
   }
 }
+
+/*
+ * Desktop: a second pane on the admin shell's canvas, framed like the page card
+ * (shell.ts), which shrinks beside it instead of being covered. useSidePane marks
+ * <html> while it is open and collapses the nav to make room.
+ */
+@media (min-width: 768px) {
+  :root {
+    --site-assistant-width: min(26rem, 42vw);
+  }
+  #site-assistant [data-slot="sheet-content"] {
+    inset-block: 0.5rem;
+    right: 0.5rem;
+    width: var(--site-assistant-width);
+    max-width: none;
+    height: auto;
+    border: 0;
+    border-radius: 1rem;
+    background: var(--admin-page, var(--color-kumo-base));
+    box-shadow: var(--admin-card-shadow, none);
+  }
+  html[data-theme] [data-sidebar-wrapper][data-side="left"] > aside + div {
+    transition: margin-right var(--sidebar-animation-duration)
+      var(--sidebar-easing);
+  }
+  html[data-theme][data-site-assistant]
+    [data-sidebar-wrapper][data-side="left"]
+    > aside
+    + div {
+    margin-right: calc(var(--site-assistant-width) + 1rem);
+  }
+}
