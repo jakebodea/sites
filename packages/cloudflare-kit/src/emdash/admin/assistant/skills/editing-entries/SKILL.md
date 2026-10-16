@@ -29,6 +29,10 @@ description: How to change an EmDash entry safely as a draft. Load before the fi
 - `repeater`: the complete array of items, each item with every property kept.
 - `blocks` (page sections): load the `page-sections` skill first.
 
+## Facts
+
+Facts about the business come from the site's own pages. Before stating or changing one (dates, places, certifications, services, contact details), find it with `search` or `content_get`. If the site does not say it, ask the person; never fill the gap yourself.
+
 ## When an update fails
 
 - "changed since you read it" or a `_rev` error: someone saved in between. Read the entry again, re-apply your change to the new values, and retry once.

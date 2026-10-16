@@ -84,14 +84,14 @@ describe(messageSteps, () => {
       id: "m3",
       parts: [
         {
-          arguments: '{"name":"business-facts"}',
+          arguments: '{"name":"page-sections"}',
           id: "call-4",
           name: "load_skill",
           state: "input-complete",
           type: "tool-call",
         },
         {
-          content: '{"skill":"business-facts","content":"Founded: 2001."}',
+          content: '{"skill":"page-sections","content":"Keep every _key."}',
           state: "complete",
           toolCallId: "call-4",
           type: "tool-result",
@@ -100,7 +100,7 @@ describe(messageSteps, () => {
       role: "assistant",
     };
     expect(messageSteps(loaded, false)).toMatchObject([
-      { status: "done", target: "business facts", title: "Read up" },
+      { status: "done", target: "page sections", title: "Read up" },
     ]);
   });
 });

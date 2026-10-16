@@ -144,25 +144,27 @@ describe(streamAgent, () => {
     const model = fakeText();
     model.setResponses([
       {
-        toolCalls: [{ input: { name: "business-facts" }, name: "load_skill" }],
+        toolCalls: [{ input: { name: "house-style" }, name: "load_skill" }],
       },
-      { text: "Founded in 2001." },
+      { text: "I will say affordable rather than cheap." },
     ]);
 
     const result = await runTurn({
       adapter: model,
       mcp: fakeEmDash({}).connection,
-      prompt: "When were we founded?",
+      prompt: "Can you say we are cheap?",
       skills: assistantSkills([
         {
-          description: "Verified facts about the business.",
-          instructions: "Founded: 2001.",
-          name: "business-facts",
+          description: "Words this business uses and avoids.",
+          instructions: "Never call the work cheap; say affordable.",
+          name: "house-style",
         },
       ]),
     });
 
-    expect(result.results.join("")).toContain("Founded: 2001.");
+    expect(result.results.join("")).toContain(
+      "Never call the work cheap; say affordable."
+    );
   });
 
   it("never forwards a publish to EmDash", async () => {

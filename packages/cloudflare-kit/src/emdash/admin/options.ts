@@ -27,11 +27,12 @@ export type AssistantPreset = "polish" | "seo" | "alt-text" | "translate";
 /**
  * A skill of the site's own, loaded by the assistant only when a request needs it.
  * The shared skills (editing entries, page sections, photos, copy editing, search
- * descriptions) come with the kit; a site adds what only it knows, such as its
- * business facts. A site skill named like a shared one replaces it.
+ * descriptions) come with the kit; a site adds what is not on its pages, such
+ * as tone preferences or words the client avoids (facts the assistant reads from
+ * the pages themselves). A site skill named like a shared one replaces it.
  */
 export interface SiteSkill {
-  /** Lowercase letters, digits and hyphens, e.g. "business-facts". */
+  /** Lowercase letters, digits and hyphens, e.g. "house-style". */
   readonly name: string;
   /** When to load it; the assistant sees only this until it does. */
   readonly description: string;

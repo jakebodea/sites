@@ -5,7 +5,7 @@
  * know-how and copy craft cost nothing on turns that do not use them.
  *
  * The shared skills live in `skills/` and are bundled as text (the Worker has no
- * filesystem). A site adds its own, such as its business facts, in `cms.config.ts`.
+ * filesystem). A site adds its own (guidance its pages do not hold) in `cms.config.ts`.
  */
 import {
   aggregate,
