@@ -1,26 +1,25 @@
 import { describe, expect, it } from "vitest";
 
-import { adminThemeCss, injectAdminTheme } from "./theme.ts";
+import { adminThemeCss, brandAdminCopy, injectAdminTheme } from "./theme.ts";
 
 const theme = {
   brand: "oklch(0.38 0.05 225)",
   brandHover: "oklch(0.24 0.035 230)",
   brandOnDark: "oklch(0.72 0.06 225)",
   canvas: "oklch(0.992 0.002 100)",
-  radius: "0.5rem",
 };
 
 describe(adminThemeCss, () => {
   it("overrides Kumo's brand tokens for light and dark mode", () => {
     expect(adminThemeCss(theme)).toBe(
       [
-        "html[data-theme]:not([data-mode=dark]){--color-kumo-brand:oklch(0.38 0.05 225);--color-kumo-brand-hover:oklch(0.24 0.035 230);--text-color-kumo-brand:oklch(0.38 0.05 225);--text-color-kumo-link:oklch(0.38 0.05 225);--color-kumo-canvas:oklch(0.992 0.002 100);--color-kumo-elevated:oklch(0.992 0.002 100);--radius-lg:0.5rem;--radius-md:calc(0.5rem * 0.75);--radius-sm:calc(0.5rem * 0.5);--radius-xl:calc(0.5rem * 1.5)}",
-        "html[data-theme][data-mode=dark]{--color-kumo-brand:oklch(0.72 0.06 225);--color-kumo-brand-hover:oklch(0.38 0.05 225);--text-color-kumo-brand:oklch(0.72 0.06 225);--text-color-kumo-link:oklch(0.72 0.06 225);--radius-lg:0.5rem;--radius-md:calc(0.5rem * 0.75);--radius-sm:calc(0.5rem * 0.5);--radius-xl:calc(0.5rem * 1.5)}",
+        "html[data-theme]:not([data-mode=dark]){--color-kumo-brand:oklch(0.38 0.05 225);--color-kumo-brand-hover:oklch(0.24 0.035 230);--text-color-kumo-brand:oklch(0.38 0.05 225);--text-color-kumo-link:oklch(0.38 0.05 225);--color-kumo-canvas:oklch(0.992 0.002 100);--color-kumo-elevated:oklch(0.992 0.002 100)}",
+        "html[data-theme][data-mode=dark]{--color-kumo-brand:oklch(0.72 0.06 225);--color-kumo-brand-hover:oklch(0.38 0.05 225);--text-color-kumo-brand:oklch(0.72 0.06 225);--text-color-kumo-link:oklch(0.72 0.06 225)}",
       ].join("\n")
     );
   });
 
-  it("leaves surfaces and radii alone when a site keeps EmDash's", () => {
+  it("leaves surfaces alone when a site keeps EmDash's", () => {
     expect(
       adminThemeCss({ brand: "#123", brandHover: "#012", brandOnDark: "#9ab" })
     ).toBe(
@@ -46,5 +45,24 @@ describe(injectAdminTheme, () => {
 
   it("returns a document without a head unchanged", () => {
     expect(injectAdminTheme("<p>partial</p>", "a{b:c}")).toBe("<p>partial</p>");
+  });
+});
+
+describe(brandAdminCopy, () => {
+  it("welcomes a new editor to the client's site instead of EmDash", () => {
+    expect(
+      brandAdminCopy(
+        '<astro-island props="{&quot;7vQyJA&quot;:[1,[[0,&quot;Welcome to EmDash, &quot;]]]}">',
+        'Smith & "Sons"'
+      )
+    ).toBe(
+      '<astro-island props="{&quot;7vQyJA&quot;:[1,[[0,&quot;Welcome to Smith &amp; \\&quot;Sons\\&quot;, &quot;]]]}">'
+    );
+  });
+
+  it("keeps a dollar sign in the site name literal", () => {
+    expect(brandAdminCopy("Welcome to EmDash!", "Bucks $& Co")).toBe(
+      "Welcome to Bucks $&amp; Co!"
+    );
   });
 });
